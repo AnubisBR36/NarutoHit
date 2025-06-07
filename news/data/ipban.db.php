@@ -1,0 +1,1 @@
+<?php $ipban = array(); $ipban_stamp = array(); ?>

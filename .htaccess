@@ -1,0 +1,32 @@
+
+RewriteEngine On
+
+# Permitir acesso direto aos arquivos e diretórios existentes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [L]
+
+# Redirecionar URLs codificadas incorretamente
+RewriteRule ^index\.php%3Fp=(.*)$ index.php?p=$1 [R=301,L]
+
+# Configurações de segurança
+Options -Indexes
+ServerSignature Off
+
+# Permitir arquivos PHP
+<Files "*.php">
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+# Proteger arquivos sensíveis
+<FilesMatch "\.(txt|log|sql)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Configurações PHP
+php_value max_execution_time 300
+php_value memory_limit 256M
+php_value post_max_size 50M
+php_value upload_max_filesize 50M

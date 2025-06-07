@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* CSS Document */
+
+body			{color:#BBBBBB;background:url(../_img/background.jpg);font-size:12px;font-family:Arial, Helvetica, sans-serif;margin:0;}
+a				{color:#EEEEEE;font-weight:bold;text-decoration:none;}
+a:hover			{text-decoration:underline;}
+fieldset		{border:1px dotted #888888;padding:10px;margin-top:7px;}
+legend			{color:#FFFFFF;font-weight:bold;padding-left:5px;padding-right:5px;}
+form			{margin:0;padding:0;}
+input,select,textarea    {background:#333333;border:1px solid #666666;color:#BBBBBB;font-weight:bold;font-size:11px;}
+.input			{background:#222222;border:1px solid #BBBBBB;}
+.botao			{background:url(../img/fundo_botao.jpg) left;padding-left:23px;border:1px solid #000000;margin-top:3px;color:#FFFFFF;cursor:pointer;font-size:13px;}
+.aviso			{background:url(../_img/alert.png) no-repeat left top #440000;border:1px dotted #FFFF99;color:#FFFF99;padding:3px;padding-left:23px;text-align:left;}
+.apresentacao	{background:#440000;border:1px dotted #FFFF99;color:#FFFF99;padding:3px;text-align:center;}
+.action			{background:url(../_img/action.jpg) no-repeat center;text-align:center;line-height:40px;height:42px;margin-top:4px;}
+
+.box_top		{background:url(../_img/box/box_top.jpg) no-repeat left;line-height:35px;height:35px;padding-left:40px;font-weight:bold;text-align:left;}
+.box_middle		{background:url(../_img/box/box_middle.jpg) repeat-y left;padding-left:12px;padding-right:12px;padding-top:1px;text-align:justify;}
+.box_bottom		{background:url(../_img/box/box_bottom.jpg) no-repeat bottom left;height:15px;}
+.menutop		{background:url(../_img/menu.jpg) center no-repeat;height:60px;color:#BBBBBB;}
+
+.box2_top		{background:url(../_img/box/box2_top.jpg) no-repeat center;line-height:35px;height:35px;padding-left:40px;font-weight:bold;text-align:left;}
+.box2_middle	{background:url(../_img/box/box2_middle.jpg) repeat-y center;padding-left:12px;padding-right:12px;padding-top:1px;text-align:left;}
+.box2_bottom	{background:url(../_img/box/box2_bottom.jpg) no-repeat bottom;height:10px;}
+
+.box3_top		{height:50px;padding-left:55px;font-weight:bold;text-align:left;}
+
+.sep			{background:url(../_img/sep.jpg) repeat-x center;height:6px;position:relative;}
+.destaque		{font-weight:bold;color:#FFFFFF;}
+.sub			{float:right;width:300px;font-size:11px;color:#999999;}
+.sub2			{font-size:11px;color:#999999;text-align:center;}
+.campo			{border:1px solid #BBBBBB;}
+.clear			{clear:both;}
+.tooltip		{background:#222222;border:1px solid #DDDDDD;padding:3px;font-weight:normal;}
+
+.missoes		{text-align:center;height:17px;line-height:17px;margin-bottom:1px;}
+
+.table_titulo	{background:#1E1E1E;text-align:center;font-weight:bold;}
+.table_dados	{text-align:center;}
+.table_over		{background:#2C2C2C;}
+
+.modalExemplo	{margin: 20px 0;padding: 10px;background:#fff;width:auto;height:auto;}
+.load 			{position: absolute; top: 50%; left: 50%; width: 88px; height: 78px; margin: -39px 0 0 -44px; z-index: 99999;}
+.bg_modal 		{position: absolute; top: 0; left: 0; z-index: 99998; } 
+.view_modal 	{position: absolute; left: 50%;	top: 50%; text-align: left; z-index: 99998; }
+.modal 			{visibility: hidden; cursor:pointer; }
+
+.city_div		{border:1px solid #AAAAAA;margin-top:5px;background:#EEEEEE;color:#444444;text-align:center;padding:3px;}

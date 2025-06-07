@@ -1,0 +1,55 @@
+Descrição do Sistema de Mapa para o Jogo Naruto RPG
+
+Estrutura do Mapa:
+- O mapa será dividido em várias páginas, cada uma com uma grade de 20x20 quadrados (400 quadrados por página).
+- O jogador visualiza e interage com uma página por vez.
+- Para se deslocar entre áreas, o jogador deve chegar na borda da página (superior, inferior, esquerda ou direita).
+- Ao clicar na borda, a página atual é trocada automaticamente pela página adjacente.
+
+Transição entre Vilas:
+- Vilas disponíveis: Konoha, Areia, Pedra, Chuva, Névoa, Akatsuki.
+- Cada vila está separada por uma sequência de 4 páginas de floresta.
+- Para ir de uma vila até outra, o jogador precisa atravessar:
+  → 4 páginas x 20 quadrados = 80 quadrados
+  → Permitido andar apenas 2 quadrados por vez
+  → Total de 40 movimentos para cruzar até a próxima vila
+
+Sistema de Movimentação:
+- O jogador pode andar no máximo 2 quadrados por vez.
+- O movimento é ativado com um duplo clique no quadrado desejado.
+- Cada movimento possui um cooldown de 1.5 segundos.
+- Atravessar da vila até a próxima leva aproximadamente 1 minuto (60 segundos) se for em linha reta.
+
+Sistema de Exibição:
+- O mapa deve exibir o jogador e outros players como pontos ou ícones em tempo real.
+- O mapa sempre mostrará a grade atual (20x20), com as bordas interativas para navegação.
+- Ao chegar na borda e clicar, a página muda automaticamente, carregando a próxima parte do mapa.
+
+Sugestão de Estrutura para Banco de Dados:
+
+Tabela: maps_pages
+| Coluna            | Tipo     | Descrição                                   |
+| ----------------- | -------- | ------------------------------------------- |
+| id                | INT      | ID da página (PK).                          |
+| name              | VARCHAR  | Nome da página (ex: "Floresta 1", "Konoha").|
+| grid_data         | JSON     | Estrutura da grade 20x20 (obstáculos, etc.).|
+| north_page_id     | INT (FK) | Página que conecta ao topo.                 |
+| south_page_id     | INT (FK) | Página que conecta embaixo.                 |
+| east_page_id      | INT (FK) | Página que conecta à direita.               |
+| west_page_id      | INT (FK) | Página que conecta à esquerda.              |
+
+Tabela: players_positions
+| Coluna            | Tipo     | Descrição                                   |
+| ----------------- | -------- | ------------------------------------------- |
+| player_id         | INT      | ID do jogador (PK/FK).                      |
+| current_page_id   | INT (FK) | Página do mapa onde está atualmente.        |
+| x                 | INT      | Posição X na grade (0 a 19).                |
+| y                 | INT      | Posição Y na grade (0 a 19).                |
+| last_move_time    | DATETIME | Última vez que o player se moveu (cooldown).|
+
+Resumo das Regras do Mapa:
+- Cada página: 20x20 quadrados
+- Movimentação: até 2 quadrados por vez
+- Cooldown: 1.5 segundos por movimento
+- Transição: ao clicar nas bordas da página
+- Distância entre vilas: 4 páginas (~1 minuto de caminhada)

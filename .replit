@@ -1,0 +1,33 @@
+modules = ["php-8.2", "nodejs-20", "web"]
+run = "Faça esse site funcionar"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "Faça esse site funcionar"]
+
+[workflows]
+runButton = "Web Server"
+
+[[workflows.workflow]]
+name = "Executar Site"
+author = 43114555
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php -S 0.0.0.0:5000"
+
+[[workflows.workflow]]
+name = "Web Server"
+author = 43114555
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php -S 0.0.0.0:5000 -t ."
+
+[[ports]]
+localPort = 5000
+externalPort = 80

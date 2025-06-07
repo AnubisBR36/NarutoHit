@@ -1,0 +1,27 @@
+<body style="font-family: Verdana; font-size: 10pt">
+<h1>UTF-8 CuteNews Debug</h1>
+Please include the information below when you request help.<br />
+<textarea name="info" cols="100" rows="20">
+<?php
+error_reporting(E_ALL);
+$properties = array('register_globals', 'safe_mode', 'disable_functions', 'file_uploads', 'post_max_size', 
+			'error_log', 'error_reporting', 'log_errors', 'memory_limit', 'max_execution_time');
+
+echo 'UTF-8 CuteNews version: '.$config_utf8_id.'
+CuteNews base version: 1.4.6 / Build 186
+$config_http_script_dir: '.$config_http_script_dir.'
+'.str_repeat('-', 50).'
+PHP version: '.phpversion().'
+Magic quotes: '.get_magic_quotes_gpc();
+foreach($properties as $property){
+	echo "\r".ucfirst($property).': '.ini_get($property);
+}
+echo "\r".str_repeat('-', 50).'
+Date: '.date('D, d M Y, H:i').' ('.time().')
+Timezone: '.date('T').' (GMT'.date('O').')
+DST: '.date('I');
+
+?>
+</textarea>
+<br /><a href="?do=main">back to main</a></body>
+<?php exit; ?>

@@ -1,0 +1,4 @@
+<div class="modalExemplo" style="width:450px;">
+<div class="city_div">Parabéns! Você alcançou o nível <b><?php echo $_GET['lvl']; ?></b>.<br />Continue a ganhar experiência para subir mais e mais no ranking!<br />Como recompensa, nós lhe daremos <b>300,00 yens</b>.<?php if($_GET['lvl']>=14){ echo '<br />Como bônus, você recebeu '.(($_GET['lvl'])*9).' pontos de experiência por estar acima do nível 14.'; } ?></div>
+<div align="center" style="margin-top:7px;"><a href="#" rel="modalclose" style="color:#666666;"><img src="_img/close.jpg" border="0" align="absmiddle" width="12" height="12" /> Fechar</a></div>
+</div>

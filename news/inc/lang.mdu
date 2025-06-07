@@ -1,0 +1,201 @@
+<?php
+if($member_db[1] != 1){
+	msg('error', 'Access Denied', 'You don\'t have permission for this section');
+}
+
+$list = array();
+if($dh = opendir('./data/')){
+	while(($file = readdir($dh)) !== false){
+		if(!is_dir('./data/'.$file) && preg_match('/^[a-z]{1,}\.clf$/i', $file)){
+			$key = preg_replace('/^([a-z]{1,})\.clf$/i', '\\1', $file);
+			$list[strtolower($key)] = $key;
+		}
+	}
+}
+else{
+	die('Cannot read /data/');
+}
+closedir($dh);
+
+$droplist = '<select name="f" size="1">';
+foreach($list as $val){
+	$droplist .= '<option value="'.$val.'">'.$val.'</option>';
+}
+$droplist .= '</select>';
+
+// delete a file
+if(isset($_GET['action']) && $_GET['action'] == 'del'){
+	if(!preg_match('/^[a-z]{1,}$/i', $_GET['file']) || !file_exists('./data/'.$_GET['file'].'.clf')){
+		msg('error', 'Error!', 'Invalid file name.');
+	}
+	echoheader('user', 'Delete language');
+	echo 'Are you sure you want to delete the language <b>'.$_GET['file'].'</b> ?
+	<form action="'.$PHP_SELF.'" method="post"><input type="hidden" name="mod" value="lang" />
+<input type="hidden" name="action" value="dodel" /><input type="hidden" name="f" value="'.$_GET['file'].'" />
+ <input type="submit" value="Yes, delete" name="t" /> <input type="submit" value="No, keep!" /> </form>';
+	echofooter(); exit;
+}
+if(isset($_POST['action']) && $_POST['action'] == 'dodel'){
+	if(isset($_POST['t'])){
+		if(preg_match('/^[a-z]{1,}$/i', $_POST['f']) && file_exists('./data/'.$_POST['f'].'.clf') && strtolower($_POST['f']) != 'english'){
+			unlink('./data/'.$_POST['f'].'.clf');
+			msg('user', 'Language deleted', 'The language <b>'.$_POST['f'].'</b> has been deleted.', '?mod=lang');
+		}
+		else{
+			msg('error', 'Error!', 'Invalid file name.');
+		}
+	}
+}
+
+// Add new lang
+if(isset($_POST['action']) && $_POST['action'] == 'donew'){
+	if(!preg_match('/^[a-z]{1,}$/i', $_POST['filename'])){
+		msg('error', 'Error!', 'You may only use A-Z for language files.', 'javascript:history.back(-1)');
+	}
+	if(isset($list[strtolower($_POST['filename'])])){
+		msg('error', 'Error!', 'A file name with the name '.$_POST['filename'].' already exists.', 'javascript:history.back(-1)');
+	}
+	$new_file = file_get_contents('./data/'.$_POST['f'].'.clf');
+	$open = fopen('./data/'.$_POST['filename'].'.clf', 'w');
+	fwrite($open, $new_file);
+	fclose($open);
+
+	if(file_exists('./data/'.$_POST['f'].'.clf')){
+		msg('user', 'Language Added', 'The new language file based on '.$_POST['f'].' has been added.', '?mod=lang');
+	}
+	else{
+		msg('error', 'Error!', 'Could not write new file in /data/! Please ensure that the folder is writable.');
+	}
+}
+// Prompt new lang info
+if(isset($_GET['action']) && $_GET['action'] == 'new'){
+	echoheader('user', 'New Language');
+	echo '<form action="'.$PHP_SELF.'" method="post">
+Language file name: <input type="text" name="filename" maxlength="20" /> based on: '.$droplist.'
+<br /><input type="submit" value=" Create " /><input type="hidden" name="action" value="donew" />
+<input type="hidden" name="mod" value="lang" /></form>';
+	echofooter(); exit;
+}
+
+// default
+if(isset($_GET['f'])){
+	if(preg_match('/^[a-z]{1,}$/', $_GET['f']) && file_exists('./data/'.$_GET['f'].'.clf')){
+		$lang = $_GET['f'];
+	}
+	else{
+		$lang = 'english';
+	}
+}
+else{ $lang = 'english'; }
+
+//update file
+if(isset($_POST['action']) && $_POST['action'] == 'update'){
+	if(preg_match('/^[a-z]{1,}$/i', $_POST['langf']) && file_exists('./data/'.$_POST['langf'].'.clf')){
+		$utf8_error = false;
+		if(count($_POST['data']) != 63){ echo 'Data count mismatch! Please resubmit form.'; exit; }
+		foreach($_POST['data'] as $key => $item){
+			if(get_magic_quotes_gpc()){
+				$item = stripslashes($item);
+			}
+			$item = utf8_htmlentities($item);
+			$item = str_replace(array('&#60;', '&#62;'), array('<', '>'), $item);
+			$_POST['data'][$key] = $item;
+		}
+		
+		$open = fopen('./data/'.$_POST['langf'].'.clf', 'w');
+		fwrite($open, '<'.'?php $say = '.var_export($_POST['data'], true).'; ?'.'>');
+		fclose($open);
+		if($utf8_error){
+			msg('error', 'Error', 'Please send data under UTF-8!');
+		}
+		msg('user', 'Language Updated', 'Thank you! The file has been updated.', '?mod=lang&amp;f='.$_POST['langf']);
+	}
+	else{
+		msg('error', 'Error!', 'Invalid file name.');
+	}
+}
+
+echoheader('user', 'Languages');
+echo '<b>Manage Languages</b>
+<form method="get" action="'.$PHP_SELF.'">
+<table border=0 cellpading=0 cellspacing=0 width=347 class="panel" height="50">
+<tr>
+ <td width=126 height="23">&nbsp;Editing Language</td>
+ <td width=225 height="23">:&nbsp; <b>'.$lang.'</b></td>
+</tr>
+<tr>
+ <td height="27">&nbsp;Switch to Language</td>
+ <td height="27">'.$droplist.' <input type="submit" value="Go" /></td>
+</tr>
+<tr>
+ <td height="25" colspan="2">&nbsp;<a href="'.$PHP_SELF.'?mod=lang&amp;action=new">[add new language]</a>&nbsp; ';
+if(strtolower($lang) != 'english'){ echo '<a href="'.$PHP_SELF.'?mod=lang&amp;action=del&amp;file='.$lang.'">[delete language]</a>'; }
+echo '</td>
+</tr>
+<input type=hidden name=mod value=lang>
+</table>
+</form>';
+
+unset($say);
+require('./data/'.$lang.'.clf');
+
+$utf8i = 0;
+$lang_descr = array('login' => 'Login Button', 'remember' => 'Remember Me', 'wrong_pw' => 'Wrong Password', 'ban_title' => 'Banned Header', 'ban' => 'Ban Info', 'attempts' => '{x} Attempts Left', 'lost_pw' => 'Lost Password', 'utf8' => 'UTF-8 Error', 'lost_title' => 'Lost Password', 'lost_info' => 'Lost Pass Info', 'submit_lost' => 'Lost Pass Button', 'unmatch' => 'Email/User mismatch', 'all_fields' => 'All Fields Required',  'conf_sent' => 'Confirmation Email', 'conf_info' => 'Confirmation Info', 'invalid_str' => 'Invalid String', 'blank_pw' => 'Blank Password', 'name_long' => 'Name Too Long', 'email_long' => 'Email Too Long', 'comm_long' => 'Comment Too Long', 'pass_prompt' => 'Owned Username', 'reg_only_comm' => 'Registered Only', 'blank_comm' => 'Blank Comment', 'db_error' => 'Database Error', 'no_id' => 'Invalid ID',  'no_js' => 'JavaScript Disabled', 'bad_chars' => 'Illegal Characters', 'sh_fromdate' => 'From Date', 'sh_todate' => 'To Date', 'sh_adv' => 'Advanced', 'sh_zilch' => 'Nothing Found');
+function utf8_say($val){
+	global $utf8i, $lang_descr, $say;
+	if($utf8i % 2 == 0){ $bg = 'f7f6f4'; }
+	else{ $bg = 'fff'; }
+	$utf8i++;
+
+	$end = "\r<tr style='background-color: ".$bg."; margin: 5px 0'><td style='text-align: right'>";
+	if(isset($lang_descr[$val])){
+		$end .= $lang_descr[$val];
+	}
+	else{
+		$end .= ucwords(str_replace('_', ' ', str_replace('sh_', '', $val)));
+	}
+	$end .= ' &nbsp;</td><td><input style="width: 350px" type="text" value="'.str_replace('&amp;', '&', htmlspecialchars($say[$val])).'" name="data['.$val.']"  /></td></tr>';
+	echo $end;
+}
+	
+$items = array(0 => array('login_title', 'login', 'remember', 'remember_info', 'wrong_pw', 'ban_title', 'ban', 'attempts', 'unmatched_ip', 'lost_pw'),
+	1 => array('username', 'password', 'nickname', 'email', 'error', 'utf8'),
+	2 => array('lost_title', 'lost_info', 'submit_lost', 'unmatch', 'all_fields', 'pass_sent_title', 'pass_sent', 'conf_sent', 'conf_info', 'invalid_str'),
+	3 => array('register', 'register_submit', 'register_title', 'register_disabled', 'blank_user', 'blank_pw', 'blank_email', 'invalid_name', 'invalid_pass', 'invalid_mail', 'name_taken', 'user_added', 'register_done'),
+	4 => array('name_long', 'email_long', 'comm_long', 'flood_warn', 'ip_ban', 'pass_prompt', 'reg_only_comm', 'back', 'invalid_mailurl', 'blank_comm', 'db_error', 'no_id', 'no_js'),
+	5 => array('search', 'bad_chars', 'sh_news', 'sh_author', 'sh_fromdate', 'sh_todate', 'sh_title', 'sh_archives', 'sh_adv', 'sh_found', 'sh_zilch'),
+);
+echo '<form action="'.$PHP_SELF.'" method="post">
+<table><tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>Information</b></td></tr>
+<tr><td colspan="2">You can change the messages of CuteNews below.
+<br /><b>{x}</b> and <b>{y}</b> are replaced with dynamic variables (where necessary). "Found {x} articles" will be replaced to "Found 5 articles", for example.
+<br />Using HTML tags with attributes is not allowed, only short tags such as &lt;b&gt;, &lt;strong&gt; etc. are supported.
+<br />You can find help on implementing the language settings and already done language files <a href="http://korn19.ch/coding/utf8-cutenews/language.php" target="_blank">on the following page</a>.';
+if(!is_writable('./data/'.$lang.'.clf')){
+	echo '<br /><span style="color: #f00">Warning</span> PHP has detected that the file "/data/'.$lang.'.clf" is not writable! Please change its 
+	CHMOD.';
+}
+
+echo '<br />&nbsp;</td></tr>
+ <tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>General</b></td></tr>';
+foreach($items[1] as $thing){
+	utf8_say($thing);
+}
+echo '<tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>Login</b></td></tr>';
+foreach($items[0] as $thing){ utf8_say($thing); }
+echo '<tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>Lost password</b></td></tr>';
+foreach($items[2] as $thing){ utf8_say($thing); }
+echo '<tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>Register</b></td></tr>';
+foreach($items[3] as $thing){ utf8_say($thing); }
+echo '<tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>Comments</b></td></tr>';
+foreach($items[4] as $thing){ utf8_say($thing); }
+echo '<tr><td colspan="2" style="font-size: 10pt; background-color: #f1eae8; padding-left: 15px"><b>Search</b></td></tr>';
+foreach($items[5] as $thing){ utf8_say($thing); }
+echo '
+<input type="hidden" name="action" value="update" />
+ <input type="hidden" name="langf" value="'.$lang.'" />
+ <input type="hidden" name="mod" value="lang" />
+<tr><td style="padding-top: 5px" colspan="2"><input type="submit" value=" Save Changes " /></td></tr>
+</table>';
+echofooter();
+?>
