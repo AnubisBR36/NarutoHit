@@ -1,0 +1,488 @@
+@charset "utf-8";
+/* CSS Document */
+
+body                    {color:#BBBBBB;background:url(../_img/background.jpg);font-size:12px;font-family:Arial, Helvetica, sans-serif;margin:0;}
+a                               {color:#EEEEEE;font-weight:bold;text-decoration:none;}
+a:hover                 {text-decoration:underline;}
+fieldset                {border:1px dotted #888888;padding:10px;margin-top:7px;}
+legend                  {color:#FFFFFF;font-weight:bold;padding-left:5px;padding-right:5px;}
+form                    {margin:0;padding:0;}
+input,select,textarea    {background:#333333;border:1px solid #666666;color:#BBBBBB;font-weight:bold;font-size:11px;}
+.input                  {background:#222222;border:1px solid #BBBBBB;}
+.botao                  {background:url(../_img/fundo_botao.jpg) left;padding-left:23px;border:1px solid #000000;margin-top:3px;color:#FFFFFF;cursor:pointer;font-size:13px;}
+.botao2                 {background:url(../_img/fundo_botao.jpg) right;border:1px solid #000000;margin-top:3px;color:#FFFFFF;cursor:pointer;font-size:9px;}
+.aviso                  {background:url(../_img/alert.png) no-repeat left top #440000;border:1px dotted #FFFF99;color:#FFFF99;padding:3px;padding-left:23px;text-align:left;}
+.apresentacao   {background:#440000;border:1px dotted #FFFF99;color:#FFFF99;padding:3px;text-align:center;}
+.action                 {background:url(../_img/action.jpg) no-repeat center;text-align:center;line-height:40px;height:42px;margin-top:4px;font-size:11px;}
+
+.box_top                {background:url(../_img/box/box_top.jpg) no-repeat center;line-height:35px;height:35px;padding-left:40px;font-weight:bold;text-align:left;}
+.box_middle             {background:url(../_img/box/box_middle.jpg) repeat-y center;padding-left:12px;padding-right:12px;padding-top:1px;text-align:justify;}
+.box_bottom             {background:url(../_img/box/box_bottom.jpg) no-repeat bottom;height:15px;}
+.menutop                {background:url(../_img/menu.jpg) center no-repeat;height:60px;color:#BBBBBB;}
+
+.box2_top               {background:url(../_img/box/box2_top.jpg) no-repeat center;line-height:35px;height:35px;padding-left:40px;font-weight:bold;text-align:left;}
+.box2_middle    {background:url(../_img/box/box2_middle.jpg) repeat-y center;padding-left:12px;padding-right:12px;padding-top:1px;text-align:left;}
+.box2_bottom    {background:url(../_img/box/box2_bottom.jpg) no-repeat bottom;height:10px;}
+
+.box3_top               {height:50px;padding-left:55px;font-weight:bold;text-align:left;}
+.box3_top_Administrador {
+    background: url(../_img/box/box3_top_Administrador.jpg) no-repeat left center;
+    background-color: #2a2a2a;
+    background-size: contain;
+    line-height: 35px;
+    height: 35px;
+    padding-left: 40px;
+    font-weight: bold;
+    text-align: left;
+    width: auto;
+    min-width: 250px;
+}
+
+.sep                    {background:url(../_img/sep.jpg) repeat-x center;height:6px;position:relative;}
+.destaque               {font-weight:bold;color:#FFFFFF;}
+.sub                    {float:right;width:300px;font-size:11px;color:#999999;}
+.sub2                   {font-size:11px;color:#999999;text-align:center;}
+.campo                  {border:1px solid #BBBBBB;}
+.clear                  {clear:both;}
+.tooltip                {background:#222222;border:1px solid #DDDDDD;padding:3px;font-weight:normal;color:#FFFFFF;}
+
+.missoes                {text-align:center;height:17px;line-height:17px;margin-bottom:1px;}
+
+.table_titulo   {background:#1E1E1E;text-align:center;font-weight:bold;padding:5px;}
+.table_dados    {text-align:center;vertical-align:middle;}
+.stats_container {background:#1b1b1a !important;padding:10px;border-radius:5px;}
+.stats_row {background:#1b1b1a !important;padding:5px;}
+.stats_row td {background:#1b1b1a !important;}
+.table_over             {background:#2C2C2C;}
+.botao                  {background:url(../_img/fundo_botao.jpg) left;padding-left:23px;border:1px solid #000000;margin-top:3px;color:#FFFFFF;cursor:pointer;font-size:13px;display:inline-block;white-space:nowrap;}
+
+.modalExemplo   {margin: 20px 0;padding: 10px;background:#fff;width:auto;height:auto;}
+.load                   {position: absolute; top: 50%; left: 50%; width: 88px; height: 78px; margin: -39px 0 0 -44px; z-index: 99999;}
+.bg_modal               {position: absolute; top: 0; left: 0; z-index: 99998; } 
+.view_modal     {position: absolute; left: 50%; top: 50%; text-align: left; z-index: 99998; }
+.modal                  {visibility: hidden; cursor:pointer; }
+
+.city_div{
+        background-color:#1C1C1C;
+        color:#666666;
+        padding:5px;
+}
+
+/* Estilos para o sistema de mapa */
+.player-popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.2s ease-in;
+}
+
+.player-popup-container.closing {
+    animation: fadeOut 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    to { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
+
+.player-name {
+    color: white !important;
+    font-weight: bold;
+}
+
+.grid-cell:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#mapa-container {
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 608px !important;
+    height: 640px !important;
+    background-size: 608px 640px !important;
+    background-position: center !important;
+    border: 2px solid #000000 !important;
+}
+
+#mapa-grid {
+    width: 608px !important;
+    height: 640px !important;
+    box-sizing: border-box;
+}
+
+.other-player:hover {
+    transform: scale(1.1);
+    transition: transform 0.1s ease;
+}
+
+.grid-cell {
+    box-sizing: border-box !important;
+    border: 2px solid #000000 !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+    font-size: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.grid-cell span {
+    font-weight: bold !important;
+    color: #000000 !important;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.8) !important;
+    pointer-events: none !important;
+}
+
+.grid-cell:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: #FFD700 !important;
+}
+
+/* Kage images positioning */
+.kage_container         {position:relative;display:inline-block;}
+.kage_pergaminho        {display:block;}
+.kage_bg                        {position:absolute;top:-3px;left:0px;width:42px;height:auto;z-index:2;}
+
+/* Popup do jogador */
+.player-popup-container {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 10000 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    animation: popupFadeIn 0.2s ease-out !important;
+    width: 300px !important;
+    max-width: 350px !important;
+}
+
+.player-popup-container .box2_top {
+    background: url(../_img/box/box_top.jpg) no-repeat center !important;
+    background-size: 100% 100% !important;
+    line-height: 35px !important;
+    height: 35px !important;
+    padding: 0 20px !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    margin: 0 !important;
+    position: relative !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.player-popup-container .box2_middle {
+    background: url(../_img/box/box_middle.jpg) repeat-y center !important;
+    background-size: 100% auto !important;
+    padding: 15px 20px !important;
+    text-align: left !important;
+    margin: 0 !important;
+    min-height: 140px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.player-popup-container .box2_bottom {
+    background: url(../_img/box/box_bottom.jpg) no-repeat bottom !important;
+    background-size: 100% 100% !important;
+    height: 15px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.player-popup-container p {
+    margin: 3px 0 !important;
+    color: #BBBBBB !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+.player-popup-container strong {
+    color: #FFFFFF !important;
+    font-weight: bold !important;
+}
+
+.player-popup-container .botao {
+    background: url(../_img/fundo_botao.jpg) left !important;
+    padding: 6px 12px 6px 24px !important;
+    border: 1px solid #000000 !important;
+    margin: 3px 2px !important;
+    color: #FFFFFF !important;
+    cursor: pointer !important;
+    font-size: 11px !important;
+    display: inline-block !important;
+    white-space: nowrap !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+.player-popup-container .botao:hover {
+    background-color: #444 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.player-popup-container .botao:active {
+    transform: translateY(0) !important;
+}
+
+.player-popup-container .player-name {
+    color: #FFFFFF !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    line-height: 35px !important;
+    display: block !important;
+    text-align: left !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Animações do popup */
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes popupFadeOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+}
+
+.player-popup-container.closing {
+    animation: popupFadeOut 0.15s ease-out !important;
+}
+
+/* Estilos para botões do popup */
+.popup-btn {
+    margin: 3px !important;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    border: none !important;
+    border-radius: 3px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.popup-btn img {
+    filter: brightness(1.2) !important;
+}
+
+.attack-btn {
+    background: linear-gradient(145deg, #e74c3c, #c0392b) !important;
+    color: white !important;
+}
+
+.attack-btn:hover:not(:disabled) {
+    background: linear-gradient(145deg, #c0392b, #a93226) !important;
+    transform: translateY(-1px) !important;
+}
+
+.message-btn {
+    background: linear-gradient(145deg, #3498db, #2980b9) !important;
+    color: white !important;
+}
+
+.message-btn:hover {
+    background: linear-gradient(145deg, #2980b9, #21618c) !important;
+    transform: translateY(-1px) !important;
+}
+
+.close-btn {
+    background: linear-gradient(145deg, #95a5a6, #7f8c8d) !important;
+    color: white !important;
+}
+
+.close-btn:hover {
+    background: linear-gradient(145deg, #7f8c8d, #6c7b7d) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Responsividade do popup */
+@media (max-width: 480px) {
+    .player-popup-container {
+        max-width: 90vw !important;
+        min-width: 200px !important;
+    }
+
+    .player-popup-container .box2_middle {
+        padding: 10px 8px !important;
+    }
+
+    .popup-btn {
+        font-size: 9px !important;
+        padding: 5px 8px !important;
+        margin: 1px !important;
+    }
+
+    .popup-btn img {
+        width: 12px !important;
+        height: 12px !important;
+        margin-right: 3px !important;
+    }
+}
+
+/* Melhorar legibilidade em telas pequenas */
+@media (max-height: 600px) {
+    .player-popup-container {
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* Estilos para página de treino */
+.train_stats_bg {
+        background-color: #1b1b1a;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 5px 0;
+}
+
+.train_attribute_row {
+        background-color: #1b1b1a;
+        padding: 8px;
+        margin: 3px 0;
+        border-radius: 3px;
+}
+
+/* Estilos específicos para os atributos nas páginas home e train */
+.attribute-row {
+        background-color: #1b1b1a !important;
+}
+
+.attribute-row td {
+        background-color: #1b1b1a !important;
+}
+
+/* Para tabelas de atributos em geral */
+table tr:has(td:contains("Taijutsu:")),
+table tr:has(td:contains("Ninjutsu:")),
+table tr:has(td:contains("Genjutsu:")) {
+        background-color: #1b1b1a !important;
+}
+
+/* Estilos específicos para a página de invasão */
+.invasao-container {
+        background-color: #1b1b1a !important;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+}
+
+.invasao-content {
+        background-color: #1b1b1a !important;
+}
+
+.invasao-content table {
+        background-color: #1b1b1a !important;
+}
+
+.invasao-content td {
+        background-color: #1b1b1a !important;
+}
+
+.invasao-content .box_top,
+.invasao-content .box_middle,
+.invasao-content .box_bottom {
+        background-color: transparent !important;
+}
+
+/* Aplicar fundo escuro em toda a área da invasão */
+div[style*="text-align: center"] {
+        background-color: #1b1b1a;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 10px 0;
+}
+
+/* Estilos específicos para os status do invasor na página de invasão */
+.invasao-content table tr td[style*="padding-right:5px"] {
+        background-color: #1b1b1a !important;
+}
+
+/* Para garantir que todos os TDs dos status do invasor tenham o fundo correto */
+.invasao-content table tr:has(td:contains("Taijutsu:")),
+.invasao-content table tr:has(td:contains("Ninjutsu:")), 
+.invasao-content table tr:has(td:contains("Genjutsu:")) {
+        background-color: #1b1b1a !important;
+}
+
+.invasao-content table tr:has(td:contains("Taijutsu:")) td,
+.invasao-content table tr:has(td:contains("Ninjutsu:")) td,
+.invasao-content table tr:has(td:contains("Genjutsu:")) td {
+        background-color: #1b1b1a !important;
+}
+
+/* Aplicar diretamente nos TDs que contêm os labels dos status */
+td[style*="padding-right:5px"] b:contains("Taijutsu:"),
+td[style*="padding-right:5px"] b:contains("Ninjutsu:"),
+td[style*="padding-right:5px"] b:contains("Genjutsu:") {
+        background-color: #1b1b1a !important;
+}
+
+/* Estilos para ajustar o tamanho da imagem de fundo da vila */
+#mapa-container {
+    background-size: auto !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    max-width: 1020px !important;
+    max-height: 714px !important;
+}
+
+/* Limitar tamanho da imagem de fundo da vila especificamente */
+#mapa-container img[src*="mapas_vilas"] {
+    max-width: none !important;
+    max-height: none !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: none !important;
+}
+
+/* Garantir que o container do mapa não exceda limites razoáveis */
+.city_div {
+    max-width: 1020px !important;
+    margin: 0 auto !important;
+}
+
+/* Específico para mapa mundial - não aplicar restrições */
+#mapa-mundial-container {
+    max-width: none !important;
+}
+
+#mapa-mundial-container #mapa-container {
+    background-size: auto !important;
+    max-width: none !important;
+    max-height: none !important;ant;
+}
+
+/* FIM */

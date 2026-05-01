@@ -1,0 +1,22 @@
+{
+    "9": {
+        "id": 9,
+        "nome": "AnubisBR",
+        "x": 6,
+        "y": 5,
+        "mapaAtual": "Vila Oculta da Folha",
+        "vila": 1,
+        "isBot": false,
+        "lastUpdate": 1776213917
+    },
+    "61": {
+        "id": 61,
+        "nome": "teste1",
+        "x": 32,
+        "y": 20,
+        "mapaAtual": "MapaBase",
+        "vila": 2,
+        "isBot": false,
+        "lastUpdate": 1776213995
+    }
+}

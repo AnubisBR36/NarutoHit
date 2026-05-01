@@ -1,0 +1,167 @@
+{
+    "MapaBase": {
+        "tileSize": 32,
+        "entradas": [
+            {
+                "x": 45,
+                "y": 35,
+                "destino": "Vila Oculta da Folha",
+                "destinoX": 10,
+                "destinoY": 10
+            },
+            {
+                "x": 70,
+                "y": 25,
+                "destino": "Vila Oculta da Areia",
+                "destinoX": 10,
+                "destinoY": 10
+            },
+            {
+                "x": 30,
+                "y": 50,
+                "destino": "Vila Oculta da Névoa",
+                "destinoX": 10,
+                "destinoY": 10
+            },
+            {
+                "x": 55,
+                "y": 15,
+                "destino": "Vila Oculta da Nuvem",
+                "destinoX": 10,
+                "destinoY": 10
+            },
+            {
+                "x": 60,
+                "y": 45,
+                "destino": "Vila Oculta da Chuva",
+                "destinoX": 10,
+                "destinoY": 10
+            },
+            {
+                "x": 80,
+                "y": 40,
+                "destino": "Vila Akatsuki",
+                "destinoX": 10,
+                "destinoY": 10
+            },
+            {
+                "x": 1,
+                "y": 19,
+                "destino": "Vila Akatsuki",
+                "destinoX": 17,
+                "destinoY": 17,
+                "icone": "_img\/Icones_map\/icone_vila.png"
+            },
+            {
+                "x": 21,
+                "y": 19,
+                "destino": "Vila Oculta da Folha",
+                "destinoX": 15,
+                "destinoY": 15,
+                "icone": "_img\/Icones_map\/icone_vila.png"
+            }
+        ],
+        "saidas": [],
+        "bloqueados": []
+    },
+    "Vila Akatsuki": {
+        "tileSize": 40,
+        "entradas": [],
+        "saidas": [
+            {
+                "x": 16,
+                "y": 16,
+                "destino": "MapaBase",
+                "destinoX": 1,
+                "destinoY": 19,
+                "icone": "_img\/Icones_map\/icone_vila.png"
+            }
+        ],
+        "bloqueados": []
+    },
+    "Vila Oculta da Areia": {
+        "tileSize": 40,
+        "entradas": [],
+        "saidas": [
+            {
+                "x": 2,
+                "y": 2,
+                "destino": "MapaBase",
+                "destinoX": 70,
+                "destinoY": 25
+            }
+        ],
+        "bloqueados": []
+    },
+    "Vila Oculta da Chuva": {
+        "tileSize": 40,
+        "entradas": [],
+        "saidas": [
+            {
+                "x": 2,
+                "y": 2,
+                "destino": "MapaBase",
+                "destinoX": 60,
+                "destinoY": 45
+            }
+        ],
+        "bloqueados": []
+    },
+    "Vila Oculta da Folha": {
+        "tileSize": 40,
+        "entradas": [
+            {
+                "x": 15,
+                "y": 15,
+                "destino": "MapaBase",
+                "destinoX": 21,
+                "destinoY": 19,
+                "icone": "_img\/Icones_map\/icone_vila.png"
+            }
+        ],
+        "saidas": [],
+        "bloqueados": []
+    },
+    "Vila Oculta da Névoa": {
+        "tileSize": 40,
+        "entradas": [],
+        "saidas": [
+            {
+                "x": 2,
+                "y": 2,
+                "destino": "MapaBase",
+                "destinoX": 30,
+                "destinoY": 50
+            }
+        ],
+        "bloqueados": []
+    },
+    "Vila Oculta da Nuvem": {
+        "tileSize": 40,
+        "entradas": [],
+        "saidas": [
+            {
+                "x": 2,
+                "y": 2,
+                "destino": "MapaBase",
+                "destinoX": 55,
+                "destinoY": 15
+            }
+        ],
+        "bloqueados": []
+    },
+    "Vila Oculta da Pedra": {
+        "tileSize": 40,
+        "entradas": [],
+        "saidas": [
+            {
+                "x": 2,
+                "y": 2,
+                "destino": "MapaBase",
+                "destinoX": 25,
+                "destinoY": 20
+            }
+        ],
+        "bloqueados": []
+    }
+}

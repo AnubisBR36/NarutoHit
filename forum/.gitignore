@@ -1,0 +1,13 @@
+# Arquivo de configuração com chaves reais (não compartilhar)
+config/recaptcha.php
+
+# Banco de dados SQLite
+*.sqlite
+*.db
+
+# Arquivos temporários do PHP
+*.log
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db

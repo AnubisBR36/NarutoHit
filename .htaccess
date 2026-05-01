@@ -1,0 +1,78 @@
+RewriteEngine On
+
+# Redirecionar index.php?p= para apenas ?p=  (apenas em GET, p/ não quebrar POST de formulários)
+# Usamos [NE] para não escapar o '?' da query string (evita gerar URLs com %3F)
+RewriteCond %{REQUEST_METHOD} ^GET$ [NC]
+RewriteCond %{THE_REQUEST} \s/+index\.php\?p=([^\s&]+) [NC]
+RewriteRule ^ /?p=%1 [R=301,L,NE]
+
+# Reescrever URLs sem index.php para index.php internamente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{QUERY_STRING} ^p=(.*)$ [NC]
+RewriteRule ^$ index.php?p=%1 [L,QSA]
+
+# Recupera URLs com '?' codificado por engano (ex.: /%3Fp=reg2 -> /?p=reg2)
+RewriteCond %{REQUEST_URI} ^/+(%3[Ff])p=(.*)$ [NC]
+RewriteRule ^ /?p=%2 [R=301,L,NE]
+
+# Bloquear acesso direto aos diretórios de imagens
+<FilesMatch "\.(jpg|jpeg|png|gif)$">
+    Header set Cache-Control "max-age=2592000"
+</FilesMatch>
+
+# Proteção de arquivos sensíveis (compatível Apache 2.2 e 2.4)
+<Files "*.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
+
+<Files "conexao.php">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</Files>
+
+# Bloquear acesso a arquivos de configuração
+<FilesMatch "\.(inc|conf|config)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Garante que / sirva index.php
+DirectoryIndex index.php
+
+# Permitir acesso às imagens de upload
+RewriteRule ^_img/uploads/ - [L]
+
+# Permitir acesso direto aos arquivos e diretórios existentes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [L]
+
+# Redirecionar URLs codificadas incorretamente
+RewriteRule ^index\.php%3Fp=(.*)$ index.php?p=$1 [R=301,L]
+
+# Configurações de segurança
+Options -Indexes
+ServerSignature Off
+
+# Configurações PHP
+php_value max_execution_time 300
+php_value memory_limit 256M
+php_value post_max_size 50M
+php_value upload_max_filesize 50M

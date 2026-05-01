@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">
+  <!-- Rachadura principal -->
+  <path d="M22 0 L17 12 L24 14 L14 28 L21 27 L10 42 L16 43 L9 50" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Ramificação esquerda -->
+  <path d="M17 12 L10 18 L14 20" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none" stroke-linecap="round"/>
+  <!-- Ramificação direita superior -->
+  <path d="M24 14 L32 10 L36 14" stroke="rgba(255,255,255,0.45)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+  <!-- Ramificação direita inferior -->
+  <path d="M21 27 L30 30 L34 27" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  <!-- Micro-rachadura -->
+  <path d="M14 28 L9 32" stroke="rgba(255,255,255,0.35)" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+  <!-- Sombra da rachadura (escurece a borda) -->
+  <path d="M22 0 L17 12 L24 14 L14 28 L21 27 L10 42 L16 43 L9 50" stroke="rgba(0,0,0,0.55)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 0 L17 12 L24 14 L14 28 L21 27 L10 42 L16 43 L9 50" stroke="rgba(255,255,255,0.75)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

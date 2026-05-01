@@ -1,0 +1,133 @@
+[Sat Apr 25 16:09:09 2026] PHP 8.2.23 Development Server (http://0.0.0.0:5000) started
+[Sat Apr 25 16:09:10 2026] 127.0.0.1:43048 Accepted
+[Sat Apr 25 16:09:10 2026] 127.0.0.1:43048 [302]: GET /
+[Sat Apr 25 16:09:10 2026] 127.0.0.1:43048 Closing
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43060 Accepted
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43060 [200]: GET /install/install.php
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43060 Closing
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43066 Accepted
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43066 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43066 Closing
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43082 Accepted
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43082 [200]: GET /_img/menu.jpg
+[Sat Apr 25 16:09:11 2026] 127.0.0.1:43082 Closing
+[Sat Apr 25 16:09:12 2026] 127.0.0.1:36990 Accepted
+[Sat Apr 25 16:09:12 2026] 127.0.0.1:37002 Accepted
+[Sat Apr 25 16:09:12 2026] 127.0.0.1:36990 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:09:12 2026] 127.0.0.1:37002 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:09:12 2026] 127.0.0.1:36990 Closing
+[Sat Apr 25 16:09:12 2026] 127.0.0.1:37002 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37012 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37012 [302]: GET /
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37012 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37024 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37024 [200]: GET /install/install.php
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37024 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37034 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37050 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37034 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37050 [200]: GET /_img/menu.jpg
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37034 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37050 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37052 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37056 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37052 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37056 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37052 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37056 Closing
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37066 Accepted
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37066 [200]: GET /_img/favicon.ico
+[Sat Apr 25 16:09:18 2026] 127.0.0.1:37066 Closing
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:37072 Accepted
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:37072 [200]: GET /install/install.php
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:37072 Closing
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38414 Accepted
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38428 Accepted
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38442 Accepted
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38414 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38454 Accepted
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38428 [200]: GET /_img/menu.jpg
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38414 Closing
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38428 Closing
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38442 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38442 Closing
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38454 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38454 Closing
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38466 Accepted
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38466 [200]: GET /_img/favicon.ico
+[Sat Apr 25 16:09:22 2026] 127.0.0.1:38466 Closing
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39094 Accepted
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39094 [200]: GET /install/install.php
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39094 Closing
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39098 Accepted
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39102 Accepted
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39098 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39098 Closing
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39102 [200]: GET /_img/menu.jpg
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39102 Closing
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39104 Accepted
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39114 Accepted
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39104 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39114 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39104 Closing
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39114 Closing
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39122 Accepted
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39122 [200]: GET /_img/favicon.ico
+[Sat Apr 25 16:09:52 2026] 127.0.0.1:39122 Closing
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47278 Accepted
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47278 [200]: GET /install/install.php
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47278 Closing
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47280 Accepted
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47280 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47280 Closing
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47284 Accepted
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47284 [200]: GET /_img/menu.jpg
+[Sat Apr 25 16:10:36 2026] 127.0.0.1:47284 Closing
+[Sat Apr 25 16:10:37 2026] 127.0.0.1:47292 Accepted
+[Sat Apr 25 16:10:37 2026] 127.0.0.1:47292 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:10:37 2026] 127.0.0.1:47292 Closing
+[Sat Apr 25 16:10:37 2026] 127.0.0.1:47298 Accepted
+[Sat Apr 25 16:10:37 2026] 127.0.0.1:47298 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:10:37 2026] 127.0.0.1:47298 Closing
+[Sat Apr 25 16:33:26 2026] 127.0.0.1:35306 Accepted
+[Sat Apr 25 16:33:26 2026] 127.0.0.1:35306 [200]: GET /install/install.php?step=1
+[Sat Apr 25 16:33:26 2026] 127.0.0.1:35306 Closing
+[Sat Apr 25 16:33:26 2026] 127.0.0.1:35322 Accepted
+[Sat Apr 25 16:33:26 2026] 127.0.0.1:35322 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:33:26 2026] 127.0.0.1:35322 Closing
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35338 Accepted
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35338 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35338 Closing
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35348 Accepted
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35348 [200]: GET /install/install.php?ajax=check&k=php
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35348 Closing
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35362 Accepted
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35362 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:33:27 2026] 127.0.0.1:35362 Closing
+[Sat Apr 25 16:33:28 2026] 127.0.0.1:35374 Accepted
+[Sat Apr 25 16:33:28 2026] 127.0.0.1:35374 [200]: GET /install/install.php?ajax=check&k=pdo_mysql
+[Sat Apr 25 16:33:28 2026] 127.0.0.1:35374 Closing
+[Sat Apr 25 16:33:29 2026] 127.0.0.1:35380 Accepted
+[Sat Apr 25 16:33:29 2026] 127.0.0.1:35380 [200]: GET /install/install.php?ajax=check&k=db_sql
+[Sat Apr 25 16:33:29 2026] 127.0.0.1:35380 Closing
+[Sat Apr 25 16:33:30 2026] 127.0.0.1:35384 Accepted
+[Sat Apr 25 16:33:30 2026] 127.0.0.1:35384 [200]: GET /install/install.php?ajax=check&k=forum_sql
+[Sat Apr 25 16:33:30 2026] 127.0.0.1:35384 Closing
+[Sat Apr 25 16:33:30 2026] 127.0.0.1:35396 Accepted
+[Sat Apr 25 16:33:30 2026] 127.0.0.1:35396 [200]: GET /install/install.php?ajax=check&k=config_writable
+[Sat Apr 25 16:33:30 2026] 127.0.0.1:35396 Closing
+[Sat Apr 25 16:33:31 2026] 127.0.0.1:35398 Accepted
+[Sat Apr 25 16:33:31 2026] 127.0.0.1:35398 [200]: GET /install/install.php?ajax=check&k=install_writable
+[Sat Apr 25 16:33:31 2026] 127.0.0.1:35398 Closing
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49906 Accepted
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49906 [200]: GET /install/install.php?step=2
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49906 Closing
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49910 Accepted
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49910 [200]: GET /_img/logo.jpg
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49910 Closing
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49914 Accepted
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49914 [200]: GET /_img/background.jpg
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49914 Closing
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49926 Accepted
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49926 [200]: GET /_img/fundo_botao.jpg
+[Sat Apr 25 16:33:40 2026] 127.0.0.1:49926 Closing

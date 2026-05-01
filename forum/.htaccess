@@ -1,0 +1,54 @@
+RewriteEngine On
+
+# Redirecionar index.php?p= para apenas ?p=
+RewriteCond %{THE_REQUEST} /index\.php\?p=([^\s&]+) [NC]
+RewriteRule ^ /?p=%1? [R=301,L]
+
+# Reescrever URLs sem index.php para index.php internamente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{QUERY_STRING} ^p=(.*)$ [NC]
+RewriteRule ^$ index.php?p=%1 [L,QSA]
+
+# Bloquear acesso direto aos diretórios de imagens
+<FilesMatch "\.(jpg|jpeg|png|gif)$">
+    Header set Cache-Control "max-age=2592000"
+</FilesMatch>
+
+# Proteção de arquivos sensíveis
+<Files "*.php">
+    Order allow,deny
+    Allow from all
+</Files>
+
+<Files "conexao.php">
+    Order deny,allow
+    Deny from all
+</Files>
+
+# Bloquear acesso a arquivos de configuração
+<FilesMatch "\.(inc|conf|config)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+# Permitir acesso às imagens de upload
+RewriteRule ^_img/uploads/ - [L]
+
+# Permitir acesso direto aos arquivos e diretórios existentes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [L]
+
+# Redirecionar URLs codificadas incorretamente
+RewriteRule ^index\.php%3Fp=(.*)$ index.php?p=$1 [R=301,L]
+
+# Configurações de segurança
+Options -Indexes
+ServerSignature Off
+
+# Configurações PHP
+php_value max_execution_time 300
+php_value memory_limit 256M
+php_value post_max_size 50M
+php_value upload_max_filesize 50M

@@ -1,0 +1,24 @@
+<?php
+/**
+ * config/contato.php — Canais oficiais de contato exibidos em ?p=contact
+ *
+ * Copie este arquivo para `config/contato.php` (ou edite-o pelo painel ADM
+ * em `adm/adm.php?modulo=contatos`). Deixe em branco/remova as chaves que
+ * você NÃO quer exibir publicamente.
+ *
+ * As chaves aceitas são as mesmas usadas em _inc/contact.php:
+ *   email, discord, whatsapp, twitter, instagram, facebook, telegram,
+ *   youtube, website
+ */
+
+return [
+    'email'     => '',                 // contato@seujogo.com
+    'discord'   => '',                 // https://discord.gg/seuserver
+    'whatsapp'  => '',                 // 5511999999999  (somente números)
+    'twitter'   => '',                 // @seujogo OU URL completa
+    'instagram' => '',                 // @seujogo
+    'facebook'  => '',                 // seujogo
+    'telegram'  => '',                 // @seujogo
+    'youtube'   => '',                 // @seucanal
+    'website'   => '',                 // https://seusite.com
+];
