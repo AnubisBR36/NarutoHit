@@ -3,6 +3,22 @@ require_once('Encrypt.php');
 $c=new C_Encrypt();
 
 if(isset($_SESSION['logado'])){ header("Location: index.php?p=home"); exit; }
+
+// Verificar se cadastro está aberto (config_jogo)
+try {
+    $stmt_cad_cfg = $conexao->prepare("SELECT valor FROM configuracoes WHERE nome = 'cadastro_aberto' ORDER BY id DESC LIMIT 1");
+    $stmt_cad_cfg->execute();
+    $val_cadastro = $stmt_cad_cfg->fetchColumn();
+    if ($val_cadastro !== false && (string)$val_cadastro === '0') {
+        ?>
+        <div class="box_top">Cadastros Fechados</div>
+        <div class="box_middle"><div class="aviso">O cadastro de novos jogadores está temporariamente fechado.<br />Tente novamente mais tarde.</div></div>
+        <div class="box_bottom"></div>
+        <?php
+        return;
+    }
+} catch (Exception $e) {}
+
 $sqlc=$conexao->query("SELECT COUNT(id) as conta FROM usuarios");
 $dbc=$sqlc->fetch(PDO::FETCH_ASSOC);
 if(!$dbc) $dbc = array('conta' => 0);
@@ -10,6 +26,14 @@ $vagas=30000;
 if($dbc['conta']>=$vagas){ header("Location: index.php?p=login"); exit; }
 if(isset($_POST['reg_submit'])){
         $erro=0;
+        // Verificar reCAPTCHA se configurado
+        if (recaptcha_configurado()) {
+            $rc_cfg_reg = obter_config_recaptcha();
+            $rc_token   = $_POST['g-recaptcha-response'] ?? '';
+            if (!verificar_recaptcha($rc_token, $rc_cfg_reg['version'] === 'v3' ? 'register' : null)) {
+                $erro = 17;
+            }
+        }
         if(@$_POST['reg_termos']=='') $erro=11;
         if(!isset($_POST['reg_termos'])) $erro=8;
         if($_POST['reg_senha']<>$_POST['reg_senha2']) $erro=7;
@@ -132,10 +156,41 @@ if(!$dbc) $dbc = array('conta' => 0);
                 case 14: $msg='<b>IP</b> já está em uso por outra conta.'; break;
                 case 15: $msg='Erro interno do sistema.'; break;
                 case 16: $msg='O servidor selecionado está <b>cheio</b> ou inativo. Escolha outro servidor.'; break;
+                case 17: $msg='Verificação <b>reCAPTCHA</b> falhou. Por favor, tente novamente.'; break;
         }
         echo '<div class="aviso">'.$msg.'</div><div class="sep"></div>';
 } ?>
-<form method="post" action="?p=reg" name="reg" id="reg" style="background:url(_img/reg.jpg) no-repeat right top;" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+<?php
+$_rc_reg_cfg = recaptcha_configurado() ? obter_config_recaptcha() : null;
+if ($_rc_reg_cfg):
+    $rc_v = $_rc_reg_cfg['version'];
+    $rc_sk = htmlspecialchars($_rc_reg_cfg['site_key']);
+    if ($rc_v === 'v3'):
+        echo '<script src="https://www.google.com/recaptcha/api.js?render=' . $rc_sk . '"></script>';
+    else:
+        echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+    endif;
+endif;
+?>
+<form method="post" action="?p=reg" name="reg" id="reg" style="background:url(_img/reg.jpg) no-repeat right top;" onsubmit="return regSubmit(this);">
+<?php if ($_rc_reg_cfg && ($_rc_reg_cfg['version'] ?? 'v2') === 'v3'): ?>
+<input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response-field">
+<script>
+function regSubmit(form) {
+    var subm = form.querySelector('#subm');
+    subm.value = 'Carregando...'; subm.disabled = true;
+    grecaptcha.ready(function(){
+        grecaptcha.execute('<?php echo htmlspecialchars($_rc_reg_cfg['site_key']); ?>', {action:'register'}).then(function(token){
+            document.getElementById('g-recaptcha-response-field').value = token;
+            form.submit();
+        });
+    });
+    return false;
+}
+</script>
+<?php else: ?>
+<script>function regSubmit(form){ var s=form.querySelector('#subm'); s.value='Carregando...'; s.disabled=true; return true; }</script>
+<?php endif; ?>
 <input type="hidden" id="reg_submit" name="reg_submit" value="1" />
 <input type="hidden" id="reg_nlink" name="reg_nlink" value="<?php if(isset($_GET['nlink'])) echo $_GET['nlink']; ?>" />
 <fieldset>
@@ -261,6 +316,12 @@ if(!$dbc) $dbc = array('conta' => 0);
         <legend>Termos e Condi&ccedil;&otilde;es</legend>
     <input type="checkbox" id="reg_termos" name="reg_termos" /> Declaro que <b>li</b> e <b>aceito</b> os termos propostos, e que estou ciente das regras do jogo.
     <div class="sep"></div>
+<?php if ($_rc_reg_cfg && ($_rc_reg_cfg['version'] ?? 'v2') === 'v2'): ?>
+    <div style="margin:8px 0;">
+        <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($_rc_reg_cfg['site_key']); ?>"></div>
+    </div>
+    <div class="sep"></div>
+<?php endif; ?>
     <div align="center"><input type="submit" class="botao" id="subm" name="subm" value="Registrar" /></div>
 </fieldset>
 </form>

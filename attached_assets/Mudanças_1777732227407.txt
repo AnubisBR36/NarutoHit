@@ -1,0 +1,34 @@
+Editar cristais e fragmentos já cadastrados — nome, descrição e imagem direto pelo painel, sem precisar remover e recadastrar
+Pesquisa de inventário por jogador — o admin digita o nome e vê todos os cristais e fragmentos que aquele jogador possui no momento
+
+Animação de forja no Ferreiro — efeito visual ao juntar os fragmentos e formar o cristal (brilho, partículas)
+Notificação in-game — quando o admin adiciona itens a um jogador, ele recebe um aviso na próxima vez que logar
+
+Receita de cristal visível para o jogador — mostrar no Ferreiro quantos fragmentos o jogador já tem vs. quantos precisa, com barra de progresso (ex.: 3/5 fragmentos)
+
+Ranking de atributos — placar com os jogadores que têm mais Tai, Nin ou Gen
+
+Treinamento offline — o personagem ganha pequenos pontos de atributo enquanto o jogador está fora do jogo
+
+Sistema de clãs/aldeias — grupos de jogadores com ranking próprio, chat interno e missões exclusivas de clã
+
+Impostos e economia de servidor — admin controla a quantidade de ryo em circulação
+
+Recompensa de login diário — bonus de yens, XP ou item pequeno por logar X dias seguidos, incentiva retenção
+
+Sistema de Títulos — o jogador ganha títulos (ex.: "Lenda da Vila", "Mestre do Genjutsu") que aparecem abaixo do nome e dão pequenos bônus passivos
+
+Sistema de Mentor e Discípulo — jogador veterano adota um novato, os dois ganham bônus de XP enquanto o novato avança. Incentiva a comunidade
+
+Mercado Negro — loja que aparece aleatoriamente com itens raros por tempo limitado, só visível para jogadores de rank alto
+
+Nível de Vila — a vila sobe de nível conforme os membros completam missões e contribuem; cada nível desbloqueia benefícios para todos da vila
+
+A aba de criar fragmento de crista esta confusa os fragmentos são criado de acordo com os cristais ja existente em "Cristal de Refinamento" ao qual ja tem alguns cadastrad.
+Então precisa remover dele "Adicionar Cristal de Craft a um Jogador" pois essa parte nã há necessidade somente a parte  Adicionar Fragmentos de Cristal a um Jogador é necessarias,
+a parte "Cadastrar novo Cristal de Craft" pode remover deixe somente a parte "Fragmentos de Craft" onde quando "Vira o cristal:" vai pegar as imagens do "Cristal de Refinamento" obs: Coloca a imagem pequena pegando do cristyal de refinamento para fica mais facil de escolher qual cristal o fragemnto ira pegar,
+em "Imagem:" de "Fragmentos de Craft" ali pode manter escolher o arquivo mas no p´re defido colocque tbm imagens pequeno use "Fragmento de Cristal"
+
+
+A seguir, posso adicionar um sistema de Conquistas — marcos desbloqueáveis (completou 100 missões, primeiro Doujutsu, etc.) visíveis no perfil do jogador
+

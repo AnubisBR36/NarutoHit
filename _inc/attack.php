@@ -89,6 +89,19 @@ if(!$is_invasao_attack) {
 
 if(!isset($_SESSION['prepare']) && !$is_invasao_attack){ echo "<script>self.location='?p=home'</script>"; exit; }
 
+// Verificar se PVP está habilitado (apenas ataques entre jogadores, não invasão)
+if (!$is_invasao_attack) {
+    try {
+        $stmt_pvp_cfg = $conexao->prepare("SELECT valor FROM configuracoes WHERE nome = 'pvp_ativo' LIMIT 1");
+        $stmt_pvp_cfg->execute();
+        $pvp_val = $stmt_pvp_cfg->fetchColumn();
+        if ($pvp_val !== false && (string)$pvp_val === '0') {
+            echo "<script>alert('O PVP entre jogadores está desabilitado no momento.'); self.location='?p=hunt'</script>";
+            exit;
+        }
+    } catch (Exception $e) {}
+}
+
 try {
     $stmt = $conexao->prepare("SELECT u.id, u.usuario, u.yens, u.yens_fat, u.nivel, u.orgid, u.energia, u.energiamax, u.taijutsu, u.ninjutsu, u.genjutsu, u.personagem, u.avatar, u.renegado, u.vila, u.doujutsu, u.doujutsu_nivel, u.doujutsu_exp, u.doujutsu_expmax, u.exp, u.expmax, u.vip, u.missao, u.loginip, u.tipo, u.selo_tipo, u.selo_nivel, u.selo_vitorias, u.energia_travada, o.nivel as orgnivel FROM usuarios u LEFT OUTER JOIN organizacoes o ON u.orgid=o.id WHERE u.id=?");
     $stmt->execute([$_SESSION['prepare']]);

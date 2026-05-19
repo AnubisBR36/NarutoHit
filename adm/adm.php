@@ -29,12 +29,15 @@ $adm_modulos_standalone = [
     'tickets'           => 'tickets.php',
     'limpar_itens'      => 'limpar_itens.php',
     'invasao_completa'  => 'gerenciar_invasao.php',
-    'personagens'       => 'gerenciar_personagens.php', // upload/gerenciamento de avatares dos personagens
-    'contatos'          => 'gerenciar_contatos.php',    // canais públicos exibidos em ?p=contact
+    'personagens'       => 'gerenciar_personagens.php',
+    'contatos'          => 'gerenciar_contatos.php',
+    'config_jogo'       => 'config_jogo.php',
+    'eventos_bonus'     => 'eventos_bonus.php',
+    'ranking_pvp'       => 'ranking_pvp.php',
     // Standalones extras (funcionalidades distintas das versões inline):
-    'limpar_banco_full' => 'limpar_banco.php',  // limpa várias tabelas (vs inline que só apaga contas teste)
-    'desbloquear_ips'   => 'limpar_ip.php',     // limpa tabela `block` (vs inline que zera usuarios.ip)
-    'backup'            => 'backup.php',        // backup automático dos bancos (naruto + forum)
+    'limpar_banco_full' => 'limpar_banco.php',
+    'desbloquear_ips'   => 'limpar_ip.php',
+    'backup'            => 'backup.php',
 ];
 $_adm_req_modulo = isset($_GET['modulo']) ? (string)$_GET['modulo'] : '';
 if ($_adm_req_modulo !== '' && isset($adm_modulos_standalone[$_adm_req_modulo])) {
@@ -840,36 +843,18 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <tr>
         <td valign="top" bgcolor="#444444">
         <div style="background:#1a0a00; border-left:5px solid #ff6600; border-bottom:1px solid #ff6600; height:35px; line-height:35px; padding-left:12px; font-weight:bold; color:#FFD700; font-size:13px;">
-            ⚙️ Painel Administrativo —
+            Ferramentas de Administração —
             <?php if($is_admin): ?>
                 <span style="color:#FFD700;">Administrador</span>
             <?php else: ?>
                 <span style="color:#87CEFA;">Moderador</span>
             <?php endif; ?>
             <span style="float:right; margin-right:10px;">
-                <a href="../?p=home" style="color:#FFD700; font-size:11px; text-decoration:none; background:rgba(0,0,0,0.4); padding:3px 8px; border:1px solid #555;">🏠 Voltar ao Site</a>
+                <a href="../?p=home" style="color:#FFD700; font-size:11px; text-decoration:none; background:rgba(0,0,0,0.4); padding:3px 8px; border:1px solid #555;">Voltar ao Site</a>
             </span>
         </div>
         <div style="background:url('../_img/menu.jpg') repeat-x; padding:4px 8px; border-bottom:1px solid #ff6600;">
-            <a href="adm.php" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">🏠 Painel</a>
-            <?php if($is_admin): ?>
-            <a href="?modulo=equipamentos" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">⚔️ Equipamentos</a>
-            <a href="?modulo=clas" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">🏯 Clãs</a>
-            <a href="?modulo=invasao_completa" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">⚡ Invasão</a>
-            <a href="?modulo=cristais" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">💎 Cristais</a>
-            <a href="?modulo=personagens" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">🥷 Personagens</a>
-            <a href="?modulo=contatos" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">📬 Contatos</a>
-            <a href="?modulo=editor_database" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">🗄️ SQL</a>
-            <a href="?modulo=manutencao" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">🔧 Manutenção</a>
-            <a href="?modulo=gm_perms" style="color:#87CEFA; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #87CEFA; background:rgba(0,0,60,0.4); margin-right:4px;">🛡️ Permissões GM</a>
-            <a href="?modulo=admin_logs" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #FFD700; background:rgba(0,0,0,0.4);">📋 Logs</a>
-            <?php elseif($is_mod): ?>
-            <?php if(gm_pode('invasao', $is_admin, $gm_perms)): ?><a href="?modulo=invasao_completa" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">⚡ Invasão</a><?php endif; ?>
-            <?php if(gm_pode('clas', $is_admin, $gm_perms)): ?><a href="?modulo=clas" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">🏯 Clãs</a><?php endif; ?>
-            <?php if(gm_pode('equipamentos', $is_admin, $gm_perms)): ?><a href="?modulo=equipamentos" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">⚔️ Equipamentos</a><?php endif; ?>
-            <?php if(gm_pode('cristais', $is_admin, $gm_perms)): ?><a href="?modulo=cristais" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3); margin-right:4px;">💎 Cristais</a><?php endif; ?>
-            <?php if(gm_pode('manutencao', $is_admin, $gm_perms)): ?><a href="?modulo=manutencao" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3);">🔧 Manutenção</a><?php endif; ?>
-            <?php endif; ?>
+            <a href="adm.php" style="color:#FFD700; text-decoration:none; font-size:11px; padding:2px 6px; border:1px solid #555; background:rgba(0,0,0,0.3);">Painel</a>
         </div>
         <div class="admin-container" style="padding: 6px;">
 
@@ -1500,39 +1485,95 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php else: ?>
 
         <?php if($modulo == 'home'): ?>
+            <!-- Dashboard de Estatísticas -->
+            <?php if($is_admin): ?>
+            <?php
+            // Coletar estatísticas com segurança
+            $stat_total  = 0; $stat_online = 0; $stat_cacando = 0;
+            $stat_missao = 0; $stat_treino = 0; $stat_yens = 0;
+            $stat_gms    = 0; $stat_eventos = 0; $stat_novos = 0;
+            try { $stat_total  = (int)$conexao->query("SELECT COUNT(*) FROM usuarios")->fetchColumn(); } catch(Exception $e) {}
+            try {
+                $onl_sql = Database::isMysql()
+                    ? "SELECT COUNT(*) FROM usuarios WHERE timestamp >= (UNIX_TIMESTAMP() - 300)"
+                    : "SELECT COUNT(*) FROM usuarios WHERE timestamp >= (strftime('%s','now') - 300)";
+                $stat_online = (int)$conexao->query($onl_sql)->fetchColumn();
+            } catch(Exception $e) {}
+            try { $stat_cacando = (int)$conexao->query("SELECT COUNT(*) FROM usuarios WHERE hunt = 1")->fetchColumn(); } catch(Exception $e) {}
+            try { $stat_missao  = (int)$conexao->query("SELECT COUNT(*) FROM usuarios WHERE missao > 900")->fetchColumn(); } catch(Exception $e) {}
+            try { $stat_treino  = (int)$conexao->query("SELECT COUNT(*) FROM usuarios WHERE treino > 0")->fetchColumn(); } catch(Exception $e) {}
+            try { $stat_yens    = (float)$conexao->query("SELECT COALESCE(SUM(yens),0) FROM usuarios")->fetchColumn(); } catch(Exception $e) {}
+            try { $stat_gms     = (int)$conexao->query("SELECT COUNT(*) FROM usuarios WHERE adm > 0")->fetchColumn(); } catch(Exception $e) {}
+            try {
+                $now_ev = date('Y-m-d H:i:s');
+                $stat_eventos = (int)$conexao->query("SELECT COUNT(*) FROM eventos_bonus WHERE inicio <= '$now_ev' AND fim >= '$now_ev'")->fetchColumn();
+            } catch(Exception $e) {}
+            try {
+                $novos_sql = Database::isMysql()
+                    ? "SELECT COUNT(*) FROM usuarios WHERE DATE(criado_em) >= DATE(NOW() - INTERVAL 7 DAY)"
+                    : "SELECT COUNT(*) FROM usuarios WHERE date(criado_em) >= date('now','-7 days')";
+                $stat_novos = (int)$conexao->query($novos_sql)->fetchColumn();
+            } catch(Exception $e) {}
+            ?>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-bottom:10px;">
+                <?php
+                $cards = [
+                    ['Total de Jogadores', number_format($stat_total,0,'.',','), '#ff6600'],
+                    ['Online Agora',        $stat_online,                          '#90ee90'],
+                    ['Caçando Agora',       $stat_cacando,                         '#87CEFA'],
+                    ['Em Missão',           $stat_missao,                          '#FFD700'],
+                    ['Em Treino',           $stat_treino,                          '#DDA0DD'],
+                    ['Yens em Circ.',       'Y '.number_format($stat_yens,0,'.',','), '#FFD700'],
+                    ['Novos (7 dias)',       $stat_novos,                           '#90ee90'],
+                    ['GMs Ativos',          $stat_gms,                             '#87CEFA'],
+                    ['Eventos Ativos',      $stat_eventos > 0 ? '<b style="color:#90ee90">'.$stat_eventos.' ativo'.($stat_eventos>1?'s':'').'</b>' : '<span style="color:#555">nenhum</span>', '#ff6600'],
+                ];
+                foreach ($cards as [$lbl, $val, $cor]): ?>
+                <div style="background:#1a1200;border:1px solid #333;border-top:2px solid <?php echo $cor; ?>;padding:8px 10px;text-align:center;">
+                    <div style="font-size:18px;font-weight:bold;color:<?php echo $cor; ?>;"><?php echo $val; ?></div>
+                    <div style="font-size:10px;color:#666;margin-top:2px;"><?php echo $lbl; ?></div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+
             <!-- Menu Principal de Administração -->
             <fieldset>
-                <legend>🛠️ Ferramentas de Administração</legend>
+                <legend>Ferramentas de Administração</legend>
                 <p style="color: #BBBBBB;">Ferramentas para gerenciamento do banco de dados e sistema.</p>
                 <div class="admin-menu">
-                    <?php if(gm_pode('invasao', $is_admin, $gm_perms)): ?><a href="?modulo=invasao_completa">🔥 Gerenciar Invasões</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=limpar_banco">🧹 Limpar Banco</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=limpar_itens">🗑️ Limpar Itens</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=limpar_ip">🌐 Limpar IPs</a><?php endif; ?>
-                    <?php if(gm_pode('servidores', $is_admin, $gm_perms)): ?><a href="?modulo=servidores">🖥️ Gerenciar Servidores</a><?php endif; ?>
-                    <?php if(gm_pode('contas', $is_admin, $gm_perms)): ?><a href="?modulo=contas">👥 Editar Contas</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=ban_penalty">⚙️ Penalidade de Ban</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=config_site">🌐 Config. do Site</a><?php endif; ?>
-                    <?php if(gm_pode('clas', $is_admin, $gm_perms)): ?><a href="?modulo=clas">🏛️ Gerenciar Clãs</a><?php endif; ?>
-                    <?php if(gm_pode('manutencao', $is_admin, $gm_perms)): ?><a href="?modulo=manutencao">🔧 Gerenciar Manutenção</a><?php endif; ?>
-                    <?php if(gm_pode('equipamentos', $is_admin, $gm_perms)): ?><a href="?modulo=equipamentos">⚔️ Gerenciar Equipamentos</a><?php endif; ?>
-                    <?php if(gm_pode('cristais', $is_admin, $gm_perms)): ?><a href="?modulo=cristais">💎 Gerenciar Cristais</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=personagens">🥷 Gerenciar Personagens</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=contatos">📬 Canais de Contato</a><?php endif; ?>
+                    <?php if(gm_pode('invasao', $is_admin, $gm_perms)): ?><a href="?modulo=invasao_completa">Gerenciar Invasões</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=limpar_banco">Limpar Banco</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=limpar_itens">Limpar Itens</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=limpar_ip">Limpar IPs</a><?php endif; ?>
+                    <?php if(gm_pode('servidores', $is_admin, $gm_perms)): ?><a href="?modulo=servidores">Gerenciar Servidores</a><?php endif; ?>
+                    <?php if(gm_pode('contas', $is_admin, $gm_perms)): ?><a href="?modulo=contas">Editar Contas</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=ban_penalty">Penalidade de Ban</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=config_site">Config. do Site</a><?php endif; ?>
+                    <?php if(gm_pode('clas', $is_admin, $gm_perms)): ?><a href="?modulo=clas">Gerenciar Clãs</a><?php endif; ?>
+                    <?php if(gm_pode('manutencao', $is_admin, $gm_perms)): ?><a href="?modulo=manutencao">Gerenciar Manutenção</a><?php endif; ?>
+                    <?php if(gm_pode('equipamentos', $is_admin, $gm_perms)): ?><a href="?modulo=equipamentos">Gerenciar Equipamentos</a><?php endif; ?>
+                    <?php if(gm_pode('cristais', $is_admin, $gm_perms)): ?><a href="?modulo=cristais">Gerenciar Cristais</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=personagens">Gerenciar Personagens</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=contatos">Canais de Contato</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="recompensa_diaria.php">Login Diário</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=config_jogo">Config. do Jogo</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=eventos_bonus">Eventos de Bônus</a><?php endif; ?>
+                    <a href="?modulo=ranking_pvp">Ranking PVP</a>
                     <?php if(gm_pode('tickets', $is_admin, $gm_perms)):
                         $tk_pendentes = 0;
                         try { $tk_pendentes = (int)$conexao->query("SELECT COUNT(*) FROM tickets WHERE nao_lido_staff = 1 AND status IN ('aberto','atendimento')")->fetchColumn(); } catch(Exception $e) {}
-                    ?><a href="?modulo=tickets">🎫 Suporte / Tickets<?php if($tk_pendentes>0): ?> <span style="background:#ff3333;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:bold;"><?php echo $tk_pendentes; ?></span><?php endif; ?></a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=gm_perms" style="border-color:#87CEFA;color:#87CEFA;">🛡️ Permissões GM</a><?php endif; ?>
-                    <?php if(gm_pode('backup', $is_admin, $gm_perms)): ?><a href="?modulo=backup" style="border-color:#9eff9e;color:#9eff9e;">💾 Backup Automático</a><?php endif; ?>
+                    ?><a href="?modulo=tickets">Suporte / Tickets<?php if($tk_pendentes>0): ?> <span style="background:#ff3333;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:bold;"><?php echo $tk_pendentes; ?></span><?php endif; ?></a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=gm_perms" style="border-color:#87CEFA;color:#87CEFA;">Permissões GM</a><?php endif; ?>
+                    <?php if(gm_pode('backup', $is_admin, $gm_perms)): ?><a href="?modulo=backup" style="border-color:#9eff9e;color:#9eff9e;">Backup Automático</a><?php endif; ?>
                     <?php if($is_admin):
                         $den_pendentes = 0;
                         try { $den_pendentes = (int)$conexao->query("SELECT COUNT(*) FROM spam")->fetchColumn(); } catch(Exception $e) {}
-                    ?><a href="?modulo=denuncias">🚨 Denúncias<?php if($den_pendentes>0): ?> <span style="background:#ff3333;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:bold;"><?php echo $den_pendentes; ?></span><?php endif; ?></a><?php endif; ?>
+                    ?><a href="?modulo=denuncias">Denúncias<?php if($den_pendentes>0): ?> <span style="background:#ff3333;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:bold;"><?php echo $den_pendentes; ?></span><?php endif; ?></a><?php endif; ?>
                     <?php if($is_admin):
                         $cri_total = 0;
                         try { $cri_total = (int)$conexao->query("SELECT COUNT(*) FROM usuarios WHERE criador_conteudo = 1")->fetchColumn(); } catch(Exception $e) {}
-                    ?><a href="?modulo=criadores" style="border-color:#fff;color:#fff;">🎬 Criadores<?php if($cri_total>0): ?> <span style="background:#cc0000;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:bold;"><?php echo $cri_total; ?></span><?php endif; ?></a><?php endif; ?>
+                    ?><a href="?modulo=criadores" style="border-color:#fff;color:#fff;">Criadores<?php if($cri_total>0): ?> <span style="background:#cc0000;color:#fff;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:bold;"><?php echo $cri_total; ?></span><?php endif; ?></a><?php endif; ?>
                 </div>
             </fieldset>
 

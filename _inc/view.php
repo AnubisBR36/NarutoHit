@@ -313,4 +313,225 @@ $mh_moeda_icon = [
     <?php endif; ?>
 </div>
 <div class="box_bottom"></div>
+<?php
+/* ===========================================================
+ * Histórico de Batalhas PVP — últimas 10 batalhas do perfil
+ * =========================================================== */
+$hist_batalhas = [];
+try {
+    $hist_stmt = $conexao->prepare(
+        "SELECT r.data, r.vencedor, r.exp, r.yens,
+                r.usuarioid, r.inimigoid,
+                ua.usuario AS nome_atacante,
+                ui.usuario AS nome_inimigo
+         FROM relatorios r
+         LEFT JOIN usuarios ua ON r.usuarioid = ua.id
+         LEFT JOIN usuarios ui ON r.inimigoid = ui.id
+         WHERE r.usuarioid = ? OR r.inimigoid = ?
+         ORDER BY r.data DESC LIMIT 10"
+    );
+    $hist_stmt->execute([(int)$db['id'], (int)$db['id']]);
+    $hist_batalhas = $hist_stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) { $hist_batalhas = []; }
+?>
+<div class="box_top">Histórico de Batalhas de <?php echo ucfirst($_GET['view']); ?></div>
+<div class="box_middle">
+<?php if (empty($hist_batalhas)): ?>
+    <div align="center"><i>Nenhuma batalha registrada.</i></div>
+<?php else: ?>
+    <span class="sub2">Últimas <?php echo count($hist_batalhas); ?> batalhas registradas.</span>
+    <div class="sep"></div>
+    <table width="100%" cellpadding="4" cellspacing="1">
+        <tr class="table_dados" style="background:#1a1a1a;color:#FFD700;">
+            <td>Resultado</td>
+            <td>Adversário</td>
+            <td align="right">EXP</td>
+            <td align="right">Yens</td>
+            <td align="right">Data</td>
+        </tr>
+        <?php foreach ($hist_batalhas as $bt):
+            $eu_ganhei  = (int)$bt['vencedor'] === (int)$db['id'];
+            $empate     = ((int)$bt['vencedor'] === 0);
+            if ($empate) {
+                $res_txt = 'Empate';
+                $res_cor = '#aaa';
+                $res_bg  = '#1e1e1e';
+            } elseif ($eu_ganhei) {
+                $res_txt = 'Vitória';
+                $res_cor = '#90EE90';
+                $res_bg  = '#0a1a0a';
+            } else {
+                $res_txt = 'Derrota';
+                $res_cor = '#ff9999';
+                $res_bg  = '#1a0a0a';
+            }
+            // Adversário = quem NÃO é o dono do perfil
+            if ((int)$bt['usuarioid'] === (int)$db['id']) {
+                $adv_nome = $bt['nome_inimigo'] ?? '?';
+            } else {
+                $adv_nome = $bt['nome_atacante'] ?? '?';
+            }
+            // Formatar data
+            $data_fmt = $bt['data'] ? date('d/m/y H:i', strtotime($bt['data'])) : '—';
+        ?>
+        <tr class="table_dados" style="background:<?php echo $res_bg; ?>;">
+            <td style="color:<?php echo $res_cor; ?>;font-weight:bold;"><?php echo $res_txt; ?></td>
+            <td>
+                <?php if ($adv_nome && $adv_nome !== '?'): ?>
+                    <a href="?p=view&view=<?php echo htmlspecialchars($adv_nome); ?>"><?php echo htmlspecialchars($adv_nome); ?></a>
+                <?php else: ?>
+                    <span style="color:#555;">—</span>
+                <?php endif; ?>
+            </td>
+            <td align="right" style="color:#FFD700;">
+                <?php echo $bt['exp'] > 0 ? '+'.number_format((int)$bt['exp'],0,'.',',') : '—'; ?>
+                <?php if ($bt['exp'] > 0): ?>
+                <img src="_img/Icones/experiencia.png" style="width:12px;height:12px;vertical-align:middle;">
+                <?php endif; ?>
+            </td>
+            <td align="right">
+                <?php echo $bt['yens'] > 0 ? number_format((float)$bt['yens'],2,',','.') : '—'; ?>
+                <?php if ($bt['yens'] > 0): ?>
+                <img src="_img/yens.png" style="width:12px;height:12px;vertical-align:middle;">
+                <?php endif; ?>
+            </td>
+            <td align="right"><span class="sub2"><?php echo $data_fmt; ?></span></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
+</div>
+<div class="box_bottom"></div>
+
+<?php
+/* ===========================================================
+ * Conquistas PVP — baseadas em vitorias/derrotas/batalhas e relatorios
+ * =========================================================== */
+$pvp_vit   = (int)($db['vitorias']  ?? 0);
+$pvp_der   = (int)($db['derrotas']  ?? 0);
+$pvp_bat   = (int)($db['batalhas']  ?? 0);
+$pvp_emp   = (int)($db['empates']   ?? 0);
+$pvp_nivel = (int)($db['nivel']     ?? 1);
+
+// Query 1: Últimas 5 batalhas para checar sequência de vitórias
+$ultimas5 = [];
+try {
+    $s5 = $conexao->prepare(
+        "SELECT vencedor FROM relatorios
+         WHERE usuarioid = ? OR inimigoid = ?
+         ORDER BY data DESC LIMIT 5"
+    );
+    $s5->execute([(int)$db['id'], (int)$db['id']]);
+    $ultimas5 = $s5->fetchAll(PDO::FETCH_COLUMN);
+} catch (Throwable $e) {}
+
+// Query 2: Vitória contra ninja de nível maior (nivel atual do oponente)
+$ganhou_de_mais_forte = false;
+try {
+    $sfe = $conexao->prepare(
+        "SELECT COUNT(*) FROM relatorios r
+         INNER JOIN usuarios u ON (
+             (r.usuarioid = ? AND r.inimigoid = u.id)
+             OR (r.inimigoid = ? AND r.usuarioid = u.id)
+         )
+         WHERE r.vencedor = ? AND u.nivel > ?"
+    );
+    $sfe->execute([(int)$db['id'], (int)$db['id'], (int)$db['id'], $pvp_nivel]);
+    $ganhou_de_mais_forte = (int)$sfe->fetchColumn() > 0;
+} catch (Throwable $e) {}
+
+// Query 3: Batalhas nos últimos 7 dias e se todas foram vitórias
+$bat_semana = 0; $vit_semana = 0;
+try {
+    $semana_cond = Database::isMysql()
+        ? "AND data >= DATE_SUB(NOW(), INTERVAL 7 DAY)"
+        : "AND data >= DATETIME('now','-7 days')";
+    $ssem = $conexao->prepare(
+        "SELECT COUNT(*) as total,
+                SUM(CASE WHEN vencedor = ? THEN 1 ELSE 0 END) as ganhou
+         FROM relatorios WHERE (usuarioid = ? OR inimigoid = ?) $semana_cond"
+    );
+    $ssem->execute([(int)$db['id'], (int)$db['id'], (int)$db['id']]);
+    $rsem = $ssem->fetch(PDO::FETCH_ASSOC);
+    $bat_semana = (int)($rsem['total'] ?? 0);
+    $vit_semana = (int)($rsem['ganhou'] ?? 0);
+} catch (Throwable $e) {}
+
+// ── Definir conquistas ────────────────────────────────────────────────────────
+// Cada conquista: [título, descrição, ícone_cor, condição]
+$conquistas_def = [
+    'primeira_vitoria'  => ['Primeira Vitória',      'Venceu sua primeira batalha',                '#FFD700', $pvp_vit >= 1],
+    'veterano'          => ['Veterano',               '10 vitórias conquistadas',                   '#87CEFA', $pvp_vit >= 10],
+    'guerreiro'         => ['Guerreiro',              '50 vitórias conquistadas',                   '#ff6600', $pvp_vit >= 50],
+    'lenda_pvp'         => ['Lenda do PVP',           '100 vitórias conquistadas',                  '#cc00cc', $pvp_vit >= 100],
+    'mestre_batalhas'   => ['Mestre das Batalhas',    '250 vitórias conquistadas',                  '#ff0000', $pvp_vit >= 250],
+    'centuriao'         => ['Centurião',              'Participou de 100+ batalhas',                '#5ecf6e', $pvp_bat >= 100],
+    'invicto'           => ['Invicto',                'Nunca sofreu uma derrota (mín. 5 vitórias)', '#FFD700', $pvp_der === 0 && $pvp_vit >= 5],
+    'dominante'         => ['Dominante',              '3x mais vitórias que derrotas (mín. 15 vit.)','#ff6600', $pvp_der > 0 && $pvp_vit >= 15 && $pvp_vit >= $pvp_der * 3],
+    'serie_vencedora'   => ['Série Vencedora',        'Venceu as últimas 5 batalhas seguidas',       '#90EE90', count($ultimas5) === 5 && !in_array(0, array_map(fn($v) => (int)$v === (int)$db['id'] ? 1 : 0, $ultimas5), true) && count(array_filter($ultimas5, fn($v) => (int)$v === (int)$db['id'])) === 5],
+    'cacador_elites'    => ['Caçador de Elites',      'Venceu um ninja de nível superior',           '#c97fd4', $ganhou_de_mais_forte],
+    'semana_perfeita'   => ['Semana Perfeita',        'Venceu todas as batalhas dos últimos 7 dias (mín. 5)', '#FFD700', $bat_semana >= 5 && $vit_semana === $bat_semana],
+    'perseverante'      => ['Perseverante',           'Continuou lutando após 10+ derrotas',         '#aaa',    $pvp_der >= 10],
+];
+
+$conquistadas   = array_filter($conquistas_def, fn($c) => $c[3]);
+$nao_conquistadas = array_filter($conquistas_def, fn($c) => !$c[3]);
+?>
+<div class="box_top">Conquistas PVP de <?php echo ucfirst($_GET['view']); ?></div>
+<div class="box_middle">
+<?php if (empty($conquistadas) && $pvp_bat === 0): ?>
+    <div align="center"><i>Este ninja ainda não entrou em batalha.</i></div>
+<?php else: ?>
+    <style>
+    .conquista-badge {
+        display:inline-block; margin:4px; padding:6px 10px;
+        border-radius:4px; font-size:11px; font-weight:bold;
+        border:1px solid; cursor:default; position:relative;
+        vertical-align:top; text-align:center; min-width:90px;
+    }
+    .conquista-badge .badge-titulo { font-size:10px; margin-top:3px; display:block; }
+    .conquista-badge .badge-desc { display:none; font-size:10px; white-space:nowrap; }
+    .conquista-badge:hover .badge-desc {
+        display:block; position:absolute; left:50%; transform:translateX(-50%);
+        bottom:calc(100% + 4px); background:#1a1a1a; border:1px solid #555;
+        color:#ddd; padding:4px 8px; z-index:99; white-space:nowrap;
+        border-radius:3px; font-weight:normal;
+    }
+    .conquista-locked {
+        display:inline-block; margin:4px; padding:6px 10px;
+        border-radius:4px; font-size:10px; border:1px solid #333;
+        background:#111; color:#444; vertical-align:top;
+        text-align:center; min-width:90px;
+    }
+    </style>
+
+    <?php if (!empty($conquistadas)): ?>
+    <div style="margin-bottom:6px;color:#888;font-size:10px;"><?php echo count($conquistadas); ?> conquista(s) desbloqueada(s):</div>
+    <div>
+    <?php foreach ($conquistadas as $slug => [$titulo, $desc, $cor, ]) : ?>
+        <div class="conquista-badge" style="background:<?php echo $cor; ?>22;border-color:<?php echo $cor; ?>;color:<?php echo $cor; ?>;">
+            <span style="font-size:16px;">&#9733;</span>
+            <span class="badge-titulo"><?php echo htmlspecialchars($titulo); ?></span>
+            <span class="badge-desc"><?php echo htmlspecialchars($desc); ?></span>
+        </div>
+    <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($nao_conquistadas)): ?>
+    <div class="sep"></div>
+    <div style="margin-bottom:4px;color:#444;font-size:10px;">Ainda não desbloqueadas:</div>
+    <div>
+    <?php foreach ($nao_conquistadas as $slug => [$titulo, $desc, , ]) : ?>
+        <div class="conquista-locked" title="<?php echo htmlspecialchars($desc); ?>">
+            &#128274; <?php echo htmlspecialchars($titulo); ?>
+        </div>
+    <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+<?php endif; ?>
+</div>
+<div class="box_bottom"></div>
+
 <?php if((($db['config_youtube'] ?? '')<>'')&&(($db['config_okyoutube'] ?? '')=='sim')) require_once('view_youtube.php'); ?>

@@ -114,6 +114,9 @@ if($action === 'get_items') {
             } catch (PDOException $e) {}
 
             // 2) Fragmentos de CRISTAL DE CRAFT (cat='fragmento_craft')
+            try { $pkCF = Database::autoIncPK('id'); $conexao->exec("CREATE TABLE IF NOT EXISTS craft_fragmentos ($pkCF, usuarioid INTEGER NOT NULL, itemid INTEGER NOT NULL, quantidade INTEGER NOT NULL DEFAULT 0, UNIQUE(usuarioid, itemid))"); } catch (PDOException $e) {}
+            try { $conexao->exec("ALTER TABLE table_usaveis ADD COLUMN IF NOT EXISTS cristal_alvo_id INTEGER NULL DEFAULT NULL"); } catch (PDOException $e) {}
+            try { $conexao->exec("ALTER TABLE table_usaveis ADD COLUMN IF NOT EXISTS fragmentos_necessarios INTEGER NULL DEFAULT NULL"); } catch (PDOException $e) {}
             try {
                 $stmt = $conexao->prepare("
                     SELECT cf.itemid AS item_id, cf.quantidade, t.nome, t.imagem

@@ -71,6 +71,64 @@ SQL
   echo "[mariadb] initialization complete"
 fi
 
+# ── Migrations (run every start) ──────────────────────────────────────────────
+echo "[mariadb] running migrations"
+mysql --socket="$SOCKET" -uroot naruto <<'MIGRATIONS'
+-- Deduplicar configuracoes: manter só o registro mais recente por nome
+DELETE c1 FROM configuracoes c1
+  INNER JOIN configuracoes c2
+  ON c1.nome = c2.nome AND c1.id < c2.id;
+
+-- Garantir defaults essenciais (INSERT IGNORE não sobrescreve valores existentes)
+INSERT IGNORE INTO configuracoes (nome, valor, descricao) VALUES
+  ('cadastro_aberto', '1', 'Permite novos cadastros no site (1=sim, 0=não)'),
+  ('pvp_ativo',       '1', 'Permite PVP entre jogadores (1=sim, 0=não)');
+
+-- Adicionar UNIQUE KEY em nome se ainda não existe
+SET @idx_exists = (
+  SELECT COUNT(*) FROM information_schema.statistics
+  WHERE table_schema = 'naruto'
+    AND table_name   = 'configuracoes'
+    AND index_name   = 'uq_nome'
+);
+SET @sql = IF(@idx_exists = 0,
+  'ALTER TABLE configuracoes ADD UNIQUE KEY uq_nome (nome)',
+  'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+MIGRATIONS
+echo "[mariadb] migrations done"
+
+# Garantir que config/database.php existe (recriado automaticamente se ausente)
+DB_CONFIG="$PROJECT_ROOT/config/database.php"
+if [ ! -f "$DB_CONFIG" ]; then
+  echo "[config] recriando config/database.php"
+  cat > "$DB_CONFIG" <<'DBCONF'
+<?php
+return [
+    'mysql' => [
+        'host'    => '127.0.0.1',
+        'port'    => 3306,
+        'dbname'  => 'naruto',
+        'charset' => 'utf8mb4',
+        'user'    => 'root',
+        'pass'    => '',
+    ],
+    'mysql_forum' => [
+        'host'    => '127.0.0.1',
+        'port'    => 3306,
+        'dbname'  => 'forum',
+        'charset' => 'utf8mb4',
+        'user'    => 'root',
+        'pass'    => '',
+    ],
+];
+DBCONF
+  echo "[config] config/database.php criado"
+fi
+
 # Start PHP server in foreground
 echo "[php] starting development server on 0.0.0.0:5000"
 cd "$PROJECT_ROOT"

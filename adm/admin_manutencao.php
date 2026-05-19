@@ -45,6 +45,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $erro_msg = 'Erro ao excluir mensagem!';
         }
+    } elseif ($action === 'salvar_recaptcha') {
+        $rc_version    = $_POST['rc_version']    ?? 'v2';
+        $rc_site_key   = $_POST['rc_site_key']   ?? '';
+        $rc_secret_key = $_POST['rc_secret_key'] ?? '';
+        $rc_min_score  = $_POST['rc_min_score']  ?? '0.5';
+        if (empty($rc_site_key) || empty($rc_secret_key)) {
+            $erro_msg = 'Site Key e Secret Key são obrigatórios!';
+        } elseif (salvar_config_recaptcha($rc_version, $rc_site_key, $rc_secret_key, $rc_min_score)) {
+            $sucesso_msg = 'Configurações do reCAPTCHA salvas com sucesso!';
+        } else {
+            $erro_msg = 'Erro ao salvar configurações do reCAPTCHA!';
+        }
+    } elseif ($action === 'limpar_recaptcha') {
+        if (salvar_config_recaptcha('v2', '', '', 0.5)) {
+            $sucesso_msg = 'Configurações do reCAPTCHA limpas com sucesso!';
+        } else {
+            $erro_msg = 'Erro ao limpar configurações do reCAPTCHA!';
+        }
+    } elseif ($action === 'desbloquear_ip') {
+        $ip_num = (int)($_POST['ip_num'] ?? 0);
+        if ($ip_num > 0) {
+            require_once('../_inc/rate_limit.php');
+            rl_desbloquear_ip($conexao, $ip_num);
+            $sucesso_msg = 'IP desbloqueado com sucesso!';
+        }
+    } elseif ($action === 'limpar_bloqueios') {
+        require_once('../_inc/rate_limit.php');
+        rl_limpar_todos($conexao);
+        $sucesso_msg = 'Todos os bloqueios foram removidos!';
     }
 }
 
@@ -136,9 +165,142 @@ include 'adm_header.php';
 </form>
 
 <div class="sep"></div>
+
+<h3>Configurar reCAPTCHA</h3>
+<div class="sep"></div>
+
+<?php
+$rc_cfg = obter_config_recaptcha();
+$rc_version    = $rc_cfg['version']    ?? 'v2';
+$rc_site_key   = $rc_cfg['site_key']   ?? '';
+$rc_secret_key = $rc_cfg['secret_key'] ?? '';
+$rc_min_score  = $rc_cfg['min_score']  ?? 0.5;
+?>
+
+<p class="sub2">
+    O reCAPTCHA protege o formulário de cadastro contra bots.<br>
+    Obtenha suas chaves em <strong>google.com/recaptcha/admin</strong>.<br>
+    <strong>v2 Checkbox</strong>: exibe o widget visual. <strong>v3 Invisível</strong>: avalia por pontuação sem interação do usuário.
+</p>
+<div class="sep"></div>
+
+<form method="post" action="admin_manutencao.php">
+    <input type="hidden" name="action" value="salvar_recaptcha">
+    <fieldset>
+        <legend>Chaves do reCAPTCHA</legend>
+
+        <table class="adm-table" style="max-width:600px;">
+            <tr>
+                <th style="width:160px;">Versão</th>
+                <td>
+                    <label style="margin-right:20px;">
+                        <input type="radio" name="rc_version" value="v2" <?php echo $rc_version === 'v2' ? 'checked' : ''; ?> onchange="toggleScore(this)">
+                        v2 Checkbox
+                    </label>
+                    <label>
+                        <input type="radio" name="rc_version" value="v3" <?php echo $rc_version === 'v3' ? 'checked' : ''; ?> onchange="toggleScore(this)">
+                        v3 Invisível
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <th>Site Key</th>
+                <td><input type="text" name="rc_site_key" value="<?php echo htmlspecialchars($rc_site_key); ?>" style="width:100%;max-width:420px;padding:4px;" placeholder="Chave do site (pública)"></td>
+            </tr>
+            <tr>
+                <th>Secret Key</th>
+                <td><input type="text" name="rc_secret_key" value="<?php echo htmlspecialchars($rc_secret_key); ?>" style="width:100%;max-width:420px;padding:4px;" placeholder="Chave secreta (privada)"></td>
+            </tr>
+            <tr id="row_score" style="display:<?php echo $rc_version === 'v3' ? 'table-row' : 'none'; ?>;">
+                <th>Score mínimo (v3)</th>
+                <td>
+                    <input type="number" name="rc_min_score" value="<?php echo $rc_min_score; ?>" min="0.1" max="1.0" step="0.05" style="width:80px;padding:4px;">
+                    <span class="sub2"> (0.1 = permissivo, 1.0 = rigoroso; recomendado: 0.5)</span>
+                </td>
+            </tr>
+        </table>
+
+        <div class="sep"></div>
+        <button type="submit" class="botao btn-success">Salvar reCAPTCHA</button>
+    </fieldset>
+</form>
+
+<div class="sep"></div>
+
+<?php if ($recaptcha_configurado): ?>
+<form method="post" action="admin_manutencao.php" onsubmit="return confirm('Remover configurações do reCAPTCHA?');">
+    <input type="hidden" name="action" value="limpar_recaptcha">
+    <button type="submit" class="botao btn-danger">Remover reCAPTCHA</button>
+</form>
+<?php endif; ?>
+
+<div class="sep"></div>
+
+<h3>IPs Bloqueados (Rate Limit de Login)</h3>
+<div class="sep"></div>
+
+<?php
+require_once('../_inc/rate_limit.php');
+$ips_bloqueados = rl_listar_bloqueados($conexao);
+?>
+
+<p class="sub2">
+    IPs bloqueados automaticamente após <?php echo RATE_LIMIT_MAX_FALHAS; ?> tentativas falhas.
+    Bloqueio dura <?php echo rl_formatar_tempo(RATE_LIMIT_BLOQUEIO_SEG); ?>.
+</p>
+<div class="sep"></div>
+
+<?php if (empty($ips_bloqueados)): ?>
+    <p style="color:#90EE90;">Nenhum IP bloqueado no momento.</p>
+<?php else: ?>
+    <form method="post" action="admin_manutencao.php" onsubmit="return confirm('Remover todos os bloqueios?');" style="display:inline;">
+        <input type="hidden" name="action" value="limpar_bloqueios">
+        <button type="submit" class="botao btn-danger" style="margin-bottom:10px;">Desbloquear Todos (<?php echo count($ips_bloqueados); ?>)</button>
+    </form>
+    <div class="sep"></div>
+    <table class="adm-table" style="max-width:700px;">
+        <tr>
+            <th>IP</th>
+            <th>Tentativas</th>
+            <th>Primeiro Erro</th>
+            <th>Bloqueado Até</th>
+            <th>Ação</th>
+        </tr>
+        <?php foreach ($ips_bloqueados as $bl): ?>
+        <?php $ip_str = rl_ip_num_to_str($bl['ip']); $seg_rest = max(0, strtotime($bl['bloqueado_ate']) - time()); ?>
+        <tr>
+            <td><code><?php echo htmlspecialchars($ip_str); ?></code></td>
+            <td style="text-align:center;color:#ff6666;"><?php echo (int)$bl['tentativas']; ?></td>
+            <td style="font-size:12px;"><?php echo date('d/m H:i:s', strtotime($bl['primeiro_erro'])); ?></td>
+            <td style="font-size:12px;color:#f9a825;">
+                <?php echo date('d/m H:i:s', strtotime($bl['bloqueado_ate'])); ?>
+                <br><small>(<?php echo rl_formatar_tempo($seg_rest); ?> restantes)</small>
+            </td>
+            <td>
+                <form method="post" action="admin_manutencao.php" style="display:inline;">
+                    <input type="hidden" name="action" value="desbloquear_ip">
+                    <input type="hidden" name="ip_num" value="<?php echo (int)$bl['ip']; ?>">
+                    <button type="submit" class="botao btn-success" style="padding:3px 10px;font-size:12px;">Desbloquear</button>
+                </form>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
+
+<div class="sep"></div>
 <p class="sub2"><strong>Dica:</strong> Para desativar completamente a manutenção, desmarque "Ativar modo de manutenção" e salve as configurações.</p>
 
 </div>
 <div class="box_bottom"></div>
+
+<script>
+function toggleScore(radio) {
+    document.getElementById('row_score').style.display = radio.value === 'v3' ? 'table-row' : 'none';
+}
+document.querySelectorAll('input[name="rc_version"]').forEach(function(r){
+    r.addEventListener('change', function(){ toggleScore(this); });
+});
+</script>
 
 <?php include 'adm_footer.php'; ?>

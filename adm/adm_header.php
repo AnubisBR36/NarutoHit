@@ -185,15 +185,9 @@
     </tr>
     <tr>
         <td valign="top" bgcolor="#444444">
-            <div class="adm-box3-top">⚙️ Painel Administrativo<?php if(isset($page_title)): ?> &rsaquo; <?php echo htmlspecialchars($page_title); ?><?php endif; ?></div>
+            <div class="adm-box3-top">Ferramentas de Administração<?php if(isset($page_title)): ?> &rsaquo; <?php echo htmlspecialchars($page_title); ?><?php endif; ?></div>
             <div class="adm-nav">
                 <span class="breadcrumb">Navegação:</span>
-                <a href="adm.php">🏠 Painel</a>
-                <a href="adm.php?modulo=equipamentos">⚔️ Equipamentos</a>
-                <a href="adm.php?modulo=clas">🏯 Clãs</a>
-                <a href="adm.php?modulo=invasao_completa">⚡ Invasão</a>
-                <a href="adm.php?modulo=cristais">💎 Cristais</a>
-                <a href="adm.php?modulo=manutencao">🔧 Manutenção</a>
-                <a href="adm.php?modulo=limpar_ip">🔓 Limpar IPs</a>
+                <a href="adm.php">Painel</a>
             </div>
             <div style="background:#111111; padding:8px 12px; min-height:300px; border-left:1px solid #333; border-right:1px solid #333;">

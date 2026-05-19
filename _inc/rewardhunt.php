@@ -1,5 +1,7 @@
 <?php require_once('trava.php'); ?>
 <?php
+require_once('game_config.php');
+require_once('game_events.php');
 $atual=date('Y-m-d H:i:s');
 if($db['hunt']==0){ echo "<script>self.location='?p=home'</script>"; exit; } else {
         if($atual<$db['hunt_fim']){ echo "<script>self.location='?p=busyhunt'</script>"; exit; } else {
@@ -15,7 +17,12 @@ if($db['hunt']==0){ echo "<script>self.location='?p=home'</script>"; exit; } els
                         case 9: $yens=rand(781,870); break;
                         case 10: $yens=rand(871,960); break;
                 }
-                if(date('Y-m-d H:i:s')<$db['vip']) $bonus=3; else $bonus=0;
+                // Aplicar multiplicadores de evento/globais ao EXP e Yens base
+                $_mults = get_event_mults();
+                $exp  = max(1, (int)round($exp  * $_mults['exp']));
+                $yens = max(1, (int)round($yens * $_mults['yens']));
+                $_caca_vip_bonus = (int)get_gc('caca_vip_bonus_exp', 3);
+                if(date('Y-m-d H:i:s')<$db['vip']) $bonus=$_caca_vip_bonus; else $bonus=0;
                 $exp=$exp+$bonus;
                 try {
                         $stmt = $conexao->prepare("UPDATE usuarios SET hunt=0, hunt_fim=NULL, yens=yens+?, yens_fat=yens_fat+?, exp=exp+?, exptotal=exptotal+? WHERE id=?");
@@ -37,8 +44,11 @@ if($db['hunt']==0){ echo "<script>self.location='?p=home'</script>"; exit; } els
 <div class="box_bottom"></div>
 <?php
 $chance=rand(1,100);
-if(($chance<=10)or($chance>=91)){
-if($chance<=10){
+$_ch1=(int)get_gc('caca_item_chance',10); $_ch2=(int)get_gc('caca_item_chance2',10);
+// Aplicar multiplicador de drop ao range de chance
+$_ch1=min(50,(int)round($_ch1*$_mults['drop'])); $_ch2=min(50,(int)round($_ch2*$_mults['drop']));
+if(($chance<=$_ch1)or($chance>=(101-$_ch2))){
+if($chance<=$_ch1){
         try {
                 $sqli = $conexao->prepare("SELECT * FROM table_itens ORDER BY RANDOM() LIMIT 1");
                 $sqli->execute();
@@ -53,7 +63,7 @@ if($chance<=10){
                 $dbi = false;
         }
 }
-if($chance>=91){
+if($chance>=(101-$_ch2)){
         try {
                 $sqli = $conexao->prepare("SELECT * FROM table_usaveis ORDER BY RANDOM() LIMIT 1");
                 $sqli->execute();

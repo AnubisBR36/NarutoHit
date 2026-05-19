@@ -267,7 +267,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['acti
         unset($f);
 
         // ---- Fragmentos de CRISTAL DE CRAFT ----
-        // Cria a tabela se não existir (mesma definição usada em rewardorgmission.php)
+        // Cria a tabela e colunas necessárias se não existirem
         try {
             $pkCF = Database::autoIncPK('id');
             $conexao->exec("CREATE TABLE IF NOT EXISTS craft_fragmentos (
@@ -278,12 +278,14 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['acti
                 UNIQUE(usuarioid, itemid)
             )");
         } catch (PDOException $e) {}
+        try { $conexao->exec("ALTER TABLE table_usaveis ADD COLUMN IF NOT EXISTS cristal_alvo_id INTEGER NULL DEFAULT NULL"); } catch (PDOException $e) {}
+        try { $conexao->exec("ALTER TABLE table_usaveis ADD COLUMN IF NOT EXISTS fragmentos_necessarios INTEGER NULL DEFAULT NULL"); } catch (PDOException $e) {}
 
         $cristalFrags = [];
         try {
-            // Fragmentos de craft agora são entidades próprias (cat='fragmento_craft').
-            // O cristal_alvo_id aponta para o cristal completo (cat='cristal_craft')
-            // que vai ser entregue ao combinar.
+            // Fragmentos de craft são entidades próprias (cat='fragmento_craft').
+            // O cristal_alvo_id aponta para o cristal completo (cat='cristal')
+            // que vai ser entregue ao combinar com sucesso (30% chance).
             $stmtC = $conexao->prepare("
                 SELECT cf.itemid, cf.quantidade, t.nome, t.imagem, t.descricao,
                        t.fragmentos_necessarios AS precisa_cfg,
@@ -292,7 +294,7 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['acti
                        c.imagem AS alvo_imagem
                 FROM craft_fragmentos cf
                 LEFT JOIN table_usaveis t ON cf.itemid = t.id
-                LEFT JOIN table_usaveis c ON t.cristal_alvo_id = c.id AND c.categoria = 'cristal_craft'
+                LEFT JOIN table_usaveis c ON t.cristal_alvo_id = c.id AND c.categoria = 'cristal'
                 WHERE cf.usuarioid = ? AND cf.quantidade > 0 AND t.categoria = 'fragmento_craft'
                 ORDER BY cf.quantidade DESC, t.nome
             ");
@@ -311,7 +313,46 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['acti
             unset($cf);
         } catch (PDOException $e) {}
 
-        $all = array_merge($frags, $cristalFrags);
+        // ---- Fragmentos de CRISTAL DE BUFF ----
+        // Usa a tabela buff_fragmentos (já criada em rewardorgmission.php).
+        // O itemid aponta diretamente para a entrada cristal_buff em table_usaveis.
+        // N fragmentos do mesmo cristal → 30% PF → recebe o próprio cristal_buff.
+        $buffFrags = [];
+        try {
+            $pkBF = Database::autoIncPK('id');
+            $conexao->exec("CREATE TABLE IF NOT EXISTS buff_fragmentos (
+                $pkBF,
+                usuarioid INTEGER NOT NULL,
+                itemid INTEGER NOT NULL,
+                quantidade INTEGER NOT NULL DEFAULT 0,
+                UNIQUE(usuarioid, itemid)
+            )");
+        } catch (PDOException $e) {}
+        try {
+            $stmtB = $conexao->prepare("
+                SELECT bf.itemid, bf.quantidade, t.nome, t.imagem,
+                       t.fragmentos_necessarios AS precisa_cfg
+                FROM buff_fragmentos bf
+                LEFT JOIN table_usaveis t ON bf.itemid = t.id AND t.categoria = 'cristal_buff'
+                WHERE bf.usuarioid = ? AND bf.quantidade > 0 AND t.id IS NOT NULL
+                ORDER BY bf.quantidade DESC, t.nome
+            ");
+            $stmtB->execute([$userId]);
+            $buffFrags = $stmtB->fetchAll(PDO::FETCH_ASSOC);
+            foreach($buffFrags as &$bf) {
+                $bf['categoria']    = 'cristal_buff';
+                $bf['tipo']         = 'buff';
+                $bf['img_base']     = '_img/Buff/';
+                $bf['has_frag_img'] = 0;
+                $precisa_cfg = isset($bf['precisa_cfg']) ? (int)$bf['precisa_cfg'] : 0;
+                $bf['precisa'] = ($precisa_cfg >= 2 && $precisa_cfg <= 20) ? $precisa_cfg : 3;
+                $bf['chance']  = 30;
+                unset($bf['precisa_cfg']);
+            }
+            unset($bf);
+        } catch (PDOException $e) {}
+
+        $all = array_merge($frags, $cristalFrags, $buffFrags);
 
         echo json_encode(['success' => true, 'fragments' => $all]);
     } catch(PDOException $e) {
@@ -331,61 +372,206 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['a
     }
 
     // ========== FRAGMENTO DE CRAFT (entidade própria → cristal alvo) ==========
-    // Combinação garantida: N fragmentos do mesmo tipo → 1 cristal completo
-    // (cristal_alvo_id, cat='cristal_craft'). N configurado pelo admin em
+    // 30% de chance (Provably Fair): N fragmentos do mesmo tipo → 1 cristal completo
+    // (cristal_alvo_id, cat='cristal'). N configurado pelo admin em
     // adm/cristal.php (fragmentos_necessarios), default 5.
     if($tipo === 'crystal') {
+        if(empty($clientSeed)) {
+            $clientSeed = bin2hex(random_bytes(16));
+        }
         try {
             $stmtC = $conexao->prepare("
                 SELECT cf.quantidade, t.nome AS frag_nome,
                        t.fragmentos_necessarios AS precisa_cfg,
                        t.cristal_alvo_id        AS alvo_id,
-                       c.id   AS alvo_id_chk,
-                       c.nome AS alvo_nome
+                       c.id     AS alvo_id_chk,
+                       c.nome   AS alvo_nome,
+                       c.imagem AS alvo_imagem
                 FROM craft_fragmentos cf
                 LEFT JOIN table_usaveis t ON cf.itemid = t.id
-                LEFT JOIN table_usaveis c ON t.cristal_alvo_id = c.id AND c.categoria = 'cristal_craft'
+                LEFT JOIN table_usaveis c ON t.cristal_alvo_id = c.id AND c.categoria = 'cristal'
                 WHERE cf.usuarioid = ? AND cf.itemid = ? AND t.categoria = 'fragmento_craft'
             ");
             $stmtC->execute([$userId, $itemId]);
             $fragC = $stmtC->fetch(PDO::FETCH_ASSOC);
 
-            $precisa_cfg = isset($fragC['precisa_cfg']) ? (int)$fragC['precisa_cfg'] : 0;
-            $precisa = ($precisa_cfg >= 2 && $precisa_cfg <= 20) ? $precisa_cfg : 5;
-
             if(!$fragC) {
                 echo json_encode(['success' => false, 'message' => 'Fragmento não encontrado no seu inventário.']);
                 exit;
             }
+
+            $precisa_cfg = isset($fragC['precisa_cfg']) ? (int)$fragC['precisa_cfg'] : 0;
+            $precisa = ($precisa_cfg >= 2 && $precisa_cfg <= 20) ? $precisa_cfg : 5;
+
             if($fragC['quantidade'] < $precisa) {
                 echo json_encode(['success' => false, 'message' => 'Você precisa de pelo menos '.$precisa.' fragmentos "'.$fragC['frag_nome'].'".']);
                 exit;
             }
             $alvoId = (int)($fragC['alvo_id_chk'] ?? 0);
             if ($alvoId <= 0) {
-                echo json_encode(['success' => false, 'message' => 'Este fragmento não tem cristal alvo configurado. Avise um administrador.']);
+                echo json_encode(['success' => false, 'message' => 'Este fragmento não tem cristal alvo configurado. Verifique em adm → Cristal se o fragmento tem um cristal-alvo da categoria "cristal" vinculado.']);
                 exit;
             }
 
-            // Consumir N fragmentos do tipo
+            // Provably Fair — 30% de chance para cristais
+            $chance = 30;
+            $committedSeed = ProvablyFair::getCommittedSeed($conexao, $userId);
+            if(!$committedSeed) {
+                echo json_encode(['success' => false, 'message' => 'Nenhuma seed encontrada. Recarregue a página.']);
+                exit;
+            }
+            $seedId     = $committedSeed['id'];
+            $serverSeed = $committedSeed['server_seed'];
+            $nonce      = ProvablyFair::getNextNonce($conexao, $seedId);
+            $rollResult = ProvablyFair::roll($serverSeed, $clientSeed, $nonce);
+            $hash       = $rollResult['hash'];
+            $number     = $rollResult['number'];
+            $success    = ProvablyFair::isSuccess($number, $chance);
+
+            ProvablyFair::logRoll($conexao, $userId, $itemId, $serverSeed, $clientSeed, $nonce, $hash, $number, $chance, $success);
+            ProvablyFair::markSeedAsUsed($conexao, $seedId);
+            ProvablyFair::createNewSeedForUser($conexao, $userId);
+
+            // Consumir N fragmentos independente do resultado
             $stmtUpd = $conexao->prepare("UPDATE craft_fragmentos SET quantidade = quantidade - ? WHERE usuarioid = ? AND itemid = ?");
             $stmtUpd->execute([$precisa, $userId, $itemId]);
             $conexao->prepare("DELETE FROM craft_fragmentos WHERE usuarioid = ? AND itemid = ? AND quantidade <= 0")
                     ->execute([$userId, $itemId]);
 
-            // Entregar 1 cristal alvo (cat=cristal_craft) na tabela usaveis
-            $conexao->prepare("INSERT INTO usaveis (usuarioid, itemid) VALUES (?, ?)")
-                    ->execute([$userId, $alvoId]);
+            $pf_data = [
+                'server_seed' => $serverSeed,
+                'client_seed' => $clientSeed,
+                'nonce'       => $nonce,
+                'hash'        => $hash,
+                'number'      => $number,
+                'chance'      => $chance,
+                'result'      => $success ? 'SUCESSO' : 'FALHOU'
+            ];
 
-            echo json_encode([
-                'success'   => true,
-                'tipo'      => 'crystal',
-                'item_nome' => $fragC['alvo_nome'],
-                'message'   => $precisa.' fragmentos "'.$fragC['frag_nome'].'" combinados! Você recebeu o cristal "'.$fragC['alvo_nome'].'".',
-                'provably_fair' => null
-            ]);
+            if($success) {
+                // Entregar 1 cristal alvo (cat=cristal) na tabela usaveis
+                $conexao->prepare("INSERT INTO usaveis (usuarioid, itemid) VALUES (?, ?)")
+                        ->execute([$userId, $alvoId]);
+                echo json_encode([
+                    'success'       => true,
+                    'tipo'          => 'crystal',
+                    'item_nome'     => $fragC['alvo_nome'],
+                    'item_imagem'   => $fragC['alvo_imagem'] ?? '',
+                    'message'       => 'Forja bem-sucedida! '.$precisa.' fragmentos "'.$fragC['frag_nome'].'" forjados → você recebeu "'.$fragC['alvo_nome'].'"!',
+                    'provably_fair' => $pf_data
+                ]);
+            } else {
+                echo json_encode([
+                    'success'       => false,
+                    'failed'        => true,
+                    'tipo'          => 'crystal',
+                    'item_nome'     => $fragC['alvo_nome'],
+                    'message'       => 'A forja falhou! Os '.$precisa.' fragmentos foram destruídos.',
+                    'provably_fair' => $pf_data
+                ]);
+            }
         } catch(PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Erro ao combinar cristal: ' . $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Erro ao forjar cristal: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ========== FRAGMENTO DE CRISTAL DE BUFF (buff_fragmentos → cristal_buff → usaveis) ==========
+    if($tipo === 'buff') {
+        if(empty($clientSeed)) {
+            $clientSeed = bin2hex(random_bytes(16));
+        }
+        try {
+            $pkBF = Database::autoIncPK('id');
+            try { $conexao->exec("CREATE TABLE IF NOT EXISTS buff_fragmentos (
+                $pkBF,
+                usuarioid INTEGER NOT NULL,
+                itemid INTEGER NOT NULL,
+                quantidade INTEGER NOT NULL DEFAULT 0,
+                UNIQUE(usuarioid, itemid)
+            )"); } catch (PDOException $e) {}
+
+            $stmtB = $conexao->prepare("
+                SELECT bf.quantidade, t.nome AS buff_nome, t.imagem AS buff_imagem,
+                       t.fragmentos_necessarios AS precisa_cfg, t.id AS buff_id
+                FROM buff_fragmentos bf
+                LEFT JOIN table_usaveis t ON bf.itemid = t.id AND t.categoria = 'cristal_buff'
+                WHERE bf.usuarioid = ? AND bf.itemid = ?
+            ");
+            $stmtB->execute([$userId, $itemId]);
+            $fragB = $stmtB->fetch(PDO::FETCH_ASSOC);
+
+            if(!$fragB || !$fragB['buff_id']) {
+                echo json_encode(['success' => false, 'message' => 'Fragmento de buff não encontrado no seu inventário.']);
+                exit;
+            }
+
+            $precisa_cfg = isset($fragB['precisa_cfg']) ? (int)$fragB['precisa_cfg'] : 0;
+            $precisa = ($precisa_cfg >= 2 && $precisa_cfg <= 20) ? $precisa_cfg : 3;
+
+            if((int)$fragB['quantidade'] < $precisa) {
+                echo json_encode(['success' => false, 'message' => 'Você precisa de pelo menos '.$precisa.' fragmentos de "'.$fragB['buff_nome'].'".']);
+                exit;
+            }
+
+            // Provably Fair — 40% de chance
+            $chance = 40;
+            $committedSeed = ProvablyFair::getCommittedSeed($conexao, $userId);
+            if(!$committedSeed) {
+                echo json_encode(['success' => false, 'message' => 'Nenhuma seed encontrada. Recarregue a página.']);
+                exit;
+            }
+            $seedId     = $committedSeed['id'];
+            $serverSeed = $committedSeed['server_seed'];
+            $nonce      = ProvablyFair::getNextNonce($conexao, $seedId);
+            $rollResult = ProvablyFair::roll($serverSeed, $clientSeed, $nonce);
+            $hash       = $rollResult['hash'];
+            $number     = $rollResult['number'];
+            $success    = ProvablyFair::isSuccess($number, $chance);
+
+            ProvablyFair::logRoll($conexao, $userId, $itemId, $serverSeed, $clientSeed, $nonce, $hash, $number, $chance, $success);
+            ProvablyFair::markSeedAsUsed($conexao, $seedId);
+            ProvablyFair::createNewSeedForUser($conexao, $userId);
+
+            // Consumir N fragmentos independente do resultado
+            $conexao->prepare("UPDATE buff_fragmentos SET quantidade = quantidade - ? WHERE usuarioid = ? AND itemid = ?")
+                    ->execute([$precisa, $userId, $itemId]);
+            $conexao->prepare("DELETE FROM buff_fragmentos WHERE usuarioid = ? AND itemid = ? AND quantidade <= 0")
+                    ->execute([$userId, $itemId]);
+
+            $pf_data = [
+                'server_seed' => $serverSeed,
+                'client_seed' => $clientSeed,
+                'nonce'       => $nonce,
+                'hash'        => $hash,
+                'number'      => $number,
+                'chance'      => $chance,
+                'result'      => $success ? 'SUCESSO' : 'FALHOU'
+            ];
+
+            if($success) {
+                $conexao->prepare("INSERT INTO usaveis (usuarioid, itemid) VALUES (?, ?)")
+                        ->execute([$userId, $itemId]);
+                echo json_encode([
+                    'success'       => true,
+                    'tipo'          => 'buff',
+                    'item_nome'     => $fragB['buff_nome'],
+                    'item_imagem'   => $fragB['buff_imagem'] ?? '',
+                    'message'       => 'Forja bem-sucedida! '.$precisa.' fragmentos forjados → você recebeu "'.$fragB['buff_nome'].'"!',
+                    'provably_fair' => $pf_data
+                ]);
+            } else {
+                echo json_encode([
+                    'success'       => false,
+                    'failed'        => true,
+                    'tipo'          => 'buff',
+                    'item_nome'     => $fragB['buff_nome'],
+                    'message'       => 'A forja falhou! Os '.$precisa.' fragmentos foram destruídos.',
+                    'provably_fair' => $pf_data
+                ]);
+            }
+        } catch(PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Erro ao forjar cristal de buff: ' . $e->getMessage()]);
         }
         exit;
     }

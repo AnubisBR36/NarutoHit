@@ -85,6 +85,26 @@ function verificar_admin_por_dados($conexao, $usuario, $senha_hash) {
     return $user && in_array($user['adm'], ADMIN_LEVELS) ? $user : false;
 }
 
+function salvar_config_recaptcha($version, $site_key, $secret_key, $min_score) {
+    $config = [
+        'version'    => in_array($version, ['v2','v3']) ? $version : 'v2',
+        'site_key'   => trim($site_key),
+        'secret_key' => trim($secret_key),
+        'min_score'  => max(0.1, min(1.0, (float)$min_score)),
+    ];
+
+    $conteudo  = "<?php\n";
+    $conteudo .= "/**\n * Configuração do reCAPTCHA\n */\n\n";
+    $conteudo .= "return [\n";
+    $conteudo .= "    'version'    => '" . addslashes($config['version'])    . "',\n";
+    $conteudo .= "    'site_key'   => '" . addslashes($config['site_key'])   . "',\n";
+    $conteudo .= "    'secret_key' => '" . addslashes($config['secret_key']) . "',\n";
+    $conteudo .= "    'min_score'  => "  . $config['min_score']              . ",\n";
+    $conteudo .= "];\n";
+
+    return file_put_contents(__DIR__ . '/../config/recaptcha.php', $conteudo) !== false;
+}
+
 function verificar_recaptcha($response, $action_esperada = null) {
     if (empty($response)) return false;
 

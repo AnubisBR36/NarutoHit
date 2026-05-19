@@ -101,11 +101,6 @@ if(isset($_POST['login_login'])){
                 if($erro==0){
                         $is_admin = isset($db['adm']) && in_array($db['adm'], [1, 2]);
                         
-                        if (!recaptcha_configurado() && !$is_admin) {
-                                header("Location: index.php?p=manutencao");
-                                exit;
-                        }
-                        
                         if (recaptcha_configurado()) {
                                 $recaptcha_response = $_POST['g-recaptcha-response'] ?? '';
                                 if (!verificar_recaptcha($recaptcha_response)) {
@@ -234,9 +229,11 @@ if(isset($_POST['login_login'])){
         }
 }
 
-if(!isset($_COOKIE['allowgm']) && (!recaptcha_configurado() || esta_em_manutencao()) && !isset($_SESSION['logado'])) {
+if(!isset($_COOKIE['allowgm']) && esta_em_manutencao() && !isset($_SESSION['logado'])) {
         $p = $_GET['p'] ?? 'home';
-        if($p !== 'manutencao' && $p !== 'login') {
+        // Durante manutenção: apenas login e página de manutenção liberados
+        $paginas_livres = ['manutencao', 'login'];
+        if (!in_array($p, $paginas_livres)) {
                 header("Location: index.php?p=manutencao");
                 exit;
         }

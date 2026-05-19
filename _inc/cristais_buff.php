@@ -13,22 +13,8 @@ try {
     )");
 } catch (PDOException $e) {}
 
-// Combinar 3 fragmentos em 1 cristal
-if (isset($_GET['combinar_buff']) && is_numeric($_GET['combinar_buff'])) {
-    $frag_itemid = (int)$_GET['combinar_buff'];
-    try {
-        $stmtf = $conexao->prepare("SELECT quantidade FROM buff_fragmentos WHERE usuarioid = ? AND itemid = ?");
-        $stmtf->execute([$db['id'], $frag_itemid]);
-        $frow = $stmtf->fetch(PDO::FETCH_ASSOC);
-        if ($frow && $frow['quantidade'] >= 3) {
-            $conexao->prepare("UPDATE buff_fragmentos SET quantidade = quantidade - 3 WHERE usuarioid = ? AND itemid = ?")->execute([$db['id'], $frag_itemid]);
-            $conexao->prepare("DELETE FROM buff_fragmentos WHERE usuarioid = ? AND itemid = ? AND quantidade <= 0")->execute([$db['id'], $frag_itemid]);
-            $conexao->prepare("INSERT INTO usaveis (usuarioid, itemid) VALUES (?, ?)")->execute([$db['id'], $frag_itemid]);
-            echo "<script>location.href='?p=cristais_buff&msg=combinado'</script>"; exit;
-        }
-    } catch (PDOException $e) {}
-    echo "<script>location.href='?p=cristais_buff'</script>"; exit;
-}
+// Combinação de fragmentos de buff removida daqui.
+// Os fragmentos agora são forjados exclusivamente no Ferreiro (40% Provably Fair).
 
 // Carregar dados
 try {
@@ -89,10 +75,6 @@ function descrever_efeito_cristal_buff($te, $valor_json, $nome) {
     </div>
     <div class="sep"></div>
 
-<?php if (isset($_GET['msg']) && $_GET['msg'] === 'combinado'): ?>
-    <div class="aviso" style="margin:6px 0;">💎 3 fragmentos combinados — cristal formado!</div>
-    <div class="sep"></div>
-<?php endif; ?>
 
 <?php if ($buff_ativo): $ba_nome = ucfirst($buff_ativo['tipo_buff']); $ba_cor = $buff_cor_map[$buff_ativo['tipo_buff']] ?? '#FFD700'; ?>
     <div class="aviso" style="margin-bottom:8px;">
@@ -160,18 +142,21 @@ function descrever_efeito_cristal_buff($te, $valor_json, $nome) {
             </div>
         </td>
         <td style="padding:8px;">
-            <b>Fragmento de <?php echo htmlspecialchars($bf['nome']); ?></b>
-            <span style="background:#000;color:#FFD700;font-size:10px;font-weight:bold;padding:1px 5px;margin-left:5px;border:1px solid #FFD700;">FRAGMENTO</span><br/>
-            <span class="sub2">Junte 3 fragmentos para formar o cristal completo.</span><br/><br/>
-            <?php if ($bf['quantidade'] >= 3): ?>
-            <a href="?p=cristais_buff&combinar_buff=<?php echo $bf['itemid']; ?>"
-               onclick="return confirm('Combinar 3 fragmentos de <?php echo htmlspecialchars($bf['nome']); ?>?');"
-               style="display:inline-block;padding:4px 16px;background:url('_img/fundo_botao.jpg') repeat-x center;color:#fff;border:1px solid #555;font-size:12px;font-weight:bold;text-decoration:none;text-shadow:1px 1px 2px #000;">
-               Combinar (<?php echo (int)$bf['quantidade']; ?>/3)
+            <b style="color:#2ecc71;">Fragmento de <?php echo htmlspecialchars($bf['nome']); ?></b>
+            <span style="background:#0a5a1a;color:#2ecc71;font-size:10px;font-weight:bold;padding:1px 5px;margin-left:5px;border:1px solid #2ecc71;">FRAGMENTO</span><br/>
+            <?php
+                $stmtFN = $conexao->prepare("SELECT fragmentos_necessarios FROM table_usaveis WHERE id=? AND categoria='cristal_buff'");
+                $stmtFN->execute([$bf['itemid']]);
+                $fnRow = $stmtFN->fetch(PDO::FETCH_ASSOC);
+                $precisa_buff = (int)($fnRow['fragmentos_necessarios'] ?? 0);
+                if ($precisa_buff < 2 || $precisa_buff > 20) $precisa_buff = 3;
+            ?>
+            <span class="sub2">Você tem <b style="color:#2ecc71;"><?php echo (int)$bf['quantidade']; ?>/<?php echo $precisa_buff; ?></b> fragmento(s).</span><br/>
+            <span class="sub2" style="color:#aaa;">🔨 Vá ao <b>Ferreiro</b> para tentar forjar com <b style="color:#2ecc71;">40% de chance</b> (Provably Fair).</span><br/><br/>
+            <a href="?p=blacksmith"
+               style="display:inline-block;padding:4px 16px;background:url('_img/fundo_botao.jpg') repeat-x center;color:#2ecc71;border:1px solid #2ecc71;font-size:12px;font-weight:bold;text-decoration:none;text-shadow:1px 1px 2px #000;">
+               🔨 Ir ao Ferreiro
             </a>
-            <?php else: ?>
-            <span class="sub2">Faltam <?php echo 3 - (int)$bf['quantidade']; ?> fragmento(s)</span>
-            <?php endif; ?>
         </td>
     </tr>
     <?php endforeach; ?>

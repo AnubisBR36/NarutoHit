@@ -290,12 +290,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'cadas
     } elseif ($alvoId <= 0) {
         $mensagem_frag = 'Selecione qual cristal este fragmento irá se tornar.'; $tipo_mensagem_frag = 'error';
     } else {
-        // Confirma que o alvo existe e é um cristal_craft
-        $chk = $conexao->prepare("SELECT id, nome FROM table_usaveis WHERE id=? AND categoria='cristal_craft'");
+        // Confirma que o alvo existe e é um cristal de refinamento
+        $chk = $conexao->prepare("SELECT id, nome FROM table_usaveis WHERE id=? AND categoria='cristal'");
         $chk->execute([$alvoId]);
         $alvo = $chk->fetch(PDO::FETCH_ASSOC);
         if (!$alvo) {
-            $mensagem_frag = 'Cristal alvo inválido (não encontrado em Cristais de Craft).'; $tipo_mensagem_frag = 'error';
+            $mensagem_frag = 'Cristal alvo inválido (não encontrado em Cristais de Refinamento).'; $tipo_mensagem_frag = 'error';
         } else {
             try {
                 $img = _frag_resolver_imagem('frag_imagem_upload', 'frag_imagem_galeria');
@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edita
     } elseif ($alvoId <= 0) {
         $mensagem_frag = 'Selecione um cristal alvo.'; $tipo_mensagem_frag = 'error';
     } else {
-        $chk = $conexao->prepare("SELECT id, nome FROM table_usaveis WHERE id=? AND categoria='cristal_craft'");
+        $chk = $conexao->prepare("SELECT id, nome FROM table_usaveis WHERE id=? AND categoria='cristal'");
         $chk->execute([$alvoId]);
         $alvo = $chk->fetch(PDO::FETCH_ASSOC);
         if (!$alvo) {
@@ -378,6 +378,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'dar_f
             $mensagem_frag = 'Erro ao dar fragmento: '.$e->getMessage();
             $tipo_mensagem_frag = 'error';
         }
+    }
+}
+
+// Dar fragmentos a qualquer jogador (admin)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'dar_fragmento_jogador') {
+    $fid            = (int)($_POST['frag_id_jogador'] ?? 0);
+    $qtd            = max(1, min(99, (int)($_POST['qtd_jogador'] ?? 1)));
+    $usuario_busca  = trim($_POST['usuario_fragmento'] ?? '');
+    if ($fid > 0 && $usuario_busca !== '') {
+        $stmt_u = $conexao->prepare("SELECT id, usuario FROM usuarios WHERE LOWER(usuario) = LOWER(?)");
+        $stmt_u->execute([$usuario_busca]);
+        $usuario_destino = $stmt_u->fetch(PDO::FETCH_ASSOC);
+        if (!$usuario_destino) {
+            $mensagem_frag = "Usuário '$usuario_busca' não encontrado."; $tipo_mensagem_frag = 'error';
+        } else {
+            try {
+                $pkCF = Database::autoIncPK('id');
+                $conexao->exec("CREATE TABLE IF NOT EXISTS craft_fragmentos (
+                    $pkCF,
+                    usuarioid INTEGER NOT NULL,
+                    itemid INTEGER NOT NULL,
+                    quantidade INTEGER NOT NULL DEFAULT 0,
+                    UNIQUE(usuarioid, itemid)
+                )");
+                $sql = Database::isMysql()
+                    ? "INSERT INTO craft_fragmentos (usuarioid, itemid, quantidade) VALUES (?,?,?)
+                       ON DUPLICATE KEY UPDATE quantidade = quantidade + VALUES(quantidade)"
+                    : "INSERT INTO craft_fragmentos (usuarioid, itemid, quantidade) VALUES (?,?,?)
+                       ON CONFLICT(usuarioid,itemid) DO UPDATE SET quantidade = craft_fragmentos.quantidade + EXCLUDED.quantidade";
+                $conexao->prepare($sql)->execute([$usuario_destino['id'], $fid, $qtd]);
+                $fn = $conexao->prepare("SELECT nome FROM table_usaveis WHERE id = ?");
+                $fn->execute([$fid]);
+                $frow = $fn->fetch(PDO::FETCH_ASSOC);
+                $mensagem_frag = "✅ +{$qtd} fragmento(s) «{$frow['nome']}» adicionados para «{$usuario_destino['usuario']}».";
+                $tipo_mensagem_frag = 'success';
+            } catch (Exception $e) {
+                $mensagem_frag = 'Erro: ' . $e->getMessage(); $tipo_mensagem_frag = 'error';
+            }
+        }
+    } else {
+        $mensagem_frag = 'Dados inválidos (informe jogador e selecione o fragmento).'; $tipo_mensagem_frag = 'error';
     }
 }
 
@@ -506,52 +547,9 @@ $stmt = $conexao->query("
 ");
 $jogadores_buff = $stmt->fetchAll();
 
-// ── Craft Crystals ────────────────────────────────────────────────────────────
-$cristais_craft = $conexao->query("SELECT * FROM table_usaveis WHERE categoria = 'cristal_craft' ORDER BY id")->fetchAll();
-$mensagem_craft = '';
-$tipo_mensagem_craft = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'adicionar_cristal_craft') {
-    $usuario_busca = trim($_POST['usuario_craft'] ?? '');
-    $cristal_id    = (int)($_POST['cristal_craft_id'] ?? 0);
-    $quantidade    = (int)($_POST['quantidade_craft'] ?? 1);
-
-    if (empty($usuario_busca)) {
-        $mensagem_craft = 'Informe o nome do jogador.'; $tipo_mensagem_craft = 'error';
-    } elseif ($cristal_id <= 0) {
-        $mensagem_craft = 'Selecione um tipo de cristal de craft.'; $tipo_mensagem_craft = 'error';
-    } elseif ($quantidade <= 0 || $quantidade > 99) {
-        $mensagem_craft = 'Quantidade inválida. Use entre 1 e 99.'; $tipo_mensagem_craft = 'error';
-    } else {
-        $stmt = $conexao->prepare("SELECT id, usuario FROM usuarios WHERE LOWER(usuario) = LOWER(?)");
-        $stmt->execute([$usuario_busca]);
-        $usuario_destino = $stmt->fetch();
-        if (!$usuario_destino) {
-            $mensagem_craft = "Usuário '$usuario_busca' não encontrado."; $tipo_mensagem_craft = 'error';
-        } else {
-            try {
-                $stmt = $conexao->prepare("INSERT INTO usaveis (usuarioid, itemid, status) VALUES (?, ?, 'off')");
-                for ($i = 0; $i < $quantidade; $i++) $stmt->execute([$usuario_destino['id'], $cristal_id]);
-                $nome_cc = '';
-                foreach ($cristais_craft as $c) { if ($c['id'] == $cristal_id) { $nome_cc = $c['nome']; break; } }
-                $mensagem_craft = "✅ Adicionado $quantidade x '$nome_cc' para '{$usuario_destino['usuario']}'!";
-                $tipo_mensagem_craft = 'success';
-            } catch (Exception $e) {
-                $mensagem_craft = "Erro: " . $e->getMessage(); $tipo_mensagem_craft = 'error';
-            }
-        }
-    }
-}
-
-$stmt = $conexao->query("
-    SELECT u.usuario, tu.nome as cristal_nome, COUNT(*) as quantidade
-    FROM usaveis us
-    JOIN usuarios u ON us.usuarioid = u.id
-    JOIN table_usaveis tu ON us.itemid = tu.id
-    WHERE tu.categoria = 'cristal_craft'
-    GROUP BY u.id, us.itemid ORDER BY u.usuario, tu.nome
-");
-$jogadores_craft = $stmt->fetchAll();
+// ── Craft Crystals (apenas para uso interno dos fragmentos) ──────────────────
+$cristais_craft = [];
+try { $cristais_craft = $conexao->query("SELECT * FROM table_usaveis WHERE categoria = 'cristal_craft' ORDER BY id")->fetchAll(); } catch (Throwable $e) {}
 
 $page_title = 'Gerenciar Cristais';
 include 'adm_header.php';
@@ -578,17 +576,28 @@ include 'adm_header.php';
 
 <h3>🆕 Cadastrar novo Cristal de Refinamento</h3>
 <div class="sep"></div>
-<form method="POST" enctype="multipart/form-data" style="background:#1a1200;border:1px solid #555;padding:8px;">
+<form method="POST" enctype="multipart/form-data" style="background:#1a1200;border:1px solid #555;border-radius:4px;padding:14px;">
     <input type="hidden" name="action" value="cadastrar_cristal">
-    <table width="100%">
-        <tr>
-            <td width="30%"><label>Nome:</label><br><input type="text" name="novo_nome" maxlength="100" required placeholder="Ex.: Cristal Maior do Ferreiro" style="width:100%;"></td>
-            <td width="40%"><label>Descrição (uso/efeito):</label><br><input type="text" name="novo_desc" maxlength="255" placeholder="Ex.: Refina equipamentos +5 a +10 com 80% de chance" style="width:100%;"></td>
-            <td width="20%"><label>Imagem (opcional):</label><br><input type="file" name="novo_imagem" accept="image/*" style="width:100%;"></td>
-            <td width="10%" valign="bottom"><button type="submit" class="botao btn-success">➕ Cadastrar</button></td>
-        </tr>
-    </table>
-    <div class="sub2" style="margin-top:4px;">Imagem salva em <code>_img/ferreiro/</code>. Categoria: <code>cristal</code>.</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:160px;">
+            <label style="display:block;margin-bottom:4px;color:#FFD700;font-weight:bold;">Nome:</label>
+            <input type="text" name="novo_nome" maxlength="100" required placeholder="Ex.: Cristal Maior do Ferreiro" style="width:100%;padding:6px 8px;background:#0d0900;border:1px solid #555;color:#fff;border-radius:3px;">
+        </div>
+        <div style="flex:2;min-width:200px;">
+            <label style="display:block;margin-bottom:4px;color:#FFD700;font-weight:bold;">Descrição (uso/efeito):</label>
+            <input type="text" name="novo_desc" maxlength="255" placeholder="Ex.: Refina equipamentos +5 a +10 com 80% de chance" style="width:100%;padding:6px 8px;background:#0d0900;border:1px solid #555;color:#fff;border-radius:3px;">
+        </div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+            <label style="display:block;margin-bottom:4px;color:#FFD700;font-weight:bold;">Imagem (opcional):</label>
+            <input type="file" name="novo_imagem" accept="image/*" style="width:100%;padding:4px 0;">
+            <div class="sub2" style="margin-top:4px;">Salva em <code>_img/ferreiro/</code> · Categoria: <code>cristal</code></div>
+        </div>
+        <div style="flex:0 0 auto;padding-bottom:24px;">
+            <button type="submit" class="botao btn-success" style="padding:8px 18px;">➕ Cadastrar</button>
+        </div>
+    </div>
 </form>
 
 <div class="sep"></div>
@@ -727,16 +736,28 @@ include 'adm_header.php';
 
 <h3>🆕 Cadastrar novo Cristal de Buff</h3>
 <div class="sep"></div>
-<form method="POST" enctype="multipart/form-data" style="background:#0a1a0a;border:1px solid #2a6a2a;padding:8px;">
+<form method="POST" enctype="multipart/form-data" style="background:#0a1a0a;border:1px solid #2a6a2a;border-radius:4px;padding:14px;">
     <input type="hidden" name="action" value="cadastrar_cristal_buff">
-    <table width="100%">
-        <tr>
-            <td width="30%"><label>Nome:</label><br><input type="text" name="novo_nome" maxlength="100" required placeholder="Ex.: Cristal do Tigre" style="width:100%;"></td>
-            <td width="40%"><label>Descrição (livre):</label><br><input type="text" name="novo_desc" maxlength="255" placeholder="Ex.: Concentração ancestral dos felinos" style="width:100%;"></td>
-            <td width="20%"><label>Imagem (PNG/JPG):</label><br><input type="file" name="novo_imagem" accept="image/*" style="width:100%;"></td>
-            <td width="10%" valign="bottom"><button type="submit" class="botao btn-success">➕ Cadastrar</button></td>
-        </tr>
-    </table>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:160px;">
+            <label style="display:block;margin-bottom:4px;color:#5ecf6e;font-weight:bold;">Nome:</label>
+            <input type="text" name="novo_nome" maxlength="100" required placeholder="Ex.: Cristal do Tigre" style="width:100%;padding:6px 8px;background:#050f05;border:1px solid #2a6a2a;color:#fff;border-radius:3px;">
+        </div>
+        <div style="flex:2;min-width:200px;">
+            <label style="display:block;margin-bottom:4px;color:#5ecf6e;font-weight:bold;">Descrição (livre):</label>
+            <input type="text" name="novo_desc" maxlength="255" placeholder="Ex.: Concentração ancestral dos felinos" style="width:100%;padding:6px 8px;background:#050f05;border:1px solid #2a6a2a;color:#fff;border-radius:3px;">
+        </div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:200px;">
+            <label style="display:block;margin-bottom:4px;color:#5ecf6e;font-weight:bold;">Imagem (PNG/JPG):</label>
+            <input type="file" name="novo_imagem" accept="image/*" style="width:100%;padding:4px 0;">
+            <div class="sub2" style="margin-top:4px;">Salva em <code>_img/Buff/</code> · Categoria: <code>cristal_buff</code></div>
+        </div>
+        <div style="flex:0 0 auto;padding-bottom:24px;">
+            <button type="submit" class="botao btn-success" style="padding:8px 18px;">➕ Cadastrar</button>
+        </div>
+    </div>
     <div class="sep"></div>
     <table width="100%">
         <tr>
@@ -917,201 +938,93 @@ function atualizarCamposEfeito() {
 <div class="box_bottom"></div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
-<!-- ══ CRISTAIS DE CRAFT ═════════════════════════════════════ -->
+<!-- ══ FRAGMENTOS DE CRISTAL ════════════════════════════════ -->
 <!-- ═══════════════════════════════════════════════════════════ -->
-<div class="box_top" style="background:linear-gradient(90deg,#1a0a1a,#2a0d2a,#1a0a1a); margin-top:10px;">⚙️ Cristais de Craft</div>
+<div class="box_top" style="background:linear-gradient(90deg,#1a0a1a,#2a0d2a,#1a0a1a); margin-top:10px;">🧩 Fragmentos de Cristal</div>
 <div class="box_middle">
 
-<?php if ($mensagem_cad && in_array($_POST['action'] ?? '', ['cadastrar_cristal_craft'], true)): ?>
-    <div class="alert-<?php echo $tipo_mensagem_cad; ?>"><?php echo htmlspecialchars($mensagem_cad); ?></div>
-    <div class="sep"></div>
-<?php endif; ?>
-<?php if ($mensagem_del && ($_POST['categoria'] ?? '') === 'cristal_craft'): ?>
-    <div class="alert-<?php echo $tipo_mensagem_del; ?>"><?php echo htmlspecialchars($mensagem_del); ?></div>
-    <div class="sep"></div>
-<?php endif; ?>
-
-<div style="background:#1a0a1a;border-left:3px solid #c084fc;padding:8px 12px;margin-bottom:8px;">
-    <b style="color:#c084fc;">📘 Para que serve?</b><br>
-    <span class="sub2">Os <b>Cristais de Craft</b> são insumos usados na <b>fabricação (forja) de equipamentos</b>
-    e itens raros. Servem como matéria-prima nas receitas dos jogadores. A descrição deve indicar o tipo do
-    insumo (ex.: <code>Núcleo elemental — necessário para forjar armas raras</code>).</span>
+<div style="background:#1a0a1a;border-left:3px solid #cf6ecf;padding:8px 12px;margin-bottom:8px;">
+    <b style="color:#cf6ecf;">📘 Para que serve?</b><br>
+    <span class="sub2">Os <b>Fragmentos de Cristal</b> são itens coletáveis. Cada fragmento aponta para um <b>Cristal de Refinamento</b> existente — quando o jogador junta a quantidade configurada no Ferreiro, vira automaticamente o cristal correspondente.</span>
 </div>
-
-<h3>🆕 Cadastrar novo Cristal de Craft</h3>
-<div class="sep"></div>
-<form method="POST" enctype="multipart/form-data" style="background:#1a0a1a;border:1px solid #6a2a6a;padding:8px;">
-    <input type="hidden" name="action" value="cadastrar_cristal_craft">
-    <table width="100%">
-        <tr>
-            <td width="20%"><label>Nome:</label><br><input type="text" name="novo_nome" maxlength="100" required placeholder="Ex.: Cristal de Chakra Refinado" style="width:100%;"></td>
-            <td width="25%"><label>Descrição (uso/efeito):</label><br><input type="text" name="novo_desc" maxlength="255" placeholder="Ex.: Insumo para forjar equipamentos raros" style="width:100%;"></td>
-            <td width="11%"><label title="Quantos fragmentos formam 1 cristal completo.">🧩 Fragmentos:</label><br>
-                <input type="number" name="fragmentos_necessarios" value="<?php echo CRISTAL_FRAG_DEFAULT; ?>" min="<?php echo CRISTAL_FRAG_MIN; ?>" max="<?php echo CRISTAL_FRAG_MAX; ?>" required style="width:100%;text-align:center;font-weight:bold;color:#cf6ecf;"></td>
-            <td width="17%"><label title="Imagem do CRISTAL completo (a forma final).">💎 Imagem do Cristal:</label><br><input type="file" name="novo_imagem" accept="image/*" style="width:100%;"></td>
-            <td width="17%"><label title="Imagem do FRAGMENTO (a versão quebrada que o jogador junta). Opcional — sem upload usa a do cristal com filtro roxo.">🧩 Imagem do Fragmento:</label><br><input type="file" name="novo_imagem_fragmento" accept="image/*" style="width:100%;"></td>
-            <td width="10%" valign="bottom"><button type="submit" class="botao btn-success">➕ Cadastrar</button></td>
-        </tr>
-    </table>
-    <div class="sub2" style="margin-top:4px;">
-        💎 cristal salvo em <code>_img/Craft/</code> · 🧩 fragmento salvo em <code>_img/Craft/fragmentos/</code>.
-        <b style="color:#cf6ecf;">Receita:</b> N fragmentos → 1× cristal (N entre <?php echo CRISTAL_FRAG_MIN; ?> e <?php echo CRISTAL_FRAG_MAX; ?>; padrão <?php echo CRISTAL_FRAG_DEFAULT; ?>).
-        Sem upload da imagem do fragmento, o jogo usa a imagem do cristal com filtro roxo.
-    </div>
-</form>
-
-<div class="sep"></div>
-<h3>🧩 Receitas e Remoção de Cristais de Craft</h3>
-<div class="sub2" style="margin-bottom:6px;">A coluna <b style="color:#cf6ecf;">Receita</b> mostra quantos fragmentos o jogador precisa juntar no Ferreiro para formar 1 unidade do cristal completo. Você pode editar a quantidade direto na linha e clicar em 💾 Salvar.</div>
-
-<?php if ($mensagem_receita): ?>
-    <div class="alert-<?php echo $tipo_mensagem_receita; ?>"><?php echo htmlspecialchars($mensagem_receita); ?></div>
-    <div class="sep"></div>
-<?php endif; ?>
-
-<?php if (empty($cristais_craft)): ?>
-    <p class="sub2">Nenhum cristal de craft cadastrado.</p>
-<?php else: ?>
-<table class="adm-table">
-    <tr>
-        <th width="60">💎 Cristal</th>
-        <th>Nome / Descrição</th>
-        <th width="420">🧩 Receita visual (fragmento → cristal)</th>
-        <th width="100">Ação</th>
-    </tr>
-    <?php foreach ($cristais_craft as $cr): ?>
-        <?php
-            $frag_atual = (int)($cr['fragmentos_necessarios'] ?? 0);
-            if ($frag_atual <= 0) $frag_atual = CRISTAL_FRAG_DEFAULT;
-            $img_frag = trim((string)($cr['imagem_fragmento'] ?? ''));
-            $tem_img_frag = ($img_frag !== '');
-        ?>
-        <tr>
-            <td align="center">
-                <?php if (!empty($cr['imagem'])): ?>
-                    <img src="../_img/Craft/<?php echo htmlspecialchars($cr['imagem']); ?>" onerror="this.style.display='none'" style="width:42px;height:42px;object-fit:contain;">
-                <?php endif; ?>
-            </td>
-            <td>
-                <b style="color:#c084fc;"><?php echo htmlspecialchars($cr['nome']); ?></b><br>
-                <span class="sub2"><?php echo htmlspecialchars($cr['descricao']); ?></span>
-            </td>
-            <td>
-                <form method="POST" enctype="multipart/form-data" style="margin:0;">
-                    <input type="hidden" name="action" value="editar_receita_craft">
-                    <input type="hidden" name="cristal_id" value="<?php echo (int)$cr['id']; ?>">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                        <!-- Imagem do FRAGMENTO -->
-                        <div style="text-align:center;">
-                            <?php if ($tem_img_frag): ?>
-                                <img src="../_img/Craft/fragmentos/<?php echo htmlspecialchars($img_frag); ?>?v=<?php echo (int)$cr['id']; ?>" onerror="this.style.display='none'" style="width:38px;height:38px;object-fit:contain;border:1px solid #cf6ecf;background:#0a000a;padding:1px;">
-                            <?php elseif (!empty($cr['imagem'])): ?>
-                                <img src="../_img/Craft/<?php echo htmlspecialchars($cr['imagem']); ?>" onerror="this.style.display='none'" style="width:38px;height:38px;object-fit:contain;border:1px dashed #555;padding:1px;filter:grayscale(80%) brightness(0.7) sepia(0.4) hue-rotate(260deg);">
-                            <?php else: ?>
-                                <div style="width:38px;height:38px;border:1px dashed #555;color:#555;font-size:9px;display:flex;align-items:center;justify-content:center;">sem img</div>
-                            <?php endif; ?>
-                            <div style="font-size:9px;color:#aaa;margin-top:1px;"><?php echo $tem_img_frag ? 'fragmento' : 'fallback'; ?></div>
-                        </div>
-
-                        <!-- Quantidade x -->
-                        <div style="text-align:center;">
-                            <input type="number" name="fragmentos_necessarios" value="<?php echo $frag_atual; ?>" min="<?php echo CRISTAL_FRAG_MIN; ?>" max="<?php echo CRISTAL_FRAG_MAX; ?>" required title="Quantos fragmentos formam 1 cristal" style="width:50px;text-align:center;font-weight:bold;color:#cf6ecf;background:#1a0a1a;border:1px solid #6a2a6a;">
-                            <div style="font-size:9px;color:#aaa;">qtd</div>
-                        </div>
-
-                        <span style="color:#cf6ecf;font-weight:bold;font-size:18px;">→</span>
-
-                        <!-- Imagem do CRISTAL -->
-                        <div style="text-align:center;">
-                            <?php if (!empty($cr['imagem'])): ?>
-                                <img src="../_img/Craft/<?php echo htmlspecialchars($cr['imagem']); ?>" onerror="this.style.display='none'" style="width:38px;height:38px;object-fit:contain;border:1px solid #c084fc;background:#0a000a;padding:1px;">
-                            <?php endif; ?>
-                            <div style="font-size:9px;color:#c084fc;margin-top:1px;">1× cristal</div>
-                        </div>
-
-                        <div style="flex:1 1 100%;border-top:1px dotted #444;margin-top:4px;padding-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                            <span class="sub2" style="font-size:10px;">📷 trocar img frag.:</span>
-                            <input type="file" name="imagem_fragmento_edit" accept="image/*" style="font-size:10px;max-width:160px;">
-                            <button type="submit" class="botao btn-success" style="font-size:10px;padding:2px 6px;">💾 Salvar</button>
-                            <?php if ($tem_img_frag): ?>
-                                <button type="submit" formnovalidate name="action" value="remover_imagem_fragmento" class="botao btn-danger" style="font-size:10px;padding:2px 6px;" onclick="return confirm('Remover a imagem do fragmento? (Vai voltar ao filtro roxo na imagem do cristal.)');">🧹 Limpar img</button>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </form>
-            </td>
-            <td>
-                <form method="POST" onsubmit="return confirm('Remover \'<?php echo htmlspecialchars(addslashes($cr['nome'])); ?>\'? Estoques serão zerados.');" style="margin:0;">
-                    <input type="hidden" name="action" value="remover_cristal">
-                    <input type="hidden" name="categoria" value="cristal_craft">
-                    <input type="hidden" name="cristal_id" value="<?php echo (int)$cr['id']; ?>">
-                    <button type="submit" class="botao btn-danger" style="font-size:11px;">❌ Remover Cristal</button>
-                </form>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-</table>
-<?php endif; ?>
-<div class="sep"></div>
-
-<?php if ($mensagem_craft): ?>
-    <div class="alert-<?php echo $tipo_mensagem_craft; ?>"><?php echo htmlspecialchars($mensagem_craft); ?></div>
-    <div class="sep"></div>
-<?php endif; ?>
-
-<!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- 🧩 FRAGMENTOS DE CRAFT (entidades próprias com cristal alvo)            -->
-<!-- ═══════════════════════════════════════════════════════════════════════ -->
-<h3>🧩 Fragmentos de Craft</h3>
-<div class="sub2" style="margin-bottom:6px;">
-    Fragmentos são itens próprios (com nome e imagem). Cada fragmento aponta para 1 cristal alvo (já cadastrado acima).
-    Quando o jogador junta a quantidade configurada no Ferreiro, vira automaticamente o cristal escolhido.
-    Vários fragmentos diferentes podem virar o mesmo cristal.
-</div>
-<div class="sep"></div>
 
 <?php if ($mensagem_frag): ?>
     <div class="alert-<?php echo $tipo_mensagem_frag; ?>"><?php echo htmlspecialchars($mensagem_frag); ?></div>
     <div class="sep"></div>
 <?php endif; ?>
 
-<?php if (empty($cristais_craft)): ?>
-    <div class="alert-warning">
-        ⚠️ Cadastre pelo menos 1 Cristal de Craft acima antes de criar fragmentos (você precisa escolher qual cristal cada fragmento vira).
-    </div>
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- 🧩 FRAGMENTOS DE CRAFT (cadastro)                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<h3>🆕 Cadastrar novo Fragmento</h3>
+<div class="sep"></div>
+
+<?php if (empty($cristais)): ?>
+    <div class="alert-warning">⚠️ Cadastre pelo menos 1 Cristal de Refinamento antes de criar fragmentos.</div>
 <?php else: ?>
-<form method="POST" enctype="multipart/form-data" style="background:#1a0a1a;border:1px solid #6a2a6a;padding:8px;">
+<form method="POST" enctype="multipart/form-data" id="form_cadastrar_frag" style="background:#1a0a1a;border:1px solid #6a2a6a;border-radius:4px;padding:14px;">
     <input type="hidden" name="action" value="cadastrar_fragmento_craft">
-    <table width="100%">
-        <tr>
-            <td width="20%"><label>Nome do fragmento:</label><br>
-                <input type="text" name="frag_nome" maxlength="100" required placeholder="Ex.: Fragmento Chakra Bruto" style="width:100%;"></td>
-            <td width="22%"><label>Descrição (opcional):</label><br>
-                <input type="text" name="frag_desc" maxlength="255" placeholder="Ex.: Pedaço bruto de cristal de chakra" style="width:100%;"></td>
-            <td width="9%"><label title="Quantos fragmentos formam 1 cristal alvo.">🧩 Qtd:</label><br>
-                <input type="number" name="frag_qtd" value="<?php echo CRISTAL_FRAG_DEFAULT; ?>" min="<?php echo CRISTAL_FRAG_MIN; ?>" max="<?php echo CRISTAL_FRAG_MAX; ?>" required style="width:100%;text-align:center;font-weight:bold;color:#cf6ecf;"></td>
-            <td width="22%"><label title="Quando o jogador combinar no Ferreiro, vira este cristal.">💎 Vira o cristal:</label><br>
-                <select name="cristal_alvo_id" required style="width:100%;background:#1a0a1a;color:#c084fc;border:1px solid #6a2a6a;padding:2px;">
-                    <option value="">— escolha o cristal alvo —</option>
-                    <?php foreach ($cristais_craft as $cc): ?>
-                        <option value="<?php echo (int)$cc['id']; ?>"><?php echo htmlspecialchars($cc['nome']); ?></option>
-                    <?php endforeach; ?>
-                </select></td>
-            <td width="17%"><label>📷 Imagem:</label><br>
-                <select name="frag_imagem_galeria" style="width:100%;font-size:11px;background:#1a0a1a;color:#cf6ecf;border:1px solid #6a2a6a;">
-                    <option value="">— da galeria —</option>
-                    <?php foreach ($galeria_fragmentos as $gf): ?>
-                        <option value="<?php echo htmlspecialchars($gf); ?>"><?php echo htmlspecialchars($gf); ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="file" name="frag_imagem_upload" accept="image/*" style="width:100%;font-size:11px;margin-top:2px;" title="OU envie uma imagem nova"></td>
-            <td width="10%" valign="bottom"><button type="submit" class="botao btn-success">➕ Cadastrar</button></td>
-        </tr>
-    </table>
-    <div class="sub2" style="margin-top:4px;">
-        Imagens salvas em <code>_img/Fragmento de Cristal/</code>. Use a galeria pra reaproveitar uma imagem existente, ou envie uma nova (PNG/JPG/WEBP/GIF).
+    <input type="hidden" name="cristal_alvo_id" id="frag_alvo_id_hidden" value="">
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:160px;">
+            <label style="display:block;margin-bottom:4px;color:#cf6ecf;font-weight:bold;">Nome do fragmento:</label>
+            <input type="text" name="frag_nome" maxlength="100" required placeholder="Ex.: Fragmento Chakra Bruto" style="width:100%;padding:6px 8px;background:#0d000d;border:1px solid #6a2a6a;color:#fff;border-radius:3px;">
+        </div>
+        <div style="flex:2;min-width:200px;">
+            <label style="display:block;margin-bottom:4px;color:#cf6ecf;font-weight:bold;">Descrição (opcional):</label>
+            <input type="text" name="frag_desc" maxlength="255" placeholder="Ex.: Pedaço bruto de cristal de chakra" style="width:100%;padding:6px 8px;background:#0d000d;border:1px solid #6a2a6a;color:#fff;border-radius:3px;">
+        </div>
+        <div style="flex:0 0 100px;">
+            <label style="display:block;margin-bottom:4px;color:#cf6ecf;font-weight:bold;" title="Quantos fragmentos formam 1 cristal alvo.">🧩 Qtd:</label>
+            <input type="number" name="frag_qtd" value="<?php echo CRISTAL_FRAG_DEFAULT; ?>" min="<?php echo CRISTAL_FRAG_MIN; ?>" max="<?php echo CRISTAL_FRAG_MAX; ?>" required style="width:100%;padding:6px 8px;background:#0d000d;border:1px solid #6a2a6a;color:#cf6ecf;font-weight:bold;border-radius:3px;text-align:center;">
+        </div>
+    </div>
+
+    <label style="display:block;margin-bottom:6px;color:#cf6ecf;font-weight:bold;">💎 Vira o cristal: <span id="frag_alvo_label" style="color:#FFD700;font-weight:normal;font-size:12px;">(nenhum selecionado)</span></label>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;" id="cristal_alvo_cards">
+        <?php foreach ($cristais as $cc): ?>
+        <div class="cristal-alvo-card" data-alvo-id="<?php echo (int)$cc['id']; ?>"
+             onclick="selecionarCristalAlvo(<?php echo (int)$cc['id']; ?>, '<?php echo htmlspecialchars(addslashes($cc['nome'])); ?>')"
+             style="width:80px;border:2px solid #4a1a4a;background:#0d000d;padding:6px;text-align:center;cursor:pointer;border-radius:4px;transition:border-color 0.15s;">
+            <?php if (!empty($cc['imagem'])): ?>
+                <img src="../_img/ferreiro/<?php echo htmlspecialchars($cc['imagem']); ?>" onerror="this.style.display='none'" style="width:44px;height:44px;object-fit:contain;display:block;margin:0 auto 4px auto;">
+            <?php else: ?>
+                <div style="width:44px;height:44px;margin:0 auto 4px auto;display:flex;align-items:center;justify-content:center;font-size:22px;">💎</div>
+            <?php endif; ?>
+            <div style="font-size:10px;color:#FFD700;word-break:break-word;"><?php echo htmlspecialchars($cc['nome']); ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <label style="display:block;margin-bottom:6px;color:#cf6ecf;font-weight:bold;">📷 Imagem do fragmento: <span id="frag_img_galeria_label" style="color:#aaa;font-weight:normal;font-size:11px;">(nenhuma selecionada)</span></label>
+    <?php if (!empty($galeria_fragmentos)): ?>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;" id="frag_img_galeria_cards">
+        <?php foreach ($galeria_fragmentos as $gf): ?>
+        <div class="frag-img-card" data-img="<?php echo htmlspecialchars($gf); ?>"
+             onclick="selecionarFragImg('<?php echo htmlspecialchars(addslashes($gf)); ?>', 'frag_imagem_galeria', 'frag_img_galeria_label', 'frag_img_galeria_cards')"
+             style="width:72px;border:2px solid #4a1a4a;background:#0d000d;padding:4px;text-align:center;cursor:pointer;border-radius:4px;">
+            <img src="../_img/Fragmento%20de%20Cristal/<?php echo rawurlencode($gf); ?>" onerror="this.style.display='none'" style="width:44px;height:44px;object-fit:contain;display:block;margin:0 auto 3px auto;">
+            <div style="font-size:9px;color:#cf6ecf;word-break:break-all;"><?php echo htmlspecialchars(pathinfo($gf, PATHINFO_FILENAME)); ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <input type="hidden" name="frag_imagem_galeria" id="frag_imagem_galeria" value="">
+    <?php else: ?>
+    <input type="hidden" name="frag_imagem_galeria" value="">
+    <?php endif; ?>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:4px;">
+        <label style="color:#aaa;font-size:11px;">OU envie uma nova imagem:</label>
+        <input type="file" name="frag_imagem_upload" accept="image/*" style="font-size:11px;">
+    </div>
+    <div class="sub2">Salva em <code>_img/Fragmento de Cristal/</code></div>
+
+    <div style="margin-top:12px;">
+        <button type="submit" class="botao btn-success" style="padding:8px 22px;"
+            onclick="if(!document.getElementById('frag_alvo_id_hidden').value){alert('Selecione o cristal alvo!');return false;}">➕ Cadastrar Fragmento</button>
     </div>
 </form>
+<?php endif; ?>
 
 <div class="sep"></div>
 
@@ -1176,36 +1089,48 @@ $fragmentos_craft = $conexao->query("
 
                         <span style="color:#cf6ecf;font-weight:bold;font-size:18px;">→</span>
 
-                        <!-- Dropdown cristal alvo -->
+                        <!-- Dropdown cristal alvo (Refinamento) -->
                         <div style="text-align:center;flex:0 0 auto;">
-                            <select name="cristal_alvo_id" required style="background:#1a0a1a;color:#c084fc;border:1px solid #6a2a6a;padding:2px;font-size:11px;max-width:160px;">
-                                <?php foreach ($cristais_craft as $cc): ?>
+                            <select name="cristal_alvo_id" required style="background:#1a0a1a;color:#FFD700;border:1px solid #6a2a6a;padding:2px;font-size:11px;max-width:160px;">
+                                <option value="">— selecione —</option>
+                                <?php foreach ($cristais as $cc): ?>
                                     <option value="<?php echo (int)$cc['id']; ?>" <?php if ($cc['id'] == $f['cristal_alvo_id']) echo 'selected'; ?>>
                                         <?php echo htmlspecialchars($cc['nome']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <div style="font-size:9px;color:#c084fc;margin-top:1px;">cristal alvo</div>
+                            <div style="font-size:9px;color:#FFD700;margin-top:1px;">cristal alvo</div>
                         </div>
 
                         <!-- Preview alvo -->
                         <?php if (!empty($f['alvo_imagem'])): ?>
                             <div style="text-align:center;">
-                                <img src="../_img/Craft/<?php echo htmlspecialchars($f['alvo_imagem']); ?>" onerror="this.style.display='none'" style="width:38px;height:38px;object-fit:contain;border:1px solid #c084fc;background:#0a000a;padding:1px;">
-                                <div style="font-size:9px;color:#c084fc;">1× cristal</div>
+                                <img src="../_img/ferreiro/<?php echo htmlspecialchars($f['alvo_imagem']); ?>" onerror="this.style.display='none'" style="width:38px;height:38px;object-fit:contain;border:1px solid #FFD700;background:#0a000a;padding:1px;">
+                                <div style="font-size:9px;color:#FFD700;">1× cristal</div>
                             </div>
                         <?php endif; ?>
 
-                        <div style="flex:1 1 100%;border-top:1px dotted #444;margin-top:4px;padding-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                            <span class="sub2" style="font-size:10px;">📷 trocar img:</span>
-                            <select name="frag_imagem_galeria_edit" style="font-size:10px;background:#1a0a1a;color:#cf6ecf;border:1px solid #6a2a6a;max-width:160px;">
-                                <option value="">— manter atual —</option>
+                        <div style="flex:1 1 100%;border-top:1px dotted #444;margin-top:6px;padding-top:6px;">
+                            <div style="font-size:10px;color:#aaa;margin-bottom:4px;">📷 Trocar imagem — escolha da galeria ou envie nova:</div>
+                            <?php if (!empty($galeria_fragmentos)): ?>
+                            <input type="hidden" name="frag_imagem_galeria_edit" id="frag_gal_edit_<?php echo (int)$f['id']; ?>" value="">
+                            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;" id="frag_gal_cards_edit_<?php echo (int)$f['id']; ?>">
                                 <?php foreach ($galeria_fragmentos as $gf): ?>
-                                    <option value="<?php echo htmlspecialchars($gf); ?>"><?php echo htmlspecialchars($gf); ?></option>
+                                <div class="frag-img-card" data-img="<?php echo htmlspecialchars($gf); ?>"
+                                     onclick="selecionarFragImg('<?php echo htmlspecialchars(addslashes($gf)); ?>', 'frag_gal_edit_<?php echo (int)$f['id']; ?>', null, 'frag_gal_cards_edit_<?php echo (int)$f['id']; ?>')"
+                                     style="width:50px;border:2px solid #4a1a4a;background:#0d000d;padding:2px;text-align:center;cursor:pointer;border-radius:3px;">
+                                    <img src="../_img/Fragmento%20de%20Cristal/<?php echo rawurlencode($gf); ?>" onerror="this.style.display='none'" style="width:36px;height:36px;object-fit:contain;display:block;margin:0 auto;">
+                                </div>
                                 <?php endforeach; ?>
-                            </select>
-                            <input type="file" name="frag_imagem_upload_edit" accept="image/*" style="font-size:10px;max-width:140px;">
-                            <button type="submit" class="botao btn-success" style="font-size:10px;padding:2px 6px;">💾 Salvar</button>
+                            </div>
+                            <?php else: ?>
+                            <input type="hidden" name="frag_imagem_galeria_edit" value="">
+                            <?php endif; ?>
+                            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                                <label style="font-size:10px;color:#aaa;">OU nova:</label>
+                                <input type="file" name="frag_imagem_upload_edit" accept="image/*" style="font-size:10px;max-width:140px;">
+                                <button type="submit" class="botao btn-success" style="font-size:10px;padding:2px 6px;">💾 Salvar</button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -1229,86 +1154,293 @@ $fragmentos_craft = $conexao->query("
     <?php endforeach; ?>
 </table>
 <?php endif; ?>
-<?php endif; /* fim cristais_craft não vazio */ ?>
 
 <div class="sep"></div>
 
-<h3>➕ Adicionar Cristal de Craft a um Jogador</h3>
-<div class="sep"></div>
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 🧩 ADICIONAR FRAGMENTOS DE CRISTAL A UM JOGADOR   -->
+<!-- ═══════════════════════════════════════════════════ -->
+<h3>🧩 Adicionar Fragmentos de Cristal a um Jogador</h3>
+<div class="sub2" style="margin-bottom:8px;">
+    Adiciona fragmentos de cristal ao inventário de um jogador (aba <b>Fragmentos</b> → aparecem no Ferreiro para forja).
+    <b style="color:#cf6ecf;">Diferente de adicionar o cristal completo</b> — aqui o jogador recebe os fragmentos e precisa juntar a quantidade necessária no Ferreiro para obter o cristal.
+</div>
 
-<?php if (empty($cristais_craft)): ?>
-    <div class="alert-warning">
-        ⚠️ Nenhum cristal de craft cadastrado em <code>table_usaveis</code> com categoria <code>cristal_craft</code>.
-        Cadastre cristais de craft primeiro pelo editor de banco para poder distribuí-los.
-    </div>
+<?php if (empty($fragmentos_craft)): ?>
+    <div class="alert-warning">⚠️ Nenhum fragmento cadastrado ainda. Cadastre fragmentos na seção <b>Fragmentos de Craft</b> acima.</div>
 <?php else: ?>
-<form method="POST" onsubmit="return validarFormularioCraft()">
-    <input type="hidden" name="action" value="adicionar_cristal_craft">
-    <table width="100%">
-        <tr>
-            <td width="50%" valign="top" style="padding-right:10px;">
-                <label>Nome do Jogador:</label><br>
-                <input type="text" name="usuario_craft" id="usuario_craft" placeholder="Nome do jogador" style="width:100%;">
-            </td>
-            <td width="20%" valign="top" style="padding-right:10px;">
-                <label>Quantidade:</label><br>
-                <input type="number" name="quantidade_craft" id="quantidade_craft" value="1" min="1" max="99" style="width:100%;">
-            </td>
-            <td width="30%" valign="bottom">
-                <button type="submit" class="botao btn-success">⚙️ Adicionar Cristais de Craft</button>
-            </td>
-        </tr>
-    </table>
+
+<?php if ($mensagem_frag && ($_POST['action'] ?? '') === 'dar_fragmento_jogador'): ?>
+    <div class="alert-<?php echo $tipo_mensagem_frag; ?>"><?php echo htmlspecialchars($mensagem_frag); ?></div>
     <div class="sep"></div>
-    <label>Selecione o tipo de cristal de craft:</label>
-    <div class="sep"></div>
-    <table width="100%">
-        <tr>
-        <?php foreach ($cristais_craft as $cristal): ?>
-        <?php $frag_card = (int)($cristal['fragmentos_necessarios'] ?? 0); if ($frag_card <= 0) $frag_card = CRISTAL_FRAG_DEFAULT; ?>
-        <td valign="top" style="padding:5px;">
-            <label style="display:block; cursor:pointer;" id="craft_card_<?php echo $cristal['id']; ?>" onclick="selecionarCraft(<?php echo $cristal['id']; ?>)">
-                <div style="border:1px solid #6a2a6a; background:#1a0a1a; padding:10px; text-align:center;">
-                    <img src="../_img/Craft/<?php echo htmlspecialchars($cristal['imagem']); ?>"
-                         onerror="this.style.display='none'"
-                         style="width:48px;height:48px;object-fit:contain;display:block;margin:0 auto 6px auto;" />
-                    <div style="font-weight:bold; color:#cf6ecf; margin-bottom:5px;"><?php echo htmlspecialchars($cristal['nome']); ?></div>
-                    <div class="sub2"><?php echo htmlspecialchars($cristal['descricao']); ?></div>
-                    <div style="margin-top:6px;background:#2a0d2a;border:1px dashed #cf6ecf;padding:3px 6px;font-size:11px;color:#e0a0e0;">
-                        🧩 <b><?php echo $frag_card; ?> frags</b> → 1× cristal
-                    </div>
-                    <input type="radio" name="cristal_craft_id" value="<?php echo $cristal['id']; ?>" style="display:none;">
-                </div>
-            </label>
-        </td>
+<?php endif; ?>
+
+<form method="POST" style="background:#1a0a1a;border:1px solid #6a2a6a;border-radius:4px;padding:14px;">
+    <input type="hidden" name="action" value="dar_fragmento_jogador">
+    <input type="hidden" name="frag_id_jogador" id="frag_id_jogador_hidden" value="">
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+        <div style="flex:1;min-width:180px;">
+            <label style="display:block;margin-bottom:4px;color:#cf6ecf;font-weight:bold;">👤 Nome do Jogador:</label>
+            <input type="text" name="usuario_fragmento" placeholder="Nome exato do jogador" required style="width:100%;padding:6px 8px;background:#0d000d;border:1px solid #6a2a6a;color:#fff;border-radius:3px;">
+        </div>
+        <div style="flex:0 0 100px;">
+            <label style="display:block;margin-bottom:4px;color:#cf6ecf;font-weight:bold;">🔢 Quantidade:</label>
+            <input type="number" name="qtd_jogador" value="1" min="1" max="99" style="width:100%;padding:6px 8px;background:#0d000d;border:1px solid #6a2a6a;color:#cf6ecf;font-weight:bold;border-radius:3px;text-align:center;">
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;">
+            <button type="submit" class="botao btn-success" style="padding:8px 20px;" onclick="if(!document.getElementById('frag_id_jogador_hidden').value){alert('Selecione um fragmento abaixo!');return false;}">🧩 Dar Fragmentos</button>
+        </div>
+    </div>
+
+    <label style="display:block;margin-bottom:6px;color:#cf6ecf;font-weight:bold;">Selecione o fragmento:</label>
+    <div id="frag_dar_cards" style="display:flex;flex-wrap:wrap;gap:8px;">
+        <?php foreach ($fragmentos_craft as $f):
+            $img_url_card = '../_img/Fragmento%20de%20Cristal/' . rawurlencode($f['imagem'] ?? '');
+        ?>
+        <div class="frag-dar-card" data-frag-id="<?php echo (int)$f['id']; ?>"
+             onclick="selecionarFragDar(<?php echo (int)$f['id']; ?>)"
+             style="width:90px;border:2px solid #4a1a4a;background:#0d000d;padding:8px;text-align:center;cursor:pointer;border-radius:4px;transition:border-color 0.15s;">
+            <?php if (!empty($f['imagem'])): ?>
+                <img src="<?php echo $img_url_card; ?>" onerror="this.style.display='none'" style="width:48px;height:48px;object-fit:contain;display:block;margin:0 auto 4px auto;">
+            <?php else: ?>
+                <div style="width:48px;height:48px;border:1px dashed #555;margin:0 auto 4px auto;display:flex;align-items:center;justify-content:center;color:#555;font-size:18px;">🧩</div>
+            <?php endif; ?>
+            <div style="font-size:10px;color:#cf6ecf;font-weight:bold;word-break:break-word;"><?php echo htmlspecialchars($f['nome']); ?></div>
+            <?php if (!empty($f['alvo_nome'])): ?>
+                <div style="font-size:9px;color:#888;margin-top:2px;">→ <?php echo htmlspecialchars($f['alvo_nome']); ?></div>
+            <?php endif; ?>
+        </div>
         <?php endforeach; ?>
-        </tr>
-    </table>
-    <div id="erro-craft" class="alert-error" style="display:none;"></div>
+    </div>
+    <div id="frag_dar_erro" style="display:none;color:#ff4444;margin-top:6px;font-size:12px;"></div>
 </form>
 <?php endif; ?>
 
-<div class="sep"></div>
-<h3>📊 Cristais de Craft dos Jogadores</h3>
-<div class="sep"></div>
 
-<?php if (empty($jogadores_craft)): ?>
-    <p class="sub2">Nenhum jogador possui cristais de craft ainda.</p>
+</div>
+<div class="box_bottom"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ══ FRAGMENTOS DE CRISTAL DE BUFF ═══════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<?php
+// ── Handlers PHP para buff fragments ──────────────────────────────────────────
+$mensagem_buff_frag = ''; $tipo_mensagem_buff_frag = '';
+
+// Dar fragmentos de buff ao próprio admin (TESTE)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'dar_buff_frag_teste') {
+    $bid  = (int)($_POST['buff_frag_id'] ?? 0);
+    $qtd  = max(1, min(99, (int)($_POST['buff_frag_qtd'] ?? 3)));
+    $meuId = (int)($db['id'] ?? 0);
+    if ($bid > 0 && $meuId > 0) {
+        try {
+            $pkBF = Database::autoIncPK('id');
+            $conexao->exec("CREATE TABLE IF NOT EXISTS buff_fragmentos (
+                $pkBF,
+                usuarioid INTEGER NOT NULL,
+                itemid INTEGER NOT NULL,
+                quantidade INTEGER NOT NULL DEFAULT 0,
+                UNIQUE(usuarioid, itemid)
+            )");
+            $sql = Database::isMysql()
+                ? "INSERT INTO buff_fragmentos (usuarioid, itemid, quantidade) VALUES (?,?,?)
+                   ON DUPLICATE KEY UPDATE quantidade = quantidade + VALUES(quantidade)"
+                : "INSERT INTO buff_fragmentos (usuarioid, itemid, quantidade) VALUES (?,?,?)
+                   ON CONFLICT(usuarioid,itemid) DO UPDATE SET quantidade = buff_fragmentos.quantidade + EXCLUDED.quantidade";
+            $conexao->prepare($sql)->execute([$meuId, $bid, $qtd]);
+            $fn = $conexao->prepare("SELECT nome FROM table_usaveis WHERE id=?");
+            $fn->execute([$bid]);
+            $fnRow = $fn->fetch(PDO::FETCH_ASSOC);
+            $mensagem_buff_frag = "✅ +{$qtd} fragmento(s) de buff «{$fnRow['nome']}» adicionados ao seu inventário (TESTE).";
+            $tipo_mensagem_buff_frag = 'success';
+        } catch (Exception $e) {
+            $mensagem_buff_frag = 'Erro: '.$e->getMessage(); $tipo_mensagem_buff_frag = 'error';
+        }
+    }
+}
+
+// Dar fragmentos de buff a um jogador
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'dar_buff_frag_jogador') {
+    $bid            = (int)($_POST['buff_frag_id_jogador'] ?? 0);
+    $qtd            = max(1, min(99, (int)($_POST['buff_frag_qtd_jogador'] ?? 1)));
+    $usuario_busca  = trim($_POST['usuario_buff_fragmento'] ?? '');
+    if ($bid > 0 && $usuario_busca !== '') {
+        $stmt_u = $conexao->prepare("SELECT id, usuario FROM usuarios WHERE LOWER(usuario) = LOWER(?)");
+        $stmt_u->execute([$usuario_busca]);
+        $usuario_destino = $stmt_u->fetch(PDO::FETCH_ASSOC);
+        if (!$usuario_destino) {
+            $mensagem_buff_frag = "Usuário '$usuario_busca' não encontrado."; $tipo_mensagem_buff_frag = 'error';
+        } else {
+            try {
+                $pkBF = Database::autoIncPK('id');
+                $conexao->exec("CREATE TABLE IF NOT EXISTS buff_fragmentos (
+                    $pkBF,
+                    usuarioid INTEGER NOT NULL,
+                    itemid INTEGER NOT NULL,
+                    quantidade INTEGER NOT NULL DEFAULT 0,
+                    UNIQUE(usuarioid, itemid)
+                )");
+                $sql = Database::isMysql()
+                    ? "INSERT INTO buff_fragmentos (usuarioid, itemid, quantidade) VALUES (?,?,?)
+                       ON DUPLICATE KEY UPDATE quantidade = quantidade + VALUES(quantidade)"
+                    : "INSERT INTO buff_fragmentos (usuarioid, itemid, quantidade) VALUES (?,?,?)
+                       ON CONFLICT(usuarioid,itemid) DO UPDATE SET quantidade = buff_fragmentos.quantidade + EXCLUDED.quantidade";
+                $conexao->prepare($sql)->execute([$usuario_destino['id'], $bid, $qtd]);
+                $fn = $conexao->prepare("SELECT nome FROM table_usaveis WHERE id=?");
+                $fn->execute([$bid]);
+                $fnRow = $fn->fetch(PDO::FETCH_ASSOC);
+                $mensagem_buff_frag = "✅ +{$qtd} fragmento(s) de buff «{$fnRow['nome']}» adicionados para «{$usuario_destino['usuario']}».";
+                $tipo_mensagem_buff_frag = 'success';
+            } catch (Exception $e) {
+                $mensagem_buff_frag = 'Erro: '.$e->getMessage(); $tipo_mensagem_buff_frag = 'error';
+            }
+        }
+    } else {
+        $mensagem_buff_frag = 'Dados inválidos.'; $tipo_mensagem_buff_frag = 'error';
+    }
+}
+
+// Configurar quantos fragmentos são necessários por cristal de buff
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'config_buff_frag_qtd') {
+    $bid  = (int)($_POST['buff_cfg_id'] ?? 0);
+    $qtd  = (int)($_POST['buff_cfg_qtd'] ?? 3);
+    if ($bid > 0 && $qtd >= 2 && $qtd <= 20) {
+        try {
+            $conexao->prepare("UPDATE table_usaveis SET fragmentos_necessarios=? WHERE id=? AND categoria='cristal_buff'")
+                    ->execute([$qtd, $bid]);
+            $mensagem_buff_frag = "✅ Configuração salva: {$qtd} fragmento(s) para forjar.";
+            $tipo_mensagem_buff_frag = 'success';
+        } catch (Exception $e) {
+            $mensagem_buff_frag = 'Erro: '.$e->getMessage(); $tipo_mensagem_buff_frag = 'error';
+        }
+    }
+}
+
+// Listar cristais de buff disponíveis (usados como fragmento_alvo)
+$cristais_buff_list = $conexao->query("SELECT * FROM table_usaveis WHERE categoria='cristal_buff' ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+?>
+<div class="box_top" style="background:linear-gradient(90deg,#0a1a0a,#0d2a0d,#0a1a0a); margin-top:10px;">🧩 Fragmentos de Cristal de Buff</div>
+<div class="box_middle">
+
+<div style="background:#0a1a0a;border-left:3px solid #2ecc71;padding:8px 12px;margin-bottom:8px;">
+    <b style="color:#2ecc71;">📘 Como funciona?</b><br>
+    <span class="sub2">Os <b>Fragmentos de Buff</b> são drops de missão (50% de chance quando rola um cristal buff). O jogador junta N fragmentos do mesmo cristal no Ferreiro e tenta forjar com <b>30% de chance</b> (Provably Fair). Se falhar, os fragmentos são destruídos. Configure abaixo quantos fragmentos são necessários para cada cristal.</span>
+</div>
+
+<?php if ($mensagem_buff_frag): ?>
+    <div class="alert-<?php echo $tipo_mensagem_buff_frag; ?>"><?php echo htmlspecialchars($mensagem_buff_frag); ?></div>
+    <div class="sep"></div>
+<?php endif; ?>
+
+<?php if (empty($cristais_buff_list)): ?>
+    <div class="alert-warning">⚠️ Nenhum Cristal de Buff cadastrado. Crie cristais de buff acima primeiro.</div>
 <?php else: ?>
+
+<!-- ── CONFIGURAR QUANTIDADE DE FRAGMENTOS POR CRISTAL ──────────────── -->
+<h3>⚙️ Configurar Fragmentos Necessários</h3>
+<div class="sub2" style="margin-bottom:8px;">
+    Define quantos fragmentos são necessários para tentar forjar cada tipo de cristal buff. Padrão: 3.
+</div>
 <table class="adm-table">
     <tr>
-        <th>Jogador</th>
-        <th>Tipo de Cristal</th>
-        <th>Quantidade</th>
+        <th width="60">Cristal</th>
+        <th>Nome</th>
+        <th width="200">Fragmentos necessários</th>
+        <th width="80">Ação</th>
     </tr>
-    <?php foreach ($jogadores_craft as $item): ?>
+    <?php foreach ($cristais_buff_list as $cb):
+        $frag_qtd = (int)($cb['fragmentos_necessarios'] ?? 0);
+        if ($frag_qtd < 2 || $frag_qtd > 20) $frag_qtd = 3;
+    ?>
     <tr>
-        <td><?php echo htmlspecialchars($item['usuario']); ?></td>
-        <td><?php echo htmlspecialchars($item['cristal_nome']); ?></td>
-        <td><span style="background:#5a1a5a; color:#cf6ecf; padding:2px 8px; font-weight:bold; font-size:11px; border:1px solid #cf6ecf;"><?php echo (int)$item['quantidade']; ?>x</span></td>
+        <td align="center">
+            <?php if (!empty($cb['imagem'])): ?>
+                <img src="../_img/Buff/<?php echo htmlspecialchars($cb['imagem']); ?>" onerror="this.style.display='none'" style="width:42px;height:42px;object-fit:contain;border:1px solid #2ecc71;background:#0a1a0a;padding:1px;">
+            <?php else: ?>
+                <span style="font-size:22px;">💚</span>
+            <?php endif; ?>
+        </td>
+        <td>
+            <b style="color:#2ecc71;"><?php echo htmlspecialchars($cb['nome']); ?></b><br>
+            <span class="sub2"><?php echo htmlspecialchars($cb['descricao'] ?? ''); ?></span>
+        </td>
+        <td>
+            <form method="POST" style="display:flex;align-items:center;gap:8px;margin:0;">
+                <input type="hidden" name="action" value="config_buff_frag_qtd">
+                <input type="hidden" name="buff_cfg_id" value="<?php echo (int)$cb['id']; ?>">
+                <input type="number" name="buff_cfg_qtd" value="<?php echo $frag_qtd; ?>" min="2" max="20" style="width:60px;text-align:center;font-weight:bold;color:#2ecc71;background:#0a1a0a;border:1px solid #2a6a2a;">
+                <span style="color:#aaa;font-size:11px;">fragmentos → 1 cristal</span>
+                <button type="submit" class="botao btn-success" style="font-size:10px;padding:2px 8px;">💾</button>
+            </form>
+        </td>
+        <td>
+            <form method="POST" style="margin:0;">
+                <input type="hidden" name="action" value="dar_buff_frag_teste">
+                <input type="hidden" name="buff_frag_id" value="<?php echo (int)$cb['id']; ?>">
+                <input type="hidden" name="buff_frag_qtd" value="<?php echo $frag_qtd; ?>">
+                <button type="submit" class="botao" style="font-size:10px;background:#0a3a1a;color:#2ecc71;border:1px solid #2a6a2a;width:100%;" title="Adiciona <?php echo $frag_qtd; ?> fragmento(s) deste cristal ao seu inventário para testar.">🧪 TESTE +<?php echo $frag_qtd; ?></button>
+            </form>
+        </td>
     </tr>
     <?php endforeach; ?>
 </table>
+
+<div class="sep"></div>
+
+<!-- ── DAR FRAGMENTOS DE BUFF A UM JOGADOR ─────────────────────────── -->
+<h3>🧩 Dar Fragmentos de Buff a um Jogador</h3>
+<div class="sub2" style="margin-bottom:8px;">
+    Adiciona fragmentos de cristal de buff ao inventário de um jogador (aparecem no Ferreiro para forja, aba <b>Fragmentos</b>).
+</div>
+
+<?php if ($mensagem_buff_frag && ($_POST['action'] ?? '') === 'dar_buff_frag_jogador'): ?>
+    <div class="alert-<?php echo $tipo_mensagem_buff_frag; ?>"><?php echo htmlspecialchars($mensagem_buff_frag); ?></div>
+    <div class="sep"></div>
+<?php endif; ?>
+
+<form method="POST" style="background:#0a1a0a;border:1px solid #2a6a2a;border-radius:4px;padding:14px;">
+    <input type="hidden" name="action" value="dar_buff_frag_jogador">
+    <input type="hidden" name="buff_frag_id_jogador" id="buff_frag_id_jogador_hidden" value="">
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+        <div style="flex:1;min-width:180px;">
+            <label style="display:block;margin-bottom:4px;color:#2ecc71;font-weight:bold;">👤 Nome do Jogador:</label>
+            <input type="text" name="usuario_buff_fragmento" placeholder="Nome exato do jogador" required style="width:100%;padding:6px 8px;background:#000d00;border:1px solid #2a6a2a;color:#fff;border-radius:3px;">
+        </div>
+        <div style="flex:0 0 100px;">
+            <label style="display:block;margin-bottom:4px;color:#2ecc71;font-weight:bold;">🔢 Quantidade:</label>
+            <input type="number" name="buff_frag_qtd_jogador" value="1" min="1" max="99" style="width:100%;padding:6px 8px;background:#000d00;border:1px solid #2a6a2a;color:#2ecc71;font-weight:bold;border-radius:3px;text-align:center;">
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;">
+            <button type="submit" class="botao btn-success" style="padding:8px 20px;background:#0a3a1a;color:#2ecc71;border:1px solid #2ecc71;" onclick="if(!document.getElementById('buff_frag_id_jogador_hidden').value){alert('Selecione um cristal abaixo!');return false;}">🧩 Dar Fragmentos</button>
+        </div>
+    </div>
+
+    <label style="display:block;margin-bottom:6px;color:#2ecc71;font-weight:bold;">Selecione o cristal (tipo do fragmento):</label>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <?php foreach ($cristais_buff_list as $cb): ?>
+        <div class="buff-frag-dar-card" data-id="<?php echo (int)$cb['id']; ?>"
+             onclick="selecionarBuffFragDar(<?php echo (int)$cb['id']; ?>)"
+             style="width:90px;border:2px solid #2a6a2a;background:#000d00;padding:8px;text-align:center;cursor:pointer;border-radius:4px;transition:border-color 0.15s;">
+            <?php if (!empty($cb['imagem'])): ?>
+                <img src="../_img/Buff/<?php echo htmlspecialchars($cb['imagem']); ?>"
+                     onerror="this.style.display='none'"
+                     style="width:48px;height:48px;object-fit:contain;display:block;margin:0 auto 4px auto;filter:brightness(0.6) sepia(1) hue-rotate(80deg) saturate(2);">
+            <?php else: ?>
+                <div style="width:48px;height:48px;border:1px dashed #2a6a2a;margin:0 auto 4px auto;display:flex;align-items:center;justify-content:center;color:#2a6a2a;font-size:18px;">🧩</div>
+            <?php endif; ?>
+            <div style="font-size:10px;color:#2ecc71;font-weight:bold;word-break:break-word;"><?php echo htmlspecialchars($cb['nome']); ?></div>
+            <?php
+                $fqn = (int)($cb['fragmentos_necessarios'] ?? 0);
+                if ($fqn < 2) $fqn = 3;
+            ?>
+            <div style="font-size:9px;color:#aaa;margin-top:2px;"><?php echo $fqn; ?> frags p/ forjar</div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</form>
+
 <?php endif; ?>
 
 </div>
@@ -1357,26 +1489,54 @@ function validarFormularioBuff() {
     if (!cristalSelecionado) { erroDiv.textContent = '❌ Selecione um tipo de cristal de buff.'; erroDiv.style.display = 'block'; return false; }
     return true;
 }
-function selecionarCraft(id) {
-    document.querySelectorAll('[id^="craft_card_"]').forEach(function(c) {
-        c.querySelector('div').style.borderColor = '#6a2a6a';
-        c.querySelector('div').style.background = '#1a0a1a';
+function selecionarCristalAlvo(id, nome) {
+    document.querySelectorAll('.cristal-alvo-card').forEach(function(c) {
+        c.style.borderColor = '#4a1a4a';
+        c.style.background  = '#0d000d';
     });
-    var card = document.getElementById('craft_card_' + id);
-    card.querySelector('div').style.borderColor = '#cf6ecf';
-    card.querySelector('div').style.background = '#2a0d2a';
-    card.querySelector('input[type="radio"]').checked = true;
-    document.getElementById('erro-craft').style.display = 'none';
+    var card = document.querySelector('.cristal-alvo-card[data-alvo-id="' + id + '"]');
+    if (card) { card.style.borderColor = '#FFD700'; card.style.background = '#1a1200'; }
+    document.getElementById('frag_alvo_id_hidden').value = id;
+    var lbl = document.getElementById('frag_alvo_label');
+    if (lbl) lbl.textContent = '→ ' + nome;
 }
-function validarFormularioCraft() {
-    var usuario = document.getElementById('usuario_craft').value.trim();
-    var quantidade = document.getElementById('quantidade_craft').value;
-    var cristalSelecionado = document.querySelector('input[name="cristal_craft_id"]:checked');
-    var erroDiv = document.getElementById('erro-craft');
-    if (!usuario) { erroDiv.textContent = '❌ Informe o nome do jogador.'; erroDiv.style.display = 'block'; return false; }
-    if (!quantidade || quantidade < 1 || quantidade > 99) { erroDiv.textContent = '❌ Quantidade inválida. Use entre 1 e 99.'; erroDiv.style.display = 'block'; return false; }
-    if (!cristalSelecionado) { erroDiv.textContent = '❌ Selecione um tipo de cristal de craft.'; erroDiv.style.display = 'block'; return false; }
-    return true;
+function selecionarFragImg(img, hiddenId, labelId, containerClass) {
+    document.querySelectorAll('.' + containerClass + ' .frag-img-card').forEach(function(c) {
+        c.style.borderColor = '#4a1a4a';
+        c.style.background  = '#0d000d';
+    });
+    var card = document.querySelector('.' + containerClass + ' .frag-img-card[data-img="' + img + '"]');
+    if (card) { card.style.borderColor = '#cf6ecf'; card.style.background = '#1a0a1a'; }
+    var hid = document.getElementById(hiddenId);
+    if (hid) hid.value = img;
+    var lbl = document.getElementById(labelId);
+    if (lbl) lbl.textContent = '→ ' + img;
+}
+function selecionarFragDar(id) {
+    document.querySelectorAll('.frag-dar-card').forEach(function(c) {
+        c.style.borderColor = '#4a1a4a';
+        c.style.background  = '#0d000d';
+    });
+    var card = document.querySelector('.frag-dar-card[data-frag-id="' + id + '"]');
+    if (card) {
+        card.style.borderColor = '#cf6ecf';
+        card.style.background  = '#2a0d2a';
+    }
+    document.getElementById('frag_id_jogador_hidden').value = id;
+    var erroDiv = document.getElementById('frag_dar_erro');
+    if (erroDiv) erroDiv.style.display = 'none';
+}
+function selecionarBuffFragDar(id) {
+    document.querySelectorAll('.buff-frag-dar-card').forEach(function(c) {
+        c.style.borderColor = '#2a6a2a';
+        c.style.background  = '#000d00';
+    });
+    var card = document.querySelector('.buff-frag-dar-card[data-id="' + id + '"]');
+    if (card) {
+        card.style.borderColor = '#2ecc71';
+        card.style.background  = '#0d2a0d';
+    }
+    document.getElementById('buff_frag_id_jogador_hidden').value = id;
 }
 </script>
 

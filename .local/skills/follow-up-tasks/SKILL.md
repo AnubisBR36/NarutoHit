@@ -31,7 +31,7 @@ Only propose follow-ups that represent genuine, actionable work.
 
 If your current task already has downstream tasks depending on it (listed in your task assignment), skip calling `proposeFollowUpTasks` entirely — those tasks already cover the planned next steps.
 
-Only call `proposeFollowUpTasks` once per task — the system rejects duplicate calls. If you're marking it complete again after more work, review your previously proposed follow-ups. If any are now stale or no longer relevant given the new work, call `markFollowUpTaskObsolete` to remove them.
+`proposeFollowUpTasks` is **one-shot per assigned project task** — not per turn, not per subfeature, not per `mark_task_complete` cycle. The system rejects duplicate calls. If you're marking complete again after more work on the same assigned task, review your previously proposed follow-ups; if any are now stale, call `markFollowUpTaskObsolete` to retract them.
 
 ## Examples
 

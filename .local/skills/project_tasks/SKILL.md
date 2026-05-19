@@ -54,9 +54,9 @@ const task = await getProjectTask({ taskRef: "#1" });
 // "Task #1 (Add authentication)"
 ```
 
-### updateProjectTask(taskRef, title=None, description=None, dependsOn=None, artifactKinds=None)
+### updateProjectTask(taskRef, title=None, description=None, filePath=None, dependsOn=None, artifactKinds=None)
 
-Update an existing project task's content. Only provided fields are updated.
+Update an existing project task's content. Only provided fields are updated. Editing a plan file alone does NOT update the task — you must call `updateProjectTask` to persist changes.
 
 **Parameters:**
 
@@ -64,19 +64,27 @@ Update an existing project task's content. Only provided fields are updated.
 |-----------|------|----------|-------------|
 | `taskRef` | str | Yes | Task ref to update |
 | `title` | str | No | New title |
-| `description` | str | No | New description |
+| `description` | str | No | New description as an inline string. Use this when there is no plan file. Mutually exclusive with `filePath`. |
+| `filePath` | str | No | Path to a plan file under `.local/tasks/`. If you've created/edited a plan file, pass its path here and its content becomes the new description. Mutually exclusive with `description`. |
 | `dependsOn` | array of str | No | Full list of dependency task refs (replaces existing) |
 | `artifactKinds` | array | No | Updated artifact kind tags. Pass `[]` to clear stale tags when the task is no longer artifact-producing. |
 
 **Returns:** Dict with `taskRef`, `title`, `description`, `state`, `createdAt`, `updatedAt`
 
-**Example:**
+**Examples:**
 
 ```javascript
+// Edited plan file → push its content as the new description.
 await updateProjectTask({
   taskRef: "#1",
-  title: "Updated title",
-  artifactKinds: ["web"],
+  title: "Agentic canvas prototype (tldraw)",
+  filePath: ".local/tasks/agentic-canvas-prototype.md",
+});
+
+// No plan file → pass the new description inline.
+await updateProjectTask({
+  taskRef: "#1",
+  description: "Add a Canvas toggle button to the preview pane.",
 });
 ```
 

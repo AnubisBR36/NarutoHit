@@ -1,4 +1,5 @@
 <?php require_once('trava.php'); ?>
+<?php require_once('recompensa_diaria.php'); ?>
 <?php if(isset($db['config_recuperacao']) && $db['config_recuperacao']==0) require_once('avisorecuperacao.php'); ?>
 <?php
 require_once('Encrypt.php');
@@ -344,6 +345,39 @@ $gen_data = json_encode(['label'=>'Genjutsu','stat_icon'=>'_img/Icones/gen.png',
 .bonus-tag:hover::after {
     opacity: 1;
 }
+.penalty-tag {
+    position: relative;
+    color: #ff4444;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    cursor: help;
+    display: inline-block;
+    margin-left: 2px;
+}
+.penalty-tag::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 6px);
+    transform: translateX(-50%);
+    background: #1a0a0a;
+    color: #ff4444;
+    border: 1px solid #8B1414;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: normal;
+    text-shadow: none;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 999;
+}
+.penalty-tag:hover::after {
+    opacity: 1;
+}
 .status-icon-tip {
     display: inline-block;
     cursor: help;
@@ -529,6 +563,9 @@ $gen_data = json_encode(['label'=>'Genjutsu','stat_icon'=>'_img/Icones/gen.png',
                 <?php if($tai_bonus_total > 0): ?>
                     <span class="bonus-tag" data-tip="<?php echo htmlspecialchars($tai_tooltip); ?>">+<?php echo $tai_bonus_total; ?></span>
                 <?php endif; ?>
+                <?php if($dou_tai_pen > 0): ?>
+                    <span class="penalty-tag" data-tip="Penalidade Doujutsu: -<?php echo $dou_tai_pen; ?>">-<?php echo $dou_tai_pen; ?></span>
+                <?php endif; ?>
                 <span class="status-icon-tip" data-stat="<?php echo htmlspecialchars($tai_data); ?>"><img src="_img/Status.png" style="width:16px;height:16px;vertical-align:middle;" /></span><?php if($buff_tai_pct>0): ?><img src="_img/Buff/Buff.png" style="width:16px;height:16px;vertical-align:middle;margin-left:3px;filter:drop-shadow(0 0 3px #FFD700);" /><?php endif; ?>
             </td>
         </tr>
@@ -548,6 +585,9 @@ $gen_data = json_encode(['label'=>'Genjutsu','stat_icon'=>'_img/Icones/gen.png',
                 <?php if($nin_bonus_total > 0): ?>
                     <span class="bonus-tag" data-tip="<?php echo htmlspecialchars($nin_tooltip); ?>">+<?php echo $nin_bonus_total; ?></span>
                 <?php endif; ?>
+                <?php if($dou_nin_pen > 0): ?>
+                    <span class="penalty-tag" data-tip="Penalidade Doujutsu: -<?php echo $dou_nin_pen; ?>">-<?php echo $dou_nin_pen; ?></span>
+                <?php endif; ?>
                 <span class="status-icon-tip" data-stat="<?php echo htmlspecialchars($nin_data); ?>"><img src="_img/Status.png" style="width:16px;height:16px;vertical-align:middle;" /></span><?php if($buff_nin_pct>0): ?><img src="_img/Buff/Buff.png" style="width:16px;height:16px;vertical-align:middle;margin-left:3px;filter:drop-shadow(0 0 3px #FFD700);" /><?php endif; ?>
             </td>
         </tr>
@@ -566,6 +606,9 @@ $gen_data = json_encode(['label'=>'Genjutsu','stat_icon'=>'_img/Icones/gen.png',
                 <b>| <?php echo $gen_total; ?> |</b>
                 <?php if($gen_bonus_total > 0): ?>
                     <span class="bonus-tag" data-tip="<?php echo htmlspecialchars($gen_tooltip); ?>">+<?php echo $gen_bonus_total; ?></span>
+                <?php endif; ?>
+                <?php if($dou_gen_pen > 0): ?>
+                    <span class="penalty-tag" data-tip="Penalidade Doujutsu: -<?php echo $dou_gen_pen; ?>">-<?php echo $dou_gen_pen; ?></span>
                 <?php endif; ?>
                 <span class="status-icon-tip" data-stat="<?php echo htmlspecialchars($gen_data); ?>"><img src="_img/Status.png" style="width:16px;height:16px;vertical-align:middle;" /></span><?php if($buff_gen_pct>0): ?><img src="_img/Buff/Buff.png" style="width:16px;height:16px;vertical-align:middle;margin-left:3px;filter:drop-shadow(0 0 3px #FFD700);" /><?php endif; ?>
             </td>

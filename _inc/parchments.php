@@ -1,7 +1,7 @@
 <?php
 require_once('trava.php');
 
-// Garante a tabela de fragmentos de cristal de craft (criada sob demanda)
+// Garante a tabela e colunas do sistema de fragmentos de cristal de craft
 try {
     $pkCF = Database::autoIncPK('id');
     $conexao->exec("CREATE TABLE IF NOT EXISTS craft_fragmentos (
@@ -12,6 +12,8 @@ try {
         UNIQUE(usuarioid, itemid)
     )");
 } catch (PDOException $e) {}
+try { $conexao->exec("ALTER TABLE table_usaveis ADD COLUMN IF NOT EXISTS cristal_alvo_id INTEGER NULL DEFAULT NULL"); } catch (PDOException $e) {}
+try { $conexao->exec("ALTER TABLE table_usaveis ADD COLUMN IF NOT EXISTS fragmentos_necessarios INTEGER NULL DEFAULT NULL"); } catch (PDOException $e) {}
 
 try {
     $stmt = $conexao->prepare("

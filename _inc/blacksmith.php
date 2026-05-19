@@ -1296,23 +1296,30 @@ if(isset($_GET['msg'])) {
     <div style="background:#1a1200;border:2px solid #8B6914;border-radius:6px;padding:10px;margin-top:8px;">
         <div style="color:#FFD700;font-weight:bold;font-size:14px;margin-bottom:6px;">🧩 Forja de Fragmentos</div>
         <div style="color:#aaa;font-size:12px;margin-bottom:8px;">
-            Junte <b style="color:#FFD700;">5 fragmentos</b> do mesmo equipamento para tentar forjá-lo.
-            O processo usa o <b style="color:#FF6600;">Sistema Provably Fair</b> com <b style="color:#e74c3c;">20% de chance de sucesso</b>.
-            Ao falhar, os 5 fragmentos são destruídos.
+            Junte fragmentos do mesmo tipo e tente forjar via <b style="color:#FF6600;">Sistema Provably Fair</b>.<br/>
+            <span style="color:#cf6ecf;">💎 Fragmentos de Cristal:</span> <b style="color:#cf6ecf;">30% de chance</b> — item raro, fragmentos destruídos ao falhar.<br/>
+            <span style="color:#FFD700;">⚔️ Fragmentos de Equipamento:</span> <b style="color:#e74c3c;">20% de chance</b> — fragmentos destruídos ao falhar.
         </div>
         
         <div id="fragmentList" style="display:flex;flex-wrap:wrap;gap:8px;min-height:60px;background:#111;border:1px solid #333;padding:8px;margin-bottom:10px;">
             <span style="color:#666;">Carregando fragmentos...</span>
         </div>
         
-        <div id="fragmentSelected" style="display:none;background:#1a1a00;border:1px solid #8B6914;border-radius:4px;padding:8px;margin-bottom:8px;">
-            <div style="color:#FFD700;font-weight:bold;font-size:12px;margin-bottom:4px;">Item selecionado para forjar:</div>
-            <div style="display:flex;align-items:center;gap:10px;">
-                <img id="fragSelImg" src="" style="width:48px;height:48px;object-fit:contain;border:1px solid #8B6914;" />
-                <div>
-                    <div id="fragSelNome" style="color:#FFD700;font-weight:bold;font-size:13px;"></div>
-                    <div id="fragSelQty" style="color:#aaa;font-size:11px;"></div>
-                    <div style="color:#FF6600;font-size:11px;">Chance de sucesso: <b>20%</b></div>
+        <div id="fragmentSelected" style="display:none;background:#1a1a00;border:1px solid #8B6914;border-radius:4px;padding:10px;margin-bottom:8px;">
+            <div style="color:#FFD700;font-weight:bold;font-size:12px;margin-bottom:6px;">Item selecionado para forjar:</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <img id="fragSelImg" src="" style="width:48px;height:48px;object-fit:contain;border:1px solid #8B6914;flex-shrink:0;" />
+                <div style="flex:1;min-width:0;">
+                    <div id="fragSelNome" style="color:#FFD700;font-weight:bold;font-size:13px;margin-bottom:2px;"></div>
+                    <div id="fragSelQty" style="color:#aaa;font-size:11px;margin-bottom:6px;"></div>
+                    <!-- Barra de progresso -->
+                    <div style="font-size:10px;color:#aaa;margin-bottom:3px;">
+                        Progresso: <span id="fragProgLabel" style="font-weight:bold;color:#FFD700;">0/5</span>
+                    </div>
+                    <div style="width:100%;height:12px;background:#111;border:1px solid #333;border-radius:6px;overflow:hidden;">
+                        <div id="fragProgBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8B6914,#FFD700);border-radius:6px;transition:width 0.4s ease;"></div>
+                    </div>
+                    <div id="fragChanceRow" style="color:#FF6600;font-size:11px;margin-top:4px;">Chance de sucesso: <b>20%</b></div>
                 </div>
             </div>
         </div>
@@ -2049,17 +2056,24 @@ if(isset($_GET['msg'])) {
                     var precisa = f.precisa || 5;
                     var enough  = f.quantidade >= precisa;
                     var isCrystal = (f.tipo === 'crystal');
+                    var isBuff    = (f.tipo === 'buff');
                     var imgBase   = f.img_base || '_img/equipamentos/';
                     var imgFile = f.imagem || 'default.png';
                     var lastSlash = imgFile.lastIndexOf('/');
                     var lastDot   = imgFile.lastIndexOf('.');
-                    if(lastDot <= lastSlash) { imgFile += '.png'; }
+                    if(isCrystal) {
+                        // Fragmentos de cristal são sempre .png com fundo transparente
+                        if(lastDot > lastSlash) imgFile = imgFile.substring(0, lastDot);
+                        imgFile += '.png';
+                    } else {
+                        if(lastDot <= lastSlash) imgFile += '.png';
+                    }
                     var imgPath = imgBase + imgFile;
 
-                    // Cristal: borda roxa; Equipamento: borda dourada
-                    var borderEnough = isCrystal ? '#cf6ecf' : '#8B6914';
+                    // Cristal: roxo; Buff: verde; Equipamento: dourado
+                    var borderEnough = isCrystal ? '#cf6ecf' : (isBuff ? '#2ecc71' : '#8B6914');
                     var borderColor = enough ? borderEnough : '#444';
-                    var bgColor     = isCrystal ? '#1a001a' : '#2a2200';
+                    var bgColor     = isCrystal ? '#1a001a' : (isBuff ? '#001a05' : '#2a2200');
                     var opacity = enough ? '1' : '0.5';
                     var cursor = enough ? 'pointer' : 'default';
                     var div = $('<div></div>').css({
@@ -2072,8 +2086,8 @@ if(isset($_GET['msg'])) {
                         opacity: opacity,
                         position: 'relative'
                     });
-                    var badgeBg = isCrystal ? '#5a005a' : '#8B6914';
-                    var badgeFg = isCrystal ? '#cf6ecf' : '#FFD700';
+                    var badgeBg = isCrystal ? '#5a005a' : (isBuff ? '#0a5a1a' : '#8B6914');
+                    var badgeFg = isCrystal ? '#cf6ecf' : (isBuff ? '#2ecc71' : '#FFD700');
                     var badge = $('<div></div>').css({
                         position: 'absolute', top: '2px', right: '2px',
                         background: enough ? badgeBg : '#555',
@@ -2090,10 +2104,15 @@ if(isset($_GET['msg'])) {
                     // a imagem já tem a aparência desejada — sem filtro cinza nem overlay
                     // de rachadura. Caso contrário, aplica o visual padrão de "fragmento".
                     var hasOwnFragImg = (isCrystal && (f.has_frag_img == 1 || f.has_frag_img === '1'));
+                    // Buff: filtro verde em vez de cinza
+                    var fragFilter = hasOwnFragImg ? 'none'
+                        : isBuff ? 'brightness(0.7) sepia(1) hue-rotate(80deg) saturate(2)'
+                        : 'grayscale(100%) brightness(0.75) contrast(1.1)';
                     var img = $('<img>').attr('src', imgPath)
                         .error(function(){ $(this).attr('src', '_img/equipamentos/default.png'); })
                         .css({ width: '50px', height: '50px', objectFit: 'contain', display: 'block',
-                               filter: hasOwnFragImg ? 'none' : 'grayscale(100%) brightness(0.75) contrast(1.1)' });
+                               background: 'transparent',
+                               filter: fragFilter });
                     imgWrapper.append(img);
                     if (!hasOwnFragImg) {
                         var crackOverlay = $('<img>').attr('src', '_img/ferreiro/crack.svg').css({
@@ -2102,33 +2121,47 @@ if(isset($_GET['msg'])) {
                         });
                         imgWrapper.append(crackOverlay);
                     }
-                    // Tag tipo: CRISTAL ou (sem tag para equipamento)
-                    if(isCrystal) {
+                    // Tag tipo: CRISTAL, BUFF ou (sem tag para equipamento)
+                    if(isCrystal || isBuff) {
+                        var tagBg  = isBuff ? '#0a5a1a' : '#5a005a';
+                        var tagBdr = isBuff ? '#2ecc71' : '#cf6ecf';
+                        var tagTxt = isBuff ? 'BUFF' : 'CRISTAL';
                         var typeTag = $('<div></div>').css({
                             position: 'absolute', bottom: '22px', left: '2px',
-                            background: '#5a005a', color: '#fff',
+                            background: tagBg, color: '#fff',
                             fontSize: '8px', fontWeight: 'bold',
-                            padding: '0 3px', borderRadius: '2px', border: '1px solid #cf6ecf',
+                            padding: '0 3px', borderRadius: '2px', border: '1px solid ' + tagBdr,
                             zIndex: '3'
-                        }).text('CRISTAL');
+                        }).text(tagTxt);
                         div.append(typeTag);
                     }
-                    var nameColor = isCrystal ? '#cf6ecf' : '#aaa';
+                    var nameColor = isCrystal ? '#cf6ecf' : (isBuff ? '#2ecc71' : '#aaa');
                     var nome = $('<div></div>').css({ fontSize: '9px', color: nameColor, marginTop: '2px', lineHeight: '1.1', maxHeight: '22px', overflow: 'hidden' }).text(f.nome);
-                    div.append(badge).append(imgWrapper).append(nome);
+
+                    // Mini barra de progresso
+                    var pct = Math.min(100, Math.round((f.quantidade / precisa) * 100));
+                    var barColor = isCrystal ? 'linear-gradient(90deg,#6a006a,#cf6ecf)'
+                        : isBuff ? 'linear-gradient(90deg,#0a5a1a,#2ecc71)'
+                        : 'linear-gradient(90deg,#8B6914,#FFD700)';
+                    var miniBarWrap = $('<div></div>').css({ width: '100%', height: '4px', background: '#222', borderRadius: '2px', marginTop: '3px', overflow: 'hidden' });
+                    var miniBarFill = $('<div></div>').css({ height: '100%', width: pct + '%', background: barColor, borderRadius: '2px' });
+                    miniBarWrap.append(miniBarFill);
+
+                    div.append(badge).append(imgWrapper).append(nome).append(miniBarWrap);
                     div.data('fragment', f);
-                    if(enough) {
-                        div.click(function() {
-                            selectFragment($(this).data('fragment'));
-                            var sel = $(this);
-                            $('#fragmentList .frag-selected').removeClass('frag-selected').each(function(){
-                                var fd = $(this).data('fragment');
-                                var bc = (fd && fd.tipo === 'crystal') ? '#cf6ecf' : '#8B6914';
-                                $(this).css('border-color', bc);
-                            });
-                            sel.addClass('frag-selected').css('border-color', '#FFD700');
+                    // Todos os cards são clicáveis — se suficiente, habilita forja; senão mostra progresso
+                    div.css('cursor', 'pointer').click(function() {
+                        selectFragment($(this).data('fragment'));
+                        var sel = $(this);
+                        $('#fragmentList .frag-selected').removeClass('frag-selected').each(function(){
+                            var fd = $(this).data('fragment');
+                            var bc = (fd && fd.tipo === 'crystal') ? '#cf6ecf'
+                                   : (fd && fd.tipo === 'buff')    ? '#2ecc71'
+                                   : '#8B6914';
+                            $(this).css('border-color', bc);
                         });
-                    }
+                        sel.addClass('frag-selected').css('border-color', '#FFD700');
+                    });
                     container.append(div);
                 });
             },
@@ -2140,39 +2173,110 @@ if(isset($_GET['msg'])) {
     
     function selectFragment(f) {
         selectedFragment = f;
-        var precisa  = f.precisa || 5;
+        var precisa   = f.precisa || 5;
+        var enough    = f.quantidade >= precisa;
         var isCrystal = (f.tipo === 'crystal');
+        var isBuff    = (f.tipo === 'buff');
         var imgBase   = f.img_base || '_img/equipamentos/';
         var imgFile = f.imagem || 'default.png';
         var lastSlash = imgFile.lastIndexOf('/');
         var lastDot   = imgFile.lastIndexOf('.');
-        if(lastDot <= lastSlash) { imgFile += '.png'; }
-        var imgPath = imgBase + imgFile;
-        $('#fragSelImg').attr('src', imgPath).error(function(){ $(this).attr('src', '_img/equipamentos/default.png'); });
-
         if(isCrystal) {
-            // Cristal: forja garantida (100%), sem provably fair
+            // Fragmentos de cristal são sempre .png com fundo transparente
+            if(lastDot > lastSlash) imgFile = imgFile.substring(0, lastDot);
+            imgFile += '.png';
+        } else {
+            if(lastDot <= lastSlash) imgFile += '.png';
+        }
+        var imgPath = imgBase + imgFile;
+        $('#fragSelImg').attr('src', imgPath)
+            .css('background', 'transparent')
+            .error(function(){ $(this).attr('src', '_img/equipamentos/default.png'); });
+
+        var pctBig = Math.min(100, Math.round((f.quantidade / precisa) * 100));
+
+        if(isBuff) {
+            // Cristal de Buff: Provably Fair 30%, cor verde
+            $('#fragSelNome').text('Fragmento de ' + f.nome).css('color', '#2ecc71');
+            var restB = f.quantidade - precisa;
+            if(enough) {
+                $('#fragSelQty').html('Você tem <b>' + f.quantidade + '/' + precisa + '</b> fragmentos<br/>' +
+                    '<span style="color:#aaa;font-size:10px;">(restarão ' + (restB < 0 ? 0 : restB) + ' após a tentativa — fragmentos são destruídos mesmo se falhar)</span>');
+            } else {
+                $('#fragSelQty').html('Você tem <b>' + f.quantidade + '/' + precisa + '</b> fragmentos — ainda faltam <b style="color:#e74c3c;">' + (precisa - f.quantidade) + '</b> para tentar.');
+            }
+            $('#fragProgLabel').text(f.quantidade + '/' + precisa).css('color', '#2ecc71');
+            $('#fragProgBar').css({ width: pctBig + '%', background: 'linear-gradient(90deg,#0a5a1a,#2ecc71)' });
+            $('#fragChanceRow').html(enough ? 'Chance de sucesso: <b style="color:#2ecc71;">40%</b>' : '<span style="color:#e74c3c;">⛔ Fragmentos insuficientes para forjar</span>');
+            $('#fragmentSelected').css({ background: '#001a05', 'border-color': '#2ecc71' });
+            $('#fragSelImg').css('border-color', '#2ecc71');
+            if(enough) {
+                $('#fragPFSection').show();
+                $('#fragForjarBtn').show().removeAttr('disabled')
+                    .text('💚 Forjar Cristal Buff (' + precisa + ' Fragmentos — 40%)')
+                    .css({ 'border-color':'#2ecc71', color:'#2ecc71' });
+                loadFragServerSeedHash();
+            } else {
+                $('#fragPFSection').hide();
+                $('#fragForjarBtn').show().attr('disabled','disabled')
+                    .text('💚 ' + f.quantidade + '/' + precisa + ' fragmentos — colete mais!')
+                    .css({ 'border-color':'#555', color:'#888' });
+            }
+        } else if(isCrystal) {
+            // Cristal: Provably Fair 30% de chance
             $('#fragSelNome').text('Fragmento de ' + f.nome).css('color', '#cf6ecf');
             var restC = f.quantidade - precisa;
-            $('#fragSelQty').html('Você tem <b>' + f.quantidade + '/' + precisa + '</b> fragmentos<br/>' +
-                                  '<span style="color:#90EE90;">→ Vai formar 1× <b>' + $('<div>').text(f.nome).html() + '</b></span><br/>' +
-                                  '<span style="color:#aaa;font-size:10px;">(restarão ' + (restC < 0 ? 0 : restC) + ' fragmentos após a combinação)</span>');
+            if(enough) {
+                $('#fragSelQty').html('Você tem <b>' + f.quantidade + '/' + precisa + '</b> fragmentos<br/>' +
+                    '<span style="color:#aaa;font-size:10px;">(restarão ' + (restC < 0 ? 0 : restC) + ' após a tentativa — fragmentos são destruídos mesmo se falhar)</span>');
+            } else {
+                $('#fragSelQty').html('Você tem <b>' + f.quantidade + '/' + precisa + '</b> fragmentos — ainda faltam <b style="color:#e74c3c;">' + (precisa - f.quantidade) + '</b> para tentar.');
+            }
+            // Barra de progresso — cor roxa para cristal
+            $('#fragProgLabel').text(f.quantidade + '/' + precisa).css('color', '#cf6ecf');
+            $('#fragProgBar').css({ width: pctBig + '%', background: 'linear-gradient(90deg,#6a006a,#cf6ecf)' });
+            $('#fragChanceRow').html(enough ? 'Chance de sucesso: <b style="color:#cf6ecf;">30%</b>' : '<span style="color:#e74c3c;">⛔ Fragmentos insuficientes para forjar</span>');
             $('#fragmentSelected').css({ background: '#1a001a', 'border-color': '#cf6ecf' });
-            $('#fragPFSection').hide(); // sem provably fair em cristais
-            $('#fragForjarBtn').show().removeAttr('disabled')
-                .text('💎 Combinar 5 Fragmentos → Cristal Completo')
-                .css({ 'border-color':'#cf6ecf', color:'#cf6ecf' });
+            $('#fragSelImg').css('border-color', '#cf6ecf');
+            if(enough) {
+                $('#fragPFSection').show();
+                $('#fragForjarBtn').show().removeAttr('disabled')
+                    .text('💎 Forjar Cristal (' + precisa + ' Fragmentos — 30%)')
+                    .css({ 'border-color':'#cf6ecf', color:'#cf6ecf' });
+                loadFragServerSeedHash();
+            } else {
+                $('#fragPFSection').hide();
+                $('#fragForjarBtn').show().attr('disabled','disabled')
+                    .text('💎 ' + f.quantidade + '/' + precisa + ' fragmentos — colete mais!')
+                    .css({ 'border-color':'#555', color:'#888' });
+            }
         } else {
             // Equipamento: fluxo padrão com provably fair 20%
             $('#fragSelNome').text('Fragmento de ' + f.nome).css('color', '#FFD700');
             var restantes = f.quantidade - precisa;
-            $('#fragSelQty').text('Você tem ' + f.quantidade + ' fragmentos (restarão ' + (restantes < 0 ? 0 : restantes) + ' após a tentativa)');
-            $('#fragmentSelected').css({ background: '#1a1a00', 'border-color': '#8B6914' });
-            $('#fragPFSection').show();
-            $('#fragForjarBtn').show().removeAttr('disabled')
-                .text('🔥 Forjar (5 Fragmentos)')
-                .css({ 'border-color':'#8B6914', color:'#FFD700' });
-            loadFragServerSeedHash();
+            if(enough) {
+                $('#fragSelQty').text('Você tem ' + f.quantidade + '/' + precisa + ' fragmentos (restarão ' + (restantes < 0 ? 0 : restantes) + ' após a tentativa)');
+            } else {
+                $('#fragSelQty').html('Você tem <b>' + f.quantidade + '/' + precisa + '</b> fragmentos — ainda faltam <b style="color:#e74c3c;">' + (precisa - f.quantidade) + '</b> para forjar.');
+            }
+            // Barra de progresso — cor dourada para equipamento
+            $('#fragProgLabel').text(f.quantidade + '/' + precisa).css('color', '#FFD700');
+            $('#fragProgBar').css({ width: pctBig + '%', background: 'linear-gradient(90deg,#8B6914,#FFD700)' });
+            $('#fragChanceRow').html(enough ? 'Chance de sucesso: <b>20%</b>' : '<span style="color:#e74c3c;">⛔ Fragmentos insuficientes para forjar</span>');
+            $('#fragmentSelected').css({ background: '#1a1a00', 'border-color': enough ? '#8B6914' : '#555' });
+            $('#fragSelImg').css('border-color', enough ? '#8B6914' : '#555');
+            if(enough) {
+                $('#fragPFSection').show();
+                $('#fragForjarBtn').show().removeAttr('disabled')
+                    .text('🔥 Forjar (' + precisa + ' Fragmentos)')
+                    .css({ 'border-color':'#8B6914', color:'#FFD700' });
+                loadFragServerSeedHash();
+            } else {
+                $('#fragPFSection').hide();
+                $('#fragForjarBtn').show().attr('disabled','disabled')
+                    .text('🔥 ' + f.quantidade + '/' + precisa + ' fragmentos — colete mais!')
+                    .css({ 'border-color':'#555', color:'#888' });
+            }
         }
 
         $('#fragmentSelected').show();
@@ -2196,8 +2300,9 @@ if(isset($_GET['msg'])) {
         }
     }
 
-    function startFragForgeAnimation(itemNome) {
+    function startFragForgeAnimation(itemNome, chance) {
         stopFragCycle();
+        chance = chance || 20;
 
         // 3 orbit images, each starting with a different doujutsu, spaced 120° apart (2s total, delay staggered)
         var orbitHtml = '';
@@ -2215,7 +2320,7 @@ if(isset($_GET['msg'])) {
                     '<img class="frag-forge-center-img" src="_img/Forja/doujutsu.png" />' +
                 '</div>' +
                 '<div class="frag-forge-title">Forjando fragmentos...</div>' +
-                '<div class="frag-forge-subtitle">' + $('<div>').text(itemNome).html() + ' — 20% de chance</div>' +
+                '<div class="frag-forge-subtitle">' + $('<div>').text(itemNome).html() + ' — ' + chance + '% de chance</div>' +
             '</div>'
         );
         $('#fragLoadingOverlay').addClass('show');
@@ -2232,14 +2337,14 @@ if(isset($_GET['msg'])) {
         }, 2000);
     }
 
-    function showFragForgeResult(success, itemNome, itemImg, pfData, onDone) {
+    function showFragForgeResult(success, consumed, itemNome, itemImg, pfData, onDone) {
         stopFragCycle();
 
         var color    = success ? '#FFD700' : '#e74c3c';
         var titleTxt = success ? 'FORJA BEM-SUCEDIDA!' : 'FORJA FALHOU!';
         var subTxt   = success
             ? ($('<div>').text(itemNome).html() + ' foi adicionado ao inventário!')
-            : 'Os 5 fragmentos foram destruídos.';
+            : (consumed ? 'Os fragmentos foram destruídos.' : 'Nenhum fragmento foi consumido.');
 
         var raysHtml = '';
         if(success) {
@@ -2300,21 +2405,25 @@ if(isset($_GET['msg'])) {
     function performFragmentCombine() {
         if(!selectedFragment) return;
         var isCrystal  = (selectedFragment.tipo === 'crystal');
+        var isBuff     = (selectedFragment.tipo === 'buff');
         var clientSeed = $('#fragClientSeed').val().trim();
         if(!clientSeed) clientSeed = generateRandomSeed();
 
-        $('#fragForjarBtn').attr('disabled', 'disabled').text(isCrystal ? 'Combinando...' : 'Forjando...');
+        var btnLabel = isCrystal ? 'Combinando...' : (isBuff ? 'Forjando Buff...' : 'Forjando...');
+        $('#fragForjarBtn').attr('disabled', 'disabled').text(btnLabel);
         $('#fragResult').hide();
         $('#fragPFResult').hide();
 
         var itemNome = selectedFragment.nome || 'Item';
         var rawImg   = selectedFragment.imagem || '';
-        // Ensure valid path
         if(rawImg && rawImg.indexOf('.') === -1) rawImg += '.png';
         var imgBase  = selectedFragment.img_base || '_img/equipamentos/';
         var itemImg  = rawImg ? imgBase + rawImg : '';
 
-        startFragForgeAnimation(itemNome);
+        var animChance = isBuff ? 40 : (isCrystal ? 30 : 20);
+        startFragForgeAnimation(itemNome, animChance);
+
+        var tipoEnvio = isCrystal ? 'crystal' : (isBuff ? 'buff' : 'equipment');
 
         $.ajax({
             url: '_inc/ajax_blacksmith.php',
@@ -2322,7 +2431,7 @@ if(isset($_GET['msg'])) {
             data: {
                 action: 'combine_fragments',
                 item_id: selectedFragment.itemid,
-                tipo: isCrystal ? 'crystal' : 'equipment',
+                tipo: tipoEnvio,
                 client_seed: clientSeed
             },
             dataType: 'json',
@@ -2331,12 +2440,36 @@ if(isset($_GET['msg'])) {
 
                 // Aguarda animação antes de mostrar o resultado
                 setTimeout(function() {
-                    showFragForgeResult(!!r.success, itemNome, itemImg, pf, function(pfData) {
+                    var consumed = !!(r.success || r.failed);
+                    // Para cristal/buff com sucesso, mostra imagem do item resultante
+                    var overlayImg = itemImg;
+                    if(r.success && isCrystal && r.item_imagem) {
+                        var ci = r.item_imagem;
+                        if(ci.indexOf('.') === -1) ci += '.png';
+                        overlayImg = '_img/ferreiro/' + ci;
+                    } else if(r.success && isBuff && r.item_imagem) {
+                        var bi = r.item_imagem;
+                        if(bi.indexOf('.') === -1) bi += '.png';
+                        overlayImg = '_img/Buff/' + bi;
+                    }
+                    showFragForgeResult(!!r.success, consumed, itemNome, overlayImg, pf, function(pfData) {
                         // Após fechar o overlay, mostra resultado inline e dados PF
-                        if(r.success && isCrystal) {
-                            // Cristal: combinação garantida
+                        if(r.success && isBuff) {
+                            $('#fragResult').css({ background: '#003a10', border: '1px solid #2ecc71', color: '#2ecc71', borderRadius: '5px' })
+                                .html('<div style="font-size:28px;">💚</div><b>Cristal Buff forjado!</b><br/>' + r.message).show();
+                            $('#fragResultTitle').text('SUCESSO').removeClass('failed').addClass('success');
+                        } else if(r.failed && isBuff) {
+                            $('#fragResult').css({ background: '#1a3a1a', border: '1px solid #2ecc71', color: '#2ecc71', borderRadius: '5px' })
+                                .html('<div style="font-size:28px;">💔</div><b>Forja do cristal buff falhou!</b><br/>' + r.message).show();
+                            $('#fragResultTitle').text('FALHOU').removeClass('success').addClass('failed');
+                        } else if(r.success && isCrystal) {
                             $('#fragResult').css({ background: '#2a0a2a', border: '1px solid #cf6ecf', color: '#cf6ecf', borderRadius: '5px' })
-                                .html('<div style="font-size:28px;">💎</div><b>Cristal formado!</b><br/>' + r.message).show();
+                                .html('<div style="font-size:28px;">💎</div><b>Cristal forjado!</b><br/>' + r.message).show();
+                            $('#fragResultTitle').text('SUCESSO').removeClass('failed').addClass('success');
+                        } else if(r.failed && isCrystal) {
+                            $('#fragResult').css({ background: '#3d1a3d', border: '1px solid #cf6ecf', color: '#cf6ecf', borderRadius: '5px' })
+                                .html('<div style="font-size:28px;">💔</div><b>Forja do cristal falhou!</b><br/>' + r.message).show();
+                            $('#fragResultTitle').text('FALHOU').removeClass('success').addClass('failed');
                         } else if(r.success) {
                             $('#fragResult').css({ background: '#1a3d1a', border: '1px solid #2ecc71', color: '#2ecc71', borderRadius: '5px' })
                                 .html('<div style="font-size:28px;">✅</div><b>Forja bem-sucedida!</b><br/>' + r.message).show();
@@ -2350,14 +2483,15 @@ if(isset($_GET['msg'])) {
                                 .html(r.message || 'Erro desconhecido').show();
                         }
 
-                        // Provably Fair só aplica a equipamentos
-                        if(!isCrystal && pfData && pfData.server_seed) {
+                        // Provably Fair — mostra para cristais e buff (30%) e equipamentos (20%)
+                        if(pfData && pfData.server_seed) {
                             var numClass = r.success ? 'success' : 'failed';
                             $('#fragResultServerSeed').text(pfData.server_seed);
                             $('#fragResultClientSeed').text(pfData.client_seed);
                             $('#fragResultNonce').text(pfData.nonce);
                             $('#fragResultHash').text(pfData.hash);
                             $('#fragResultNumber').text(pfData.number).removeClass('success failed').addClass(numClass);
+                            $('#fragResultChance').text(isBuff ? '40%' : (isCrystal ? '30%' : '20%'));
                             $('#fragResultFinal').text(pfData.result);
                             $('#fragPFResult').show();
                         }
@@ -2368,13 +2502,15 @@ if(isset($_GET['msg'])) {
                         $('#fragForjarBtn').hide().attr('disabled', 'disabled').text('🔥 Forjar (5 Fragmentos)');
                         loadFragments();
                     });
-                }, isCrystal ? 2000 : 5000);
+                }, (isCrystal || isBuff) ? 2000 : 5000);
             },
             error: function() {
+                stopFragCycle();
                 $('#fragLoadingOverlay').removeClass('show');
                 $('#fragResult').css({ background: '#3d1a1a', border: '1px solid #e74c3c', color: '#e74c3c', borderRadius: '5px' })
                     .html('Erro de comunicação. Tente novamente.').show();
                 $('#fragForjarBtn').removeAttr('disabled').text('🔥 Forjar (5 Fragmentos)');
+                loadFragments();
             }
         });
     }

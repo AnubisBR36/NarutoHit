@@ -8,7 +8,24 @@ $is_adm_hunt = isset($_SESSION['adm']) && ($_SESSION['adm'] == 1 || $_SESSION['a
 $is_vip_hunt = date('Y-m-d H:i:s') < $db['vip'];
 $meu_srv_id  = (int)(isset($_SESSION['servidor_id']) ? $_SESSION['servidor_id'] : ($db['servidor_id'] ?? 1));
 
+// Ler estado do PVP (admins ignoram o bloqueio)
+$pvp_ativo_hunt = true;
+if (!$is_adm_hunt) {
+    try {
+        $stmt_pvp_hunt = $conexao->prepare("SELECT valor FROM configuracoes WHERE nome = 'pvp_ativo' LIMIT 1");
+        $stmt_pvp_hunt->execute();
+        $pvp_hunt_val = $stmt_pvp_hunt->fetchColumn();
+        if ($pvp_hunt_val !== false && (string)$pvp_hunt_val === '0') {
+            $pvp_ativo_hunt = false;
+        }
+    } catch (Exception $e) {}
+}
+
 if(isset($_POST['hunt_tipo'])){
+    if (!$pvp_ativo_hunt) {
+        echo "<script>alert('O PVP entre jogadores está desabilitado no momento.'); self.location='?p=hunt'</script>";
+        exit;
+    }
         $tipo=$c->decode($_POST['hunt_tipo'],$chaveuniversal);
         vn($tipo);
         switch($tipo){
@@ -287,6 +304,12 @@ if(isset($_POST['hunt_tipo'])){
 ?>
 <div class="box_top">Caças</div>
 <div class="box_middle">As caças são as formas mais rápidas de se ganhar experiência e yens. Escolha um dos tipos de caça abaixo, e boa sorte!<div class="sep"></div><div style="background:url(_img/gradient.jpg) repeat-y;color:#FFFFAA;"><img src="_img/yens.png" align="absmiddle" width="14" height="14" /> <b>Meus Yens: <?php echo number_format($db['yens'],2,',','.'); ?> yens</b></div><div class="sep"></div>
+
+<?php if (!$pvp_ativo_hunt): ?>
+<div class="aviso" style="background:#3a1a1a;border:1px solid #cc3333;color:#ff9999;padding:10px;margin-bottom:10px;text-align:center;">
+    <b>PVP Desabilitado</b> — O combate entre ninjas foi temporariamente suspenso pelos administradores. Apenas a caça por tempo está disponível.
+</div>
+<?php endif; ?>
         <?php if(isset($_GET['msg'])){
         switch($_GET['msg']){
                 case 1:  $msg='Nenhum ninja encontrado com o nome informado.'; break;
@@ -310,6 +333,7 @@ if(isset($_POST['hunt_tipo'])){
         echo '<div class="aviso">'.$msg.'</div><div class="sep"></div>';
         } ?>
 
+<?php if ($pvp_ativo_hunt): ?>
     <!-- FORM 1: Caçar ninja específico -->
     <form method="post" action="?p=hunt" onsubmit="subm1.value='Carregando...';subm1.disabled=true;">
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('1',$chaveuniversal); ?>" />
@@ -393,6 +417,7 @@ if(isset($_POST['hunt_tipo'])){
         <div class="clear"></div>
     </fieldset>
     </form>
+<?php endif; ?>
 
     <!-- FORM 4: Caçar por Tempo -->
     <form method="post" action="?p=hunt" onsubmit="subm4.value='Carregando...';subm4.disabled=true;">

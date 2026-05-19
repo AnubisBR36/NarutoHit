@@ -228,8 +228,13 @@ CREATE TABLE `configuracoes` (
   `nome` VARCHAR(100) NOT NULL,
   `valor` TEXT NOT NULL,
   `descricao` TEXT,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_nome` (`nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `configuracoes` (`nome`, `valor`, `descricao`) VALUES
+('cadastro_aberto', '1', 'Permite novos cadastros no site (1=sim, 0=não)'),
+('pvp_ativo',       '1', 'Permite PVP entre jogadores (1=sim, 0=não)');
 
 
 
@@ -738,6 +743,7 @@ CREATE TABLE `servidores` (
   `criado_em` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 
 

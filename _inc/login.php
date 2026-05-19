@@ -42,8 +42,11 @@ if (file_exists($manutencao_config_file)) {
 // Verificar se o reCAPTCHA está configurado
 $recaptcha_enabled = !empty($recaptcha_config['secret_key']) && !empty($recaptcha_config['site_key']);
 
-// Verificar se está em modo de manutenção (keys não configuradas OU manutenção ativada)
-$em_manutencao = !$recaptcha_enabled || ($manutencao_config['ativo'] === true);
+// Manutenção apenas quando explicitamente ativada pelo admin
+$em_manutencao = ($manutencao_config['ativo'] === true);
+
+// Rate limiting
+require_once('rate_limit.php');
 
 // Processar login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -93,21 +96,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // STEP 1: VALIDAÇÃO DO GOOGLE RECAPTCHA (v2 caixa OU v3 invisível)
-    $recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
-
-    if (empty($recaptcha_response)) {
-        echo '<script>window.location.href = "index.php?p=login&erro=5";</script>';
+    // Rate limiting — bloqueia IP após tentativas excessivas de senha errada
+    require_once('conexao.php');
+    $rl_status = rl_verificar($conexao);
+    if ($rl_status['bloqueado']) {
+        echo '<script>window.location.href = "index.php?p=login&erro=8&t=' . $rl_status['segundos'] . '";</script>';
         exit;
     }
 
-    // verificar_recaptcha() já entende v2 e v3 (incluindo pontuação/ação no v3).
-    // No v3 esperamos a ação "login" emitida pelo grecaptcha.execute().
-    $action_esperada = ($recaptcha_version === 'v3') ? 'login' : null;
-    if (!verificar_recaptcha($recaptcha_response, $action_esperada)) {
-        error_log('reCAPTCHA: validação falhou (versão=' . $recaptcha_version . ')');
-        echo '<script>window.location.href = "index.php?p=login&erro=5";</script>';
-        exit;
+    // STEP 1: VALIDAÇÃO DO GOOGLE RECAPTCHA (somente se configurado)
+    if ($recaptcha_enabled) {
+        $recaptcha_response = isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '';
+
+        if (empty($recaptcha_response)) {
+            echo '<script>window.location.href = "index.php?p=login&erro=5";</script>';
+            exit;
+        }
+
+        $action_esperada = ($recaptcha_version === 'v3') ? 'login' : null;
+        if (!verificar_recaptcha($recaptcha_response, $action_esperada)) {
+            error_log('reCAPTCHA: validação falhou (versão=' . $recaptcha_version . ')');
+            echo '<script>window.location.href = "index.php?p=login&erro=5";</script>';
+            exit;
+        }
     }
 
     // STEP 2: Validação de login e senha
@@ -157,9 +168,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['adm'] = $usuario['adm'] ?? 0;
             // Admin/GM entra no servidor que selecionou; jogador normal no servidor da conta
             $_SESSION['servidor_id'] = $is_adm_gm ? $servidor_selecionado : $usuario_servidor;
+            rl_limpar($conexao);
             echo '<script>window.location.href = "index.php?p=home";</script>';
             exit;
         } else {
+            rl_registrar_falha($conexao);
             echo '<script>window.location.href = "index.php?p=login&erro=3";</script>';
             exit;
         }
@@ -213,6 +226,11 @@ if (isset($_GET['erro'])) {
             break;
         case 5:
             $msg = '<b>Verificação anti-bot falhou!</b><br />Por favor, complete a verificação do Google reCAPTCHA.';
+            break;
+        case 8:
+            $secs = isset($_GET['t']) ? max(0, (int)$_GET['t']) : RATE_LIMIT_BLOQUEIO_SEG;
+            $msg  = '<b>IP temporariamente bloqueado</b> por excesso de tentativas de login.<br />'
+                  . 'Tente novamente em <b>' . rl_formatar_tempo($secs) . '</b>.';
             break;
         case 6:
             $msg = '<b>Verificação reCAPTCHA falhou!</b><br />Por favor, complete a verificação corretamente.';

@@ -1,0 +1,44 @@
+[mariadb] starting on port 3306 (socket /home/runner/.mariadb_data/mysql.sock)
+[mariadb] waiting for socket...
+[mariadb] ready
+[php] starting development server on 0.0.0.0:5000
+[Fri May  1 01:15:50 2026] PHP 8.2.23 Development Server (http://0.0.0.0:5000) started
+[Fri May  1 01:15:50 2026] 127.0.0.1:46260 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46260 [302]: GET /
+[Fri May  1 01:15:50 2026] 127.0.0.1:46260 Closing
+[Fri May  1 01:15:50 2026] 127.0.0.1:46274 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46274 [200]: GET /install/install.php
+[Fri May  1 01:15:50 2026] 127.0.0.1:46274 Closing
+[Fri May  1 01:15:50 2026] 127.0.0.1:46290 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46296 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46290 [200]: GET /_img/logo.jpg
+[Fri May  1 01:15:50 2026] 127.0.0.1:46290 Closing
+[Fri May  1 01:15:50 2026] 127.0.0.1:46296 [200]: GET /_img/menu.jpg
+[Fri May  1 01:15:50 2026] 127.0.0.1:46296 Closing
+[Fri May  1 01:15:50 2026] 127.0.0.1:46300 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46316 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46300 [200]: GET /_img/background.jpg
+[Fri May  1 01:15:50 2026] 127.0.0.1:46300 Closing
+[Fri May  1 01:15:50 2026] 127.0.0.1:46316 [200]: GET /_img/fundo_botao.jpg
+[Fri May  1 01:15:50 2026] 127.0.0.1:46316 Closing
+[Fri May  1 01:15:50 2026] 127.0.0.1:46324 Accepted
+[Fri May  1 01:15:50 2026] 127.0.0.1:46324 [200]: GET /_img/favicon.ico
+[Fri May  1 01:15:50 2026] 127.0.0.1:46324 Closing
+[Fri May  1 01:15:51 2026] 127.0.0.1:46326 Accepted
+[Fri May  1 01:15:51 2026] 127.0.0.1:46326 [302]: GET /
+[Fri May  1 01:15:51 2026] 127.0.0.1:46326 Closing
+[Fri May  1 01:15:51 2026] 127.0.0.1:46332 Accepted
+[Fri May  1 01:15:51 2026] 127.0.0.1:46332 [200]: GET /install/install.php
+[Fri May  1 01:15:51 2026] 127.0.0.1:46332 Closing
+[Fri May  1 01:15:51 2026] 127.0.0.1:46336 Accepted
+[Fri May  1 01:15:51 2026] 127.0.0.1:46336 [200]: GET /_img/logo.jpg
+[Fri May  1 01:15:51 2026] 127.0.0.1:46336 Closing
+[Fri May  1 01:15:52 2026] 127.0.0.1:46352 Accepted
+[Fri May  1 01:15:52 2026] 127.0.0.1:46352 [200]: GET /_img/menu.jpg
+[Fri May  1 01:15:52 2026] 127.0.0.1:46352 Closing
+[Fri May  1 01:15:52 2026] 127.0.0.1:46364 Accepted
+[Fri May  1 01:15:52 2026] 127.0.0.1:46364 [200]: GET /_img/background.jpg
+[Fri May  1 01:15:52 2026] 127.0.0.1:46364 Closing
+[Fri May  1 01:15:52 2026] 127.0.0.1:46374 Accepted
+[Fri May  1 01:15:52 2026] 127.0.0.1:46374 [200]: GET /_img/fundo_botao.jpg
+[Fri May  1 01:15:52 2026] 127.0.0.1:46374 Closing

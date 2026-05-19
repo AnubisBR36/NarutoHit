@@ -471,3 +471,12 @@ Todas as tarefas de importação, migração, correções de bugs, melhorias vis
 [x] 514. App não usa integrações externas — nada a substituir
 [x] 515. Verificação end-to-end: página inicial agora carrega login corretamente (HTTP 200, sem redirect ao instalador)
 [x] 516. Importação para o ambiente Replit concluída com sucesso
+
+### Migração Agent → Replit (01/05/2026 - Sessão Atual)
+[x] 517. Workflow php-server reiniciado — MariaDB inicializado e PHP rodando na porta 5000
+[x] 518. Criado config/recaptcha.php (ausente após reimport — causava erro fatal na página de login)
+[x] 519. Página /?p=login confirmada carregando corretamente (HTTP 200, formulário visível)
+[x] 520. App não usa autenticação externa — sistema próprio de login PHP/MySQL (Replit Auth não aplicável)
+[x] 521. App não usa integrações externas (OpenAI/Stripe/etc.) — nada a substituir
+[x] 522. Screenshot final confirmado: interface do jogo carregando com layout completo
+[x] 523. Importação para o ambiente Replit concluída com sucesso

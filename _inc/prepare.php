@@ -53,6 +53,17 @@ if($is_invasao) {
     }
     
     require_once('conexao.php');
+
+    // Verificar se PVP está habilitado antes de qualquer processamento
+    try {
+        $stmt_pvp_pre = $conexao->prepare("SELECT valor FROM configuracoes WHERE nome = 'pvp_ativo' LIMIT 1");
+        $stmt_pvp_pre->execute();
+        $pvp_pre_val = $stmt_pvp_pre->fetchColumn();
+        if ($pvp_pre_val !== false && (string)$pvp_pre_val === '0') {
+            echo "<script>alert('O PVP entre jogadores está desabilitado no momento.'); self.location='?p=hunt'</script>";
+            exit;
+        }
+    } catch (Exception $e) {}
     
     try {
         $stmt = $conexao->prepare("SELECT * FROM usuarios WHERE id=?");

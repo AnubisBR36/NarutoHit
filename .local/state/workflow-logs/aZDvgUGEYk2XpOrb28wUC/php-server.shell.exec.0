@@ -1,0 +1,23 @@
+[mariadb] starting on port 3306 (socket /home/runner/.mariadb_data/mysql.sock)
+[mariadb] waiting for socket...
+[mariadb] ready
+[php] starting development server on 0.0.0.0:5000
+[Fri May  1 00:49:17 2026] PHP 8.2.23 Development Server (http://0.0.0.0:5000) started
+[Fri May  1 00:49:18 2026] 127.0.0.1:55530 Accepted
+[Fri May  1 00:49:18 2026] 127.0.0.1:55530 [302]: GET /
+[Fri May  1 00:49:18 2026] 127.0.0.1:55530 Closing
+[Fri May  1 00:49:18 2026] 127.0.0.1:55534 Accepted
+[Fri May  1 00:49:18 2026] 127.0.0.1:55534 [200]: GET /install/install.php
+[Fri May  1 00:49:18 2026] 127.0.0.1:55534 Closing
+[Fri May  1 00:49:18 2026] 127.0.0.1:55538 Accepted
+[Fri May  1 00:49:18 2026] 127.0.0.1:55538 [200]: GET /_img/logo.jpg
+[Fri May  1 00:49:18 2026] 127.0.0.1:55538 Closing
+[Fri May  1 00:49:19 2026] 127.0.0.1:55550 Accepted
+[Fri May  1 00:49:19 2026] 127.0.0.1:55550 [200]: GET /_img/menu.jpg
+[Fri May  1 00:49:19 2026] 127.0.0.1:55550 Closing
+[Fri May  1 00:49:19 2026] 127.0.0.1:55554 Accepted
+[Fri May  1 00:49:19 2026] 127.0.0.1:55554 [200]: GET /_img/background.jpg
+[Fri May  1 00:49:19 2026] 127.0.0.1:55554 Closing
+[Fri May  1 00:49:19 2026] 127.0.0.1:55566 Accepted
+[Fri May  1 00:49:19 2026] 127.0.0.1:55566 [200]: GET /_img/fundo_botao.jpg
+[Fri May  1 00:49:19 2026] 127.0.0.1:55566 Closing
