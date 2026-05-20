@@ -34,6 +34,8 @@ $adm_modulos_standalone = [
     'config_jogo'       => 'config_jogo.php',
     'eventos_bonus'     => 'eventos_bonus.php',
     'ranking_pvp'       => 'ranking_pvp.php',
+    'despertar_admin'   => 'despertar_admin.php',
+    'jutsus'            => 'gerenciar_jutsus.php',
     // Standalones extras (funcionalidades distintas das versões inline):
     'limpar_banco_full' => 'limpar_banco.php',
     'desbloquear_ips'   => 'limpar_ip.php',
@@ -256,6 +258,20 @@ if(isset($_POST['action'])) {
         }
     }
 
+    if($_POST['action'] == 'purge_audit_log' && $is_admin) {
+        $al_dias = max(1, (int)($_POST['al_dias'] ?? 30));
+        $al_deletados = 0;
+        try {
+            $st_purge = $conexao->prepare("DELETE FROM admin_logs WHERE data_hora < " . (Database::isMysql() ? "DATE_SUB(NOW(), INTERVAL ? DAY)" : "datetime('now', ? || ' days')"));
+            $st_purge->execute([$al_dias]);
+            $al_deletados = $st_purge->rowCount();
+            adm_log($conexao, $user_id, $usuario_logado['usuario'] ?? '?', 'Limpar Log Auditoria', null, null, "Registros com mais de {$al_dias} dias removidos ($al_deletados entradas)");
+            echo "<div class='al-purge-msg al-purge-ok'>✅ {$al_deletados} registro(s) removido(s) (mais de {$al_dias} dias).</div>";
+        } catch(Exception $e) {
+            echo "<div class='al-purge-msg al-purge-err'>❌ Erro ao limpar: " . htmlspecialchars($e->getMessage()) . "</div>";
+        }
+    }
+
     if($_POST['action'] == 'save_ban_penalty' && $is_admin) {
         $penalty_minutes = max(1, (int)($_POST['penalty_minutes'] ?? 5));
         $config_content = "<?php\nreturn [\n    'penalty_minutes' => " . $penalty_minutes . "\n];\n";
@@ -268,18 +284,21 @@ if(isset($_POST['action'])) {
 
     if($_POST['action'] == 'edit_user' && ($is_admin || ($is_mod && gm_pode('contas', $is_admin, $gm_perms))) && isset($_POST['user_id'])) {
         $user_id_edit = (int)$_POST['user_id'];
-        $energia = (int)$_POST['energia'];
+        $nivel        = max(1, (int)$_POST['nivel']);
+        $energiamax   = isset($_POST['energiamax']) ? max(1, (int)$_POST['energiamax']) : ($nivel * 100);
+        $energia      = min((int)$_POST['energia'], $energiamax);
         $taijutsu = (int)$_POST['taijutsu'];
         $ninjutsu = (int)$_POST['ninjutsu'];
         $genjutsu = (int)$_POST['genjutsu'];
         $exp = (int)$_POST['exp'];
-        $nivel = (int)$_POST['nivel'];
         $yens = (int)$_POST['yens'];
         $personagem = $_POST['personagem'];
         $vila = (int)$_POST['vila'];
         $vitorias = (int)$_POST['vitorias'];
         $derrotas = (int)$_POST['derrotas'];
         $empates = (int)$_POST['empates'];
+        $batalhas = (int)$_POST['batalhas'];
+        $missoes_longas = (int)$_POST['missoes_longas'];
         $energia_travada = isset($_POST['energia_travada']) ? 1 : 0;
 
         // GM não pode editar contas ADM
@@ -293,9 +312,20 @@ if(isset($_POST['action'])) {
             // O jogador renegado mantém sua vila de origem.
             $renegado = isset($_POST['renegado']) ? 'sim' : 'nao';
 
-            $stmt = $conexao->prepare("UPDATE usuarios SET energia = ?, taijutsu = ?, ninjutsu = ?, genjutsu = ?, exp = ?, nivel = ?, yens = ?, personagem = ?, vila = ?, vitorias = ?, derrotas = ?, empates = ?, renegado = ?, energia_travada = ? WHERE id = ?");
-            if($stmt->execute([$energia, $taijutsu, $ninjutsu, $genjutsu, $exp, $nivel, $yens, $personagem, $vila, $vitorias, $derrotas, $empates, $renegado, $energia_travada, $user_id_edit])) {
-                $edit_user['energia'] = $energia;
+            // Detectar se a coluna missoes_longas existe (pode faltar em DBs antigos)
+            $has_missoes_col = false;
+            try { $conexao->query("SELECT missoes_longas FROM usuarios LIMIT 0"); $has_missoes_col = true; } catch(PDOException $e){}
+
+            if($has_missoes_col){
+                $stmt = $conexao->prepare("UPDATE usuarios SET energia = ?, energiamax = ?, taijutsu = ?, ninjutsu = ?, genjutsu = ?, exp = ?, nivel = ?, yens = ?, personagem = ?, vila = ?, vitorias = ?, derrotas = ?, empates = ?, batalhas = ?, missoes_longas = ?, renegado = ?, energia_travada = ? WHERE id = ?");
+                $ok = $stmt->execute([$energia, $energiamax, $taijutsu, $ninjutsu, $genjutsu, $exp, $nivel, $yens, $personagem, $vila, $vitorias, $derrotas, $empates, $batalhas, $missoes_longas, $renegado, $energia_travada, $user_id_edit]);
+            } else {
+                $stmt = $conexao->prepare("UPDATE usuarios SET energia = ?, energiamax = ?, taijutsu = ?, ninjutsu = ?, genjutsu = ?, exp = ?, nivel = ?, yens = ?, personagem = ?, vila = ?, vitorias = ?, derrotas = ?, empates = ?, batalhas = ?, renegado = ?, energia_travada = ? WHERE id = ?");
+                $ok = $stmt->execute([$energia, $energiamax, $taijutsu, $ninjutsu, $genjutsu, $exp, $nivel, $yens, $personagem, $vila, $vitorias, $derrotas, $empates, $batalhas, $renegado, $energia_travada, $user_id_edit]);
+            }
+            if($ok) {
+                $edit_user['energia']    = $energia;
+                $edit_user['energiamax'] = $energiamax;
                 $edit_user['energia_travada'] = $energia_travada;
                 echo "<div style='color: green; margin: 10px 0;'>✅ Atributos do usuário editados com sucesso!</div>";
                 adm_log($conexao, $user_id, $usuario_logado['usuario'] ?? 'desconhecido', 'Editar Conta', $user_id_edit, $alvo_row['usuario'] ?? '', "Energia=$energia, Nível=$nivel, Yens=$yens");
@@ -1109,8 +1139,15 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="form-section">
                         <h4>⚡ Atributos de Combate</h4>
                         <label style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            Energia máx:
+                            <input type="number" name="energiamax" id="adm_energiamax" value="<?php echo (int)$edit_user['energiamax']; ?>" min="1" max="999999" class="input" style="width:90px;">
+                            <button type="button" onclick="document.getElementById('adm_energiamax').value=parseInt(document.getElementById('adm_nivel_field').value||1)*100;document.getElementById('adm_energia').max=document.getElementById('adm_energiamax').value;" style="font-size:11px;padding:2px 8px;cursor:pointer;background:#444;color:#adf;border:1px solid #558;border-radius:3px;" title="Calcular automaticamente: nível × 100">Auto (nv×100)</button>
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                             Energia:
-                            <input type="number" name="energia" value="<?php echo $edit_user['energia']; ?>" min="0" max="99999" class="input" style="width:90px;">
+                            <input type="number" name="energia" id="adm_energia" value="<?php echo $edit_user['energia']; ?>" min="0" max="<?php echo (int)$edit_user['energiamax']; ?>" class="input" style="width:90px;">
+                            <button type="button" onclick="document.getElementById('adm_energia').value=0;" style="font-size:11px;padding:2px 8px;cursor:pointer;background:#333;color:#fff;border:1px solid #666;border-radius:3px;">Min</button>
+                            <button type="button" onclick="document.getElementById('adm_energia').value=document.getElementById('adm_energiamax').value;" style="font-size:11px;padding:2px 8px;cursor:pointer;background:#333;color:#fff;border:1px solid #666;border-radius:3px;">Max</button>
                             <label style="display:flex;align-items:center;gap:4px;margin:0;cursor:pointer;" title="Quando travada, a energia não cai ao ser atacado">
                                 <input type="checkbox" name="energia_travada" value="1" <?php echo (!empty($edit_user['energia_travada']) && $edit_user['energia_travada']==1) ? 'checked' : ''; ?> style="width:auto;">
                                 <?php if(!empty($edit_user['energia_travada']) && $edit_user['energia_travada']==1): ?>
@@ -1127,7 +1164,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="form-section">
                         <h4>📊 Progressão</h4>
-                        <label>Nível: <input type="number" name="nivel" value="<?php echo $edit_user['nivel']; ?>" min="1" max="999" class="input"></label>
+                        <label>Nível: <input type="number" name="nivel" id="adm_nivel_field" value="<?php echo $edit_user['nivel']; ?>" min="1" max="999" class="input"></label>
                         <label>Experiência: <input type="number" name="exp" value="<?php echo $edit_user['exp']; ?>" min="0" class="input"></label>
                         <label>Yens: <input type="number" name="yens" value="<?php echo $edit_user['yens']; ?>" min="0" class="input"></label>
                     </div>
@@ -1162,6 +1199,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <label>Vitórias: <input type="number" name="vitorias" value="<?php echo $edit_user['vitorias']; ?>" min="0" class="input"></label>
                         <label>Derrotas: <input type="number" name="derrotas" value="<?php echo $edit_user['derrotas']; ?>" min="0" class="input"></label>
                         <label>Empates: <input type="number" name="empates" value="<?php echo $edit_user['empates']; ?>" min="0" class="input"></label>
+                        <label>Batalhas totais: <input type="number" name="batalhas" value="<?php echo $edit_user['batalhas'] ?? 0; ?>" min="0" class="input"></label>
+                        <label>Missões longas (≥10h): <input type="number" name="missoes_longas" value="<?php echo $edit_user['missoes_longas'] ?? 0; ?>" min="0" class="input"></label>
                     </div>
 
                     <div style="grid-column: 1 / -1; text-align: center;">
@@ -1549,11 +1588,13 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php if(gm_pode('servidores', $is_admin, $gm_perms)): ?><a href="?modulo=servidores">Gerenciar Servidores</a><?php endif; ?>
                     <?php if(gm_pode('contas', $is_admin, $gm_perms)): ?><a href="?modulo=contas">Editar Contas</a><?php endif; ?>
                     <?php if($is_admin): ?><a href="?modulo=ban_penalty">Penalidade de Ban</a><?php endif; ?>
-                    <?php if($is_admin): ?><a href="?modulo=config_site">Config. do Site</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=audit_log" style="border-color:#87CEFA;color:#87CEFA;">Log de Ações</a><?php endif; ?>
+                    <?php if($is_admin || gm_pode('despertar_admin', $is_admin, $gm_perms)): ?><a href="?modulo=despertar_admin" style="border-color:#9966CC;color:#CC99FF;">🩸 Despertar</a><?php endif; ?>
                     <?php if(gm_pode('clas', $is_admin, $gm_perms)): ?><a href="?modulo=clas">Gerenciar Clãs</a><?php endif; ?>
                     <?php if(gm_pode('manutencao', $is_admin, $gm_perms)): ?><a href="?modulo=manutencao">Gerenciar Manutenção</a><?php endif; ?>
                     <?php if(gm_pode('equipamentos', $is_admin, $gm_perms)): ?><a href="?modulo=equipamentos">Gerenciar Equipamentos</a><?php endif; ?>
                     <?php if(gm_pode('cristais', $is_admin, $gm_perms)): ?><a href="?modulo=cristais">Gerenciar Cristais</a><?php endif; ?>
+                    <?php if($is_admin): ?><a href="?modulo=jutsus">Gerenciar Jutsus</a><?php endif; ?>
                     <?php if($is_admin): ?><a href="?modulo=personagens">Gerenciar Personagens</a><?php endif; ?>
                     <?php if($is_admin): ?><a href="?modulo=contatos">Canais de Contato</a><?php endif; ?>
                     <?php if($is_admin): ?><a href="recompensa_diaria.php">Login Diário</a><?php endif; ?>
@@ -2049,41 +2090,244 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
             </script>
 
-        <?php elseif($modulo == 'config_site' && $is_admin): ?>
-            <div style="background:#1a0a00; border-left:4px solid #ff6600; border-bottom:1px solid #444; padding:7px 12px; font-weight:bold; color:#FFD700; font-size:13px; margin-bottom:8px;">🌐 Configurações do Site</div>
+        <?php elseif($modulo == 'audit_log' && $is_admin): ?>
+            <div style="background:#1a0a00; border-left:4px solid #87CEFA; border-bottom:1px solid #444; padding:7px 12px; font-weight:bold; color:#87CEFA; font-size:13px; margin-bottom:8px;">Log de Ações Administrativas</div>
             <div style="background:#111; border-left:1px solid #333; border-right:1px solid #333; padding:12px;">
-            <p class="sub2">Configure a URL base usada na geração dos nLinks dos jogadores.</p>
             <?php
-            if (isset($_POST['salvar_config_site'])) {
-                $nova_url = trim($_POST['site_url_valor']);
-                try {
-                    $replaceVerb = Database::isMysql() ? "REPLACE INTO" : "INSERT OR REPLACE INTO";
-                    $stmt_cs = $conexao->prepare("$replaceVerb configuracoes (nome, valor, descricao) VALUES ('site_url', ?, 'URL base do site para geração de nLinks')");
-                    $stmt_cs->execute([$nova_url]);
-                    echo "<div class='alert-success'>✅ URL salva com sucesso!</div>";
-                } catch (Exception $e) {
-                    echo "<div class='alert-error'>❌ Erro: " . htmlspecialchars($e->getMessage()) . "</div>";
-                }
+            // Filtros
+            $al_autor  = trim($_GET['al_autor']  ?? '');
+            $al_acao   = trim($_GET['al_acao']   ?? '');
+            $al_alvo   = trim($_GET['al_alvo']   ?? '');
+            $al_de     = trim($_GET['al_de']     ?? '');
+            $al_ate    = trim($_GET['al_ate']    ?? '');
+            $al_pg     = max(1, (int)($_GET['al_pg'] ?? 1));
+            $al_pp     = 50;
+            $al_offset = ($al_pg - 1) * $al_pp;
+
+            // Validar datas
+            $al_de_val  = ($al_de  !== '' && strtotime($al_de))  ? $al_de  : '';
+            $al_ate_val = ($al_ate !== '' && strtotime($al_ate)) ? $al_ate : '';
+
+            // Construir WHERE
+            $al_where  = [];
+            $al_params = [];
+            if ($al_autor  !== '') { $al_where[] = 'autor_nome LIKE ?';      $al_params[] = "%$al_autor%"; }
+            if ($al_acao   !== '') { $al_where[] = 'acao LIKE ?';            $al_params[] = "%$al_acao%"; }
+            if ($al_alvo   !== '') { $al_where[] = 'alvo_nome LIKE ?';       $al_params[] = "%$al_alvo%"; }
+            if ($al_de_val  !== '') { $al_where[] = 'data_hora >= ?';        $al_params[] = $al_de_val . ' 00:00:00'; }
+            if ($al_ate_val !== '') { $al_where[] = 'data_hora <= ?';        $al_params[] = $al_ate_val . ' 23:59:59'; }
+            $al_sql_where = $al_where ? ('WHERE ' . implode(' AND ', $al_where)) : '';
+
+            // Total
+            $al_total = 0;
+            try {
+                $st_ct = $conexao->prepare("SELECT COUNT(*) FROM admin_logs $al_sql_where");
+                $st_ct->execute($al_params);
+                $al_total = (int)$st_ct->fetchColumn();
+            } catch(Exception $e) {}
+
+            $al_pages = max(1, (int)ceil($al_total / $al_pp));
+
+            // Registros
+            $al_rows = [];
+            try {
+                $st_al = $conexao->prepare("SELECT * FROM admin_logs $al_sql_where ORDER BY id DESC LIMIT $al_pp OFFSET $al_offset");
+                $st_al->execute($al_params);
+                $al_rows = $st_al->fetchAll(PDO::FETCH_ASSOC);
+            } catch(Exception $e) {}
+
+            // Ações distintas para o filtro
+            $al_acoes_list = [];
+            try {
+                $al_acoes_list = $conexao->query("SELECT DISTINCT acao FROM admin_logs ORDER BY acao ASC")->fetchAll(PDO::FETCH_COLUMN);
+            } catch(Exception $e) {}
+
+            // URL base para filtros (mantém os outros parâmetros)
+            $al_base_url = '?modulo=audit_log';
+            if ($al_autor  !== '') $al_base_url .= '&al_autor=' . urlencode($al_autor);
+            if ($al_acao   !== '') $al_base_url .= '&al_acao='  . urlencode($al_acao);
+            if ($al_alvo   !== '') $al_base_url .= '&al_alvo='  . urlencode($al_alvo);
+            if ($al_de_val  !== '') $al_base_url .= '&al_de='   . urlencode($al_de_val);
+            if ($al_ate_val !== '') $al_base_url .= '&al_ate='  . urlencode($al_ate_val);
+
+            // Cores por categoria de ação
+            function al_cor($acao) {
+                $a = strtolower($acao);
+                if (strpos($a,'ban') !== false)         return '#ff6666';
+                if (strpos($a,'desban') !== false)      return '#66ff99';
+                if (strpos($a,'config') !== false)      return '#87CEFA';
+                if (strpos($a,'limpar') !== false)      return '#ffaa44';
+                if (strpos($a,'cargo') !== false)       return '#e0aaff';
+                if (strpos($a,'desbloquear') !== false) return '#66ddff';
+                return '#bbbbbb';
             }
-            $stmt_cs2 = $conexao->prepare("SELECT valor FROM configuracoes WHERE nome = 'site_url' LIMIT 1");
-            $stmt_cs2->execute();
-            $row_cs2 = $stmt_cs2->fetch(PDO::FETCH_ASSOC);
-            $current_site_url = $row_cs2 ? $row_cs2['valor'] : '';
             ?>
-            <fieldset>
-                <legend>URL do Site</legend>
-                <form method="POST">
-                    <label style="display:block;margin-bottom:6px;">URL base do site <small style="color:#888;">(usada nos links de convite nLink)</small></label>
-                    <input type="url" name="site_url_valor" value="<?php echo htmlspecialchars($current_site_url); ?>"
-                           style="width:100%;box-sizing:border-box;"
-                           placeholder="https://seusite.com.br" required>
-                    <small class="sub2" style="display:block;margin-top:5px;">Ex: https://seusite.com.br — o nLink gerado será: URL/?p=reg&amp;nlink=USUARIO</small>
-                    <br>
-                    <button type="submit" name="salvar_config_site" class="botao btn-success">💾 Salvar URL</button>
-                </form>
-            </fieldset>
+
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <form method="GET" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+                <input type="hidden" name="modulo" value="audit_log">
+                <div>
+                    <label style="display:block;font-size:11px;color:#aaa;margin-bottom:2px;">Admin/GM</label>
+                    <input type="text" name="al_autor" value="<?php echo htmlspecialchars($al_autor); ?>" placeholder="Nome..." style="width:110px;">
+                </div>
+                <div>
+                    <label style="display:block;font-size:11px;color:#aaa;margin-bottom:2px;">Ação</label>
+                    <select name="al_acao" style="height:26px;">
+                        <option value="">Todas</option>
+                        <?php foreach($al_acoes_list as $ac): ?>
+                            <option value="<?php echo htmlspecialchars($ac); ?>" <?php echo ($al_acao===$ac)?'selected':''; ?>><?php echo htmlspecialchars($ac); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block;font-size:11px;color:#aaa;margin-bottom:2px;">Alvo</label>
+                    <input type="text" name="al_alvo" value="<?php echo htmlspecialchars($al_alvo); ?>" placeholder="Jogador..." style="width:110px;">
+                </div>
+                <div>
+                    <label style="display:block;font-size:11px;color:#aaa;margin-bottom:2px;">De</label>
+                    <input type="date" id="al_de_inp" name="al_de" value="<?php echo htmlspecialchars($al_de_val); ?>" style="width:130px;height:26px;box-sizing:border-box;">
+                </div>
+                <div>
+                    <label style="display:block;font-size:11px;color:#aaa;margin-bottom:2px;">Até</label>
+                    <input type="date" id="al_ate_inp" name="al_ate" value="<?php echo htmlspecialchars($al_ate_val); ?>" style="width:130px;height:26px;box-sizing:border-box;">
+                </div>
+                <button type="submit" class="botao" style="height:26px;padding:0 12px;">Filtrar</button>
+                <?php if($al_autor||$al_acao||$al_alvo||$al_de_val||$al_ate_val): ?>
+                    <a href="?modulo=audit_log" class="botao" style="height:26px;line-height:26px;padding:0 10px;background:#333;">Limpar</a>
+                <?php endif; ?>
+            </form>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;margin-bottom:2px;">
+                <span style="font-size:11px;color:#666;align-self:center;">Período rápido:</span>
+                <button type="button" onclick="alPeriodo(0,0)"    class="botao" style="padding:2px 8px;font-size:11px;height:22px;">Hoje</button>
+                <button type="button" onclick="alPeriodo(6,0)"    class="botao" style="padding:2px 8px;font-size:11px;height:22px;">Últimos 7 dias</button>
+                <button type="button" onclick="alPeriodo(29,0)"   class="botao" style="padding:2px 8px;font-size:11px;height:22px;">Últimos 30 dias</button>
+                <button type="button" onclick="alMes(0)"          class="botao" style="padding:2px 8px;font-size:11px;height:22px;">Este mês</button>
+                <button type="button" onclick="alMes(-1)"         class="botao" style="padding:2px 8px;font-size:11px;height:22px;">Mês anterior</button>
             </div>
-            <div style="background:#1a0a00; border-left:1px solid #333; border-right:1px solid #333; border-bottom:2px solid #ff6600; height:8px;"></div>
+            <script>
+            function alFmt(d) {
+                return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            }
+            function alPeriodo(diasAtras, diasAFrente) {
+                var hoje = new Date();
+                var de  = new Date(hoje); de.setDate(hoje.getDate() - diasAtras);
+                var ate = new Date(hoje); ate.setDate(hoje.getDate() + diasAFrente);
+                document.getElementById('al_de_inp').value  = alFmt(de);
+                document.getElementById('al_ate_inp').value = alFmt(ate);
+            }
+            function alMes(offset) {
+                var d = new Date();
+                d.setDate(1);
+                d.setMonth(d.getMonth() + offset);
+                var ini = new Date(d.getFullYear(), d.getMonth(), 1);
+                var fim = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+                document.getElementById('al_de_inp').value  = alFmt(ini);
+                document.getElementById('al_ate_inp').value = alFmt(fim);
+            }
+            </script>
+            <?php
+            $al_csv_url = 'export_audit_log.php?';
+            if ($al_autor   !== '') $al_csv_url .= 'al_autor=' . urlencode($al_autor)   . '&';
+            if ($al_acao    !== '') $al_csv_url .= 'al_acao='  . urlencode($al_acao)    . '&';
+            if ($al_alvo    !== '') $al_csv_url .= 'al_alvo='  . urlencode($al_alvo)    . '&';
+            if ($al_de_val  !== '') $al_csv_url .= 'al_de='    . urlencode($al_de_val)  . '&';
+            if ($al_ate_val !== '') $al_csv_url .= 'al_ate='   . urlencode($al_ate_val) . '&';
+            $al_csv_url = rtrim($al_csv_url, '?&');
+            ?>
+            <a href="<?php echo htmlspecialchars($al_csv_url); ?>"
+               style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:#1a3a1a;border:1px solid #3a7a3a;color:#9eff9e;text-decoration:none;font-size:12px;border-radius:3px;white-space:nowrap;align-self:flex-end;"
+               title="Exportar registros filtrados como CSV (compatível com Excel)">
+                &#8659; Exportar CSV
+            </a>
+            </div>
+
+            <div style="color:#888;font-size:11px;margin-bottom:8px;"><?php echo $al_total; ?> registro(s) encontrado(s)</div>
+
+            <?php if($al_rows): ?>
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead>
+                    <tr style="background:#1a0a00;color:#FFD700;">
+                        <th style="padding:5px 8px;text-align:left;border-bottom:1px solid #444;">Data/Hora</th>
+                        <th style="padding:5px 8px;text-align:left;border-bottom:1px solid #444;">Admin/GM</th>
+                        <th style="padding:5px 8px;text-align:left;border-bottom:1px solid #444;">Ação</th>
+                        <th style="padding:5px 8px;text-align:left;border-bottom:1px solid #444;">Alvo</th>
+                        <th style="padding:5px 8px;text-align:left;border-bottom:1px solid #444;">Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach($al_rows as $i => $row): ?>
+                    <tr style="background:<?php echo ($i%2===0)?'#1a1a1a':'#111'; ?>;">
+                        <td style="padding:4px 8px;color:#888;white-space:nowrap;"><?php echo htmlspecialchars($row['data_hora']); ?></td>
+                        <td style="padding:4px 8px;color:#FFD700;font-weight:bold;"><?php echo htmlspecialchars($row['autor_nome']); ?></td>
+                        <td style="padding:4px 8px;"><span style="color:<?php echo al_cor($row['acao']); ?>;font-weight:bold;"><?php echo htmlspecialchars($row['acao']); ?></span></td>
+                        <td style="padding:4px 8px;color:#ccc;"><?php echo $row['alvo_nome'] ? htmlspecialchars($row['alvo_nome']) : '<span style="color:#555">—</span>'; ?></td>
+                        <td style="padding:4px 8px;color:#aaa;font-size:11px;"><?php echo htmlspecialchars($row['detalhes'] ?? ''); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <?php if($al_pages > 1): ?>
+            <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap;">
+                <?php for($p=1;$p<=$al_pages;$p++): ?>
+                    <a href="<?php echo $al_base_url; ?>&al_pg=<?php echo $p; ?>"
+                       style="padding:3px 8px;background:<?php echo ($p===$al_pg)?'#ff6600':'#333'; ?>;color:<?php echo ($p===$al_pg)?'#fff':'#ccc'; ?>;text-decoration:none;border-radius:3px;font-size:11px;">
+                        <?php echo $p; ?>
+                    </a>
+                <?php endfor; ?>
+            </div>
+            <?php endif; ?>
+
+            <?php else: ?>
+                <div style="color:#666;padding:20px;text-align:center;">Nenhum registro encontrado.</div>
+            <?php endif; ?>
+
+            <!-- Limpeza de logs antigos -->
+            <div style="margin-top:20px;border-top:1px solid #333;padding-top:14px;">
+                <div style="font-size:12px;font-weight:bold;color:#f39c12;margin-bottom:6px;">Limpar Registros Antigos</div>
+                <?php
+                // Exibir resultado do purge se veio via POST nesta mesma carga
+                // (a mensagem já foi emitida no topo via echo, então só mostramos se vier via GET redirect)
+                $al_purge_ok  = isset($_GET['al_purge_ok'])  ? (int)$_GET['al_purge_ok']  : null;
+                $al_purge_err = isset($_GET['al_purge_err']) ? htmlspecialchars($_GET['al_purge_err']) : null;
+                if ($al_purge_ok !== null):
+                ?>
+                    <div style="color:#66ff99;font-size:12px;margin-bottom:8px;">✅ <?php echo $al_purge_ok; ?> registro(s) removido(s).</div>
+                <?php elseif ($al_purge_err): ?>
+                    <div style="color:#ff6666;font-size:12px;margin-bottom:8px;">❌ <?php echo $al_purge_err; ?></div>
+                <?php endif; ?>
+                <form method="POST" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"
+                      onsubmit="return confirm('Confirma a exclusão dos logs com mais de ' + document.getElementById('al_dias_input').value + ' dias?');">
+                    <input type="hidden" name="action" value="purge_audit_log">
+                    <label style="color:#aaa;font-size:12px;">
+                        Remover registros com mais de
+                        <input type="number" id="al_dias_input" name="al_dias" value="30" min="1" max="3650"
+                               style="width:60px;margin:0 4px;">
+                        dias
+                    </label>
+                    <button type="submit" class="botao" style="background:#7a2a00;border-color:#cc4400;color:#ffcc99;padding:3px 12px;font-size:12px;">Limpar</button>
+                </form>
+                <?php
+                // Mostrar contagem de registros por faixa de idade
+                try {
+                    $al_counts = [];
+                    foreach ([7,30,60,90,180,365] as $d) {
+                        $st_c = $conexao->prepare("SELECT COUNT(*) FROM admin_logs WHERE data_hora < " . (Database::isMysql() ? "DATE_SUB(NOW(), INTERVAL ? DAY)" : "datetime('now', ? || ' days')"));
+                        $st_c->execute([$d]);
+                        $al_counts[$d] = (int)$st_c->fetchColumn();
+                    }
+                    $al_count_total = (int)$conexao->query("SELECT COUNT(*) FROM admin_logs")->fetchColumn();
+                ?>
+                <div style="margin-top:8px;font-size:11px;color:#666;display:flex;gap:12px;flex-wrap:wrap;">
+                    <span>Total: <strong style="color:#aaa;"><?php echo $al_count_total; ?></strong></span>
+                    <?php foreach($al_counts as $d => $c): if($c > 0): ?>
+                    <span>&gt;<?php echo $d; ?>d: <strong style="color:#ff9944;"><?php echo $c; ?></strong></span>
+                    <?php endif; endforeach; ?>
+                </div>
+                <?php } catch(Exception $e) {} ?>
+            </div>
+            </div>
+            <div style="background:#1a0a00; border-left:1px solid #333; border-right:1px solid #333; border-bottom:2px solid #87CEFA; height:8px;"></div>
 
         <?php elseif($modulo == 'ban_penalty' && $is_admin): ?>
             <div style="background:#1a0a00; border-left:4px solid #ff6600; border-bottom:1px solid #444; padding:7px 12px; font-weight:bold; color:#FFD700; font-size:13px; margin-bottom:8px;">⚙️ Penalidade por Rejeição de Termos</div>
@@ -2181,7 +2425,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endif; ?>
 
                 <div style="margin-top:16px;background:#1a0a00;border:1px solid #555;border-radius:4px;padding:10px;color:#888;font-size:11px;">
-                    <strong style="color:#f39c12;">⚠️ Nota:</strong> Funções exclusivas de ADM (SQL, Limpar Banco, Limpar IPs, Config. do Site, Penalidade de Ban, Alterar Cargo) nunca são acessíveis para GM.
+                    <strong style="color:#f39c12;">⚠️ Nota:</strong> Funções exclusivas de ADM (SQL, Limpar Banco, Limpar IPs, Log de Ações, Penalidade de Ban, Alterar Cargo) nunca são acessíveis para GM.
                 </div>
             </div>
             <div style="background:#1a0a00; border-left:1px solid #333; border-right:1px solid #333; border-bottom:2px solid #87CEFA; height:8px;"></div>

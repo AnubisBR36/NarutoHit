@@ -618,15 +618,42 @@ $gen_data = json_encode(['label'=>'Genjutsu','stat_icon'=>'_img/Icones/gen.png',
         </tr>
         <tr class="attribute-row">
                 <td align="right" style="padding-right:10px;background-color:#1b1b1a;white-space:nowrap;"><img src="_img/Icones/Chakra.png" style="width:16px;height:16px;vertical-align:middle;margin-right:3px;"><b>Chakra:</b></td>
-          <td><img src="_img/NewsBar/Dourado/ponta_barra.jpg" height="22" /><img src="_img/NewsBar/Dourado/barra_centro.jpg" width="<?php echo $db['energiamax'] > 0 ? (($db['energia']*$max)/$db['energiamax']) : 0; ?>" height="22" /><img src="_img/NewsBar/Dourado/fim_barra.jpg" height="22" /></td>
-            <td><b>| <?php echo $db['energia']; ?> / <?php echo $db['energiamax']; ?> |</b></td>
+          <td><?php
+                $_chakra_w = 0;
+                if($db['energiamax'] > 0) {
+                    $_energia_cap = min((int)$db['energia'], (int)$db['energiamax']);
+                    $_chakra_w = min($max, max(0, ($_energia_cap * $max) / $db['energiamax']));
+                }
+          ?><img src="_img/NewsBar/Dourado/ponta_barra.jpg" height="22" /><?php if($_chakra_w > 0): ?><img src="_img/NewsBar/Dourado/barra_centro.jpg" width="<?php echo (int)$_chakra_w; ?>" height="22" /><?php endif; ?><img src="_img/NewsBar/Dourado/fim_barra.jpg" height="22" /></td>
+            <td><b>| <?php echo (int)$db['energia']; ?> / <?php echo (int)$db['energiamax']; ?> |</b></td>
         </tr>
+        <?php if((int)$db['energia'] < (int)$db['energiamax']): ?>
+        <?php
+            $_regen_por_hora = max(1, (int)floor($db['energiamax'] * 0.05));
+            $_ultima_regen   = !empty($db['chakra_regen_ultima']) ? strtotime($db['chakra_regen_ultima']) : time();
+            $_seg_desde      = time() - $_ultima_regen;
+            $_min_prox       = max(0, 60 - (int)floor($_seg_desde / 60));
+        ?>
+        <tr>
+            <td colspan="3" style="padding:2px 0 4px 0;">
+                <span class="sub2" style="padding-left:8px;">
+                    &#8635; Recarga de chakra:
+                    <?php if($_min_prox <= 0): ?>
+                        <span style="color:#FFD700;">pronto para recarregar</span>
+                    <?php else: ?>
+                        em <b style="color:#AADDFF;"><?php echo $_min_prox; ?> min</b>
+                        <span style="color:#888;">(+<?php echo $_regen_por_hora; ?> chakra)</span>
+                    <?php endif; ?>
+                </span>
+            </td>
+        </tr>
+        <?php endif; ?>
         <tr class="attribute-row">
                 <td align="right" style="padding-right:10px;background-color:#1b1b1a;white-space:nowrap;"><img src="_img/Icones/experiencia.png" style="width:16px;height:16px;vertical-align:middle;margin-right:3px;"><b>Experiência:</b></td>
           <td><img src="_img/NewsBar/Vermelha/ponta_barra.jpg" height="22" /><?php
                         if($db['exp'] > 0 && $db['expmax'] > 0) {
-                                $exp_width = (($db['exp']*$max)/$db['expmax']);
-                                echo '<img src="_img/NewsBar/Vermelha/barra_centro.jpg" width="'.$exp_width.'" height="22" />';
+                                $exp_width = min($max, max(0, (min((int)$db['exp'],(int)$db['expmax']) * $max) / $db['expmax']));
+                                echo '<img src="_img/NewsBar/Vermelha/barra_centro.jpg" width="'.(int)$exp_width.'" height="22" />';
                         }
                         ?><img src="_img/NewsBar/Vermelha/fim_barra.jpg" height="22" /></td>
             <td><b>| <?php echo $db['exp']; ?> / <?php echo $db['expmax']; ?> |</b></td>
@@ -698,25 +725,53 @@ if($db['doujutsu']>0){
     if(!empty($db['doujutsu_proxima_tentativa']) && strtotime($db['doujutsu_proxima_tentativa']) > time()){
         $dias_rest = ceil((strtotime($db['doujutsu_proxima_tentativa']) - time()) / 86400);
         ?>
-<div class="box_top">🔮 Despertar da Linhagem</div>
-<div class="box_middle" style="text-align:center;padding:15px;">
-    <p style="color:#888;">Sua linhagem não respondeu ao ritual... aguarde para tentar novamente.</p>
-    <p style="color:#FF6600;font-weight:bold;">Próxima tentativa em: <span style="font-size:16px;"><?php echo $dias_rest; ?> dia(s)</span></p>
+<div class="box_top">Despertar da Linhagem</div>
+<div class="box_middle" style="text-align:center;padding:14px;">
+    <p style="color:#888;font-size:12px;margin:0 0 6px;font-style:italic;">"Seu sangue precisa de tempo para se recuperar..."</p>
+    <p style="font-weight:bold;margin:0;">Próxima tentativa em <span style="font-size:15px;color:#FFD700;"><?php echo $dias_rest; ?> dia(s)</span></p>
 </div>
 <div class="box_bottom"></div>
         <?php
     } else {
-        // Pode iniciar o ritual
+        $ritual_em_andamento = isset($_SESSION['despertar_fase']) && $_SESSION['despertar_fase'] > 0;
+        $h_bat = (int)($db['batalhas'] ?? 0);
+        $h_vit = (int)($db['vitorias'] ?? 0);
+        $h_mis = (int)($db['missoes_longas'] ?? 0);
+        try {
+            $hcfg = $conexao->query("SELECT nome, valor FROM configuracoes WHERE nome IN ('despertar_req_batalhas','despertar_req_vitorias','despertar_req_missoes')")->fetchAll(PDO::FETCH_KEY_PAIR);
+        } catch(Exception $e){ $hcfg = []; }
+        $h_req_bat = max(1,(int)($hcfg['despertar_req_batalhas'] ?? 100));
+        $h_req_vit = max(1,(int)($hcfg['despertar_req_vitorias'] ?? 10));
+        $h_req_mis = max(1,(int)($hcfg['despertar_req_missoes']  ?? 150));
+        $h_ok  = ($h_bat >= $h_req_bat && $h_vit >= $h_req_vit && $h_mis >= $h_req_mis);
         ?>
-<div class="box_top" style="background:linear-gradient(90deg,#1a0033,#330011,#1a0033);">🔮 Despertar da Linhagem</div>
-<div class="box_middle" style="background:radial-gradient(ellipse,#0d0005,#000);text-align:center;padding:15px;">
-    <p style="color:#CC88FF;font-size:14px;font-weight:bold;">Seu chakra está inquieto... algo dorme em seu sangue.</p>
-    <p style="color:#888;font-size:12px;">Você atingiu o nível 20. Uma herança ancestral pode estar dentro de você.<br/>
-    Enfrente a <b style="color:#FF4400;">Sombra da Linhagem</b> e descubra seu destino.</p>
-    <?php if(!empty($db['doujutsu_despertar_hp']) && $db['doujutsu_despertar_hp'] > 0): ?>
-    <p style="color:#FF9900;font-size:12px;">⚔️ Batalha em andamento — HP da Sombra: <b><?php echo $db['doujutsu_despertar_hp']; ?></b></p>
+<div class="box_top">Despertar da Linhagem</div>
+<div class="box_middle">
+    <?php if($h_ok): ?>
+        <b><?php echo $ritual_em_andamento ? 'Ritual em andamento.' : 'Você está pronto para o ritual!'; ?></b><div class="sep"></div>
+        <div align="center">
+            <?php if($ritual_em_andamento): ?>
+            <input type="button" class="botao" onclick="location.href='?p=despertar'" value="↩ Continuar Ritual">
+            <?php else: ?>
+            <input type="button" class="botao" onclick="location.href='?p=despertar'" value="Iniciar Ritual de Despertar">
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        Acumule experiência para desbloquear o Ritual de Despertar da Linhagem.<div class="sep"></div>
+        <table width="100%" cellpadding="2" cellspacing="0">
+            <tr>
+                <td><?php echo ($h_bat>=$h_req_bat)?'<b style="color:green;">✓</b>':'○'; ?> Batalhas:</td>
+                <td><b><?php echo $h_bat; ?>/<?php echo $h_req_bat; ?></b></td>
+                <td><?php echo ($h_vit>=$h_req_vit)?'<b style="color:green;">✓</b>':'○'; ?> Vitórias:</td>
+                <td><b><?php echo $h_vit; ?>/<?php echo $h_req_vit; ?></b></td>
+            </tr>
+            <tr>
+                <td><?php echo ($h_mis>=$h_req_mis)?'<b style="color:green;">✓</b>':'○'; ?> Missões ≥10h:</td>
+                <td><b><?php echo $h_mis; ?>/<?php echo $h_req_mis; ?></b></td>
+                <td></td><td><a href="?p=despertar">Ver detalhes</a></td>
+            </tr>
+        </table>
     <?php endif; ?>
-    <input type="button" style="background:linear-gradient(180deg,#8B0000,#3D0000);color:#FFD700;border:1px solid #FF4400;padding:10px 25px;cursor:pointer;font-weight:bold;font-size:14px;border-radius:4px;" value="⚔️ Iniciar Ritual" onclick="location.href='?p=despertar'" />
 </div>
 <div class="box_bottom"></div>
         <?php

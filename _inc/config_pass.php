@@ -1,5 +1,6 @@
 <?php
 if(isset($_POST['pass_atual'])){
+        if(!csrf_validar()) { echo "<script>self.location='?p=config&type=pass'</script>"; exit; }
         $atual=$_POST['pass_atual'];
         $nova=$_POST['pass_nova'];
         $nova2=$_POST['pass_nova2'];
@@ -25,6 +26,7 @@ if(isset($_GET['msg'])){
 ?>
 <fieldset><legend>Alterar Senha</legend>
         <form method="post" action="?p=config&amp;type=pass" style="background:url(_img/config_pass.jpg) no-repeat right top;" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+        <?php echo csrf_field(); ?>
         <span class="destaque">Senha Atual:</span><br />
         <input type="password" id="pass_atual" name="pass_atual" /><br />
         <span class="sub2">Digite a senha atual.</span><br /><div class="sep" style="width:180px;"></div>

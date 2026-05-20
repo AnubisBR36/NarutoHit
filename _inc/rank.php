@@ -70,7 +70,8 @@ if (isset($_GET['filter']) && $_GET['filter'] === 'pvp') {
             <img src="_img/Icones/tai.png" style="width:12px;height:12px;vertical-align:middle;">
             Atributos
         </a> |
-        <b>Ranking PVP</b>
+        <b>Ranking PVP</b> |
+        <a href="?p=rank_doujutsu" style="color:#CC99FF;">Linhagens</a>
     </div>
     <div class="sep"></div>
     <div align="center">
@@ -201,7 +202,8 @@ if (isset($_GET['filter']) && $_GET['filter'] === 'atributos') {
     <div align="center">
         <a href="?p=rank&filter=<?php echo $db['renegado']==='sim' ? 7 : $db['vila']; ?>">Ranking Geral</a> |
         <b>Atributos</b> |
-        <a href="?p=rank&filter=pvp">Ranking PVP</a>
+        <a href="?p=rank&filter=pvp">Ranking PVP</a> |
+        <a href="?p=rank_doujutsu" style="color:#CC99FF;">Linhagens</a>
     </div>
     <div class="sep"></div>
 
@@ -307,7 +309,8 @@ try {
             <img src="_img/Icones/gen.png" style="width:12px;height:12px;vertical-align:middle;">
             Atributos
         </a> |
-        <a href="?p=rank&filter=pvp">Ranking PVP</a>
+        <a href="?p=rank&filter=pvp">Ranking PVP</a> |
+        <a href="?p=rank_doujutsu" style="color:#CC99FF;">Linhagens</a>
     </div>
     <div class="sep"></div>
         <div align="center">
@@ -335,7 +338,7 @@ try {
     <div class="sep"></div>
     <?php if(date('Y-m-d H:i:s')<$db['vip']){ ?>
     <?php if(($_GET['filter']==0)or($_GET['filter']==$db['vila'])){ ?>
-    <div class="aviso">Sua Posição: <b><?php echo $posicao; ?>&ordm; lugar</b> [<a href="?p=rank&amp;filter=<?php echo $_GET['filter']; ?>&amp;pg=<?php echo floor($posicao/50); ?>">Ver</a>]</div>
+    <div class="aviso">Sua Posição: <b><?php echo (int)$posicao; ?>&ordm; lugar</b> [<a href="?p=rank&amp;filter=<?php echo (int)$_GET['filter']; ?>&amp;pg=<?php echo (int)floor($posicao/50); ?>">Ver</a>]</div>
     <div class="sep"></div>
     <?php } ?>
     <?php } ?>

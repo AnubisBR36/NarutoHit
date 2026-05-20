@@ -56,6 +56,7 @@ $canais_def = [
 // ── processar formulário ──────────────────────────────────────────────────
 $msg_form = ''; $msg_tipo_form = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['con_nome'])) {
+    if(!csrf_validar()) { $msg_form = 'Requisição inválida. Tente novamente.'; $msg_tipo_form = 'error'; goto fim_contact_post; }
     $nome     = trim((string)($_POST['con_nome'] ?? ''));
     $email    = trim((string)($_POST['con_email'] ?? ''));
     $assunto  = trim((string)($_POST['con_assunto'] ?? ''));
@@ -94,9 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['con_nome'])) {
             }
         }
     }
+    fim_contact_post:;
 }
 ?>
-<div class="box_top">📬 Contato</div>
+<div class="box_top">Contato</div>
 <div class="box_middle">
 
 <?php if ($msg_form): ?>
@@ -142,6 +144,7 @@ foreach ($canais_def as $key => $def) {
 <?php endif; ?>
 
 <form method="post" action="?p=contact" autocomplete="off">
+    <?php echo csrf_field(); ?>
     <fieldset><legend>Enviar mensagem</legend>
     <table width="100%" cellpadding="3" cellspacing="0">
         <tr>

@@ -22,6 +22,7 @@ if (!$is_adm_hunt) {
 }
 
 if(isset($_POST['hunt_tipo'])){
+    if(!csrf_validar()) { echo "<script>self.location='?p=hunt'</script>"; exit; }
     if (!$pvp_ativo_hunt) {
         echo "<script>alert('O PVP entre jogadores está desabilitado no momento.'); self.location='?p=hunt'</script>";
         exit;
@@ -336,6 +337,7 @@ if(isset($_POST['hunt_tipo'])){
 <?php if ($pvp_ativo_hunt): ?>
     <!-- FORM 1: Caçar ninja específico -->
     <form method="post" action="?p=hunt" onsubmit="subm1.value='Carregando...';subm1.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('1',$chaveuniversal); ?>" />
     <fieldset><legend>Caçar Ninja Específico (<?php if($is_vip_hunt) echo 'gratuito para jogadores VIP'; else echo '5,00 yens'; ?>)</legend>
         <div style="width:320px;margin-right:15px;float:left;">Se você sabe quem deseja procurar, digite o nome ao lado. Lembre-se que as chances de encontrar um ninja mais experiente que você varia pela diferença de níveis.</div>
@@ -346,6 +348,7 @@ if(isset($_POST['hunt_tipo'])){
 
     <!-- FORM 2: Caçar por Vila -->
     <form method="post" action="?p=hunt" onsubmit="subm2.value='Carregando...';subm2.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('2',$chaveuniversal); ?>" />
     <fieldset><legend>Caçar Ninja por Vila (<?php if($is_vip_hunt) echo 'gratuito para jogadores VIP'; else echo '5,00 yens'; ?>)</legend>
         <div style="width:320px;margin-right:15px;float:left;">Você pode concentrar suas caças apenas em uma vila (ideal para conflitos entre vilas). Escolha uma das opções ao lado, e inicie suas buscas!</div>
@@ -366,6 +369,7 @@ if(isset($_POST['hunt_tipo'])){
 
     <!-- FORM 3: Caçar por Nível -->
     <form method="post" action="?p=hunt" onsubmit="subm3.value='Carregando...';subm3.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('3',$chaveuniversal); ?>" />
     <fieldset><legend>Caçar Ninja por Nível (<?php if($is_vip_hunt) echo 'gratuito para jogadores VIP'; else echo '5,00 yens'; ?>)</legend>
         <div style="width:320px;margin-right:15px;float:left;">Procure ninjas mais fracos, equivalentes ou mais fortes que você.<br /><?php if($db['nivel']>1){ ?>- Ninjas Mais Fracos: até nível <?php echo $db['nivel']-1; ?>;<br /><?php } ?>- Ninjas Equivalentes: nível <?php echo $db['nivel']; ?>;<br />- Ninjas Mais Fortes: acima de nível <?php echo $db['nivel']+1; ?>.</div>
@@ -383,6 +387,7 @@ if(isset($_POST['hunt_tipo'])){
     <!-- FORM 5: Caçar por Status (VIP) -->
     <?php if($is_vip_hunt){ ?>
     <form method="post" action="?p=hunt" onsubmit="subm5.value='Carregando...';subm5.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('5',$chaveuniversal); ?>" />
     <fieldset><legend>Caçar Ninja por Status (gratuito - exclusivo para jogadores VIP)</legend>
         <div style="width:320px;margin-right:15px;float:left;">Procure ninjas pelo seu status atual. Você pode pesquisar por ninjas que estejam jogando neste exato momento, ou então atacar ninjas despreparados. Qualquer ninja procurado neste modo não pertencerá a mesma vila que você.</div>
@@ -399,6 +404,7 @@ if(isset($_POST['hunt_tipo'])){
 
     <!-- FORM 6: Caçar em Outros Servidores — visível para todos, funciona apenas para VIP/ADM -->
     <form method="post" action="?p=hunt" onsubmit="subm6.value='Carregando...';subm6.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('6',$chaveuniversal); ?>" />
     <fieldset style="border-color:#aa4400;">
         <legend style="color:#ffaa44;">&#9733; Caçar Ninja em Outros Servidores <?php if($is_vip_hunt || $is_adm_hunt){ echo '(gratuito)'; } else { echo '<span style="color:#ff6666;font-size:11px;">(exclusivo VIP)</span>'; } ?></legend>
@@ -421,6 +427,7 @@ if(isset($_POST['hunt_tipo'])){
 
     <!-- FORM 4: Caçar por Tempo -->
     <form method="post" action="?p=hunt" onsubmit="subm4.value='Carregando...';subm4.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" name="hunt_tipo" value="<?php echo $c->encode('4',$chaveuniversal); ?>" />
     <fieldset><legend>Caçar por Tempo</legend>
         <div style="width:320px;margin-right:15px;float:left;padding-bottom:50px;">O melhor método para se ganhar experiência e yens rapidamente. É recomendável caçar de 10 em 10 minutos, aproveitando ao máximo o tempo diário. Não há custos para este tipo de caça.<br /><br /><img src="_img/clock.png" align="absmiddle" /> <b>Tempo Restante: <?php echo $db['hunt_restantes']*10; ?> minutos.</b></div>

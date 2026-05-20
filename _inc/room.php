@@ -123,72 +123,85 @@ if($dbr && $atual < $dbr['fim']) {
 <script language="javascript" type="text/javascript">
 var conc=0;
 function calculafim(div,divtotal){
-	var navegador=navigator.appName;
-	var element = document.getElementById(div);
-	if(!element || !element.innerHTML) return;
+        var navegador=navigator.appName;
+        var element = document.getElementById(div);
+        if(!element || !element.innerHTML) return;
 
-	var tmp = element.innerHTML.split(":");
-	if(tmp.length != 3) return;
+        var tmp = element.innerHTML.split(":");
+        if(tmp.length != 3) return;
 
-	var s = parseInt(tmp[2]);
-	var m = parseInt(tmp[1]);
-	var h = parseInt(tmp[0]);
-	s--;
-	if (s < 0){ s = 59; m--; }
-	if (m < 0){ m = 59; h--; }
-	if (h < 0){ h = 0; m = 0; s = 0; }
+        var s = parseInt(tmp[2]);
+        var m = parseInt(tmp[1]);
+        var h = parseInt(tmp[0]);
+        s--;
+        if (s < 0){ s = 59; m--; }
+        if (m < 0){ m = 59; h--; }
+        if (h < 0){ h = 0; m = 0; s = 0; }
 
-	s = new String(s); if (s.length < 2) s = "0" + s;
-	m = new String(m); if (m.length < 2) m = "0" + m;
-	h = new String(h); if (h.length < 2) h = "0" + h;
+        s = new String(s); if (s.length < 2) s = "0" + s;
+        m = new String(m); if (m.length < 2) m = "0" + m;
+        h = new String(h); if (h.length < 2) h = "0" + h;
 
-	var temp = h + ":" + m + ":" + s;
+        var temp = h + ":" + m + ":" + s;
 
-	element.innerHTML = temp;
-	if(element.value !== undefined) element.value = temp;
-	atualiza(div,divtotal);
+        element.innerHTML = temp;
+        if(element.value !== undefined) element.value = temp;
+        atualiza(div,divtotal);
 }
 function atualiza(div,divtotal){
-	var element = document.getElementById(div);
-	if(!element) return;
-	var timeValue = element.value || element.innerHTML;
-	if(timeValue && timeValue <= "00:00:01"){
-		conc=1;
-		self.location="?p=school";
-	}
+        var element = document.getElementById(div);
+        if(!element) return;
+        var timeValue = element.value || element.innerHTML;
+        if(timeValue && timeValue <= "00:00:01"){
+                conc=1;
+                self.location="?p=school";
+        }
 }
 </script>
 <div class="box_top">Escola Ninja - Sala <?php echo $room_id; ?></div>
 <div class="box_middle">
-	Bem-vindo à Sala <?php echo $room_id; ?> da Escola Ninja! Aqui você pode aprender novas habilidades e aprimorar seus conhecimentos ninja. Sua sessão de treinamento tem duração de 5 minutos.<div class="sep"></div>
-	<?php echo $msg; ?>
-	<div class="sep"></div>
-	<table width="100%" cellpadding="2" cellspacing="0">
-  	  <tr>
-            <td align="center">
+        Bem-vindo à Sala <?php echo $room_id; ?> da Escola Ninja! Aqui você pode aprender novas habilidades e aprimorar seus conhecimentos ninja. Sua sessão de treinamento tem duração de 5 minutos.<div class="sep"></div>
+        <?php echo $msg; ?>
+        <div class="sep"></div>
+        <?php
+        $tem_doujutsu = !empty($db['doujutsu']);
+        $img_w = $tem_doujutsu ? '100' : '130';
+        $btn_w = $tem_doujutsu ? '100px' : '130px';
+        ?>
+        <table width="100%" cellpadding="2" cellspacing="0">
+          <tr>
+            <td align="center" width="<?php echo $tem_doujutsu ? '25%' : '33%'; ?>">
             <?php if($db['nivel']>=15) { ?>
-            <a href="?p=elements&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/chakra.jpg" border="0" /></a>
+            <a href="?p=elements&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/chakra.jpg" width="<?php echo $img_w; ?>" border="0" /></a>
             <?php } else { ?>
-            <img src="_img/school/chakra.jpg" border="0" style="opacity: 0.5;" />
-            <div style="background: url('_img/fundo_botao.jpg') no-repeat center; width: 150px; height: 20px; margin: 3px auto; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: bold; font-size: 10px;">
+            <img src="_img/school/chakra.jpg" width="<?php echo $img_w; ?>" border="0" style="opacity:0.5;" />
+            <div style="background:url('_img/fundo_botao.jpg') no-repeat center;width:<?php echo $btn_w; ?>;height:20px;margin:3px auto;display:flex;align-items:center;justify-content:center;color:#FFF;font-weight:bold;font-size:10px;">
                 Level 15 (<?php echo max(0, 15 - $db['nivel']); ?>)
             </div>
             <?php } ?>
             </td>
-          	<td align="center">
-            <a href="?p=learn&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/jutsu.jpg" border="0" /></a>
-            <div style="background: url('_img/fundo_botao.jpg') no-repeat center; width: 150px; height: 20px; margin: 3px auto; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: bold; font-size: 10px;">
+            <td align="center" width="<?php echo $tem_doujutsu ? '25%' : '33%'; ?>">
+            <a href="?p=learn&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/jutsu.jpg" width="<?php echo $img_w; ?>" border="0" /></a>
+            <div style="background:url('_img/fundo_botao.jpg') no-repeat center;width:<?php echo $btn_w; ?>;height:20px;margin:3px auto;display:flex;align-items:center;justify-content:center;color:#FFF;font-weight:bold;font-size:10px;">
                 Aprender Jutsus
             </div>
             </td>
-            <td align="center">
-            <a href="?p=schooltrain&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/treino.jpg" border="0" /></a>
-            <div style="background: url('_img/fundo_botao.jpg') no-repeat center; width: 150px; height: 20px; margin: 3px auto; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: bold; font-size: 10px;">
+            <td align="center" width="<?php echo $tem_doujutsu ? '25%' : '33%'; ?>">
+            <a href="?p=schooltrain&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/treino.jpg" width="<?php echo $img_w; ?>" border="0" /></a>
+            <div style="background:url('_img/fundo_botao.jpg') no-repeat center;width:<?php echo $btn_w; ?>;height:20px;margin:3px auto;display:flex;align-items:center;justify-content:center;color:#FFF;font-weight:bold;font-size:10px;">
                 Treinar Jutsus
             </div>
             </td>
-      </tr>
-    </table>
+            <?php if($tem_doujutsu): ?>
+            <td align="center" width="25%">
+            <a href="?p=treinar_doujutsu&amp;id=<?php echo $_GET['id']; ?>"><img src="_img/school/linhagem.jpg" width="<?php echo $img_w; ?>" border="0" /></a>
+            <div style="background:url('_img/fundo_botao.jpg') no-repeat center;width:<?php echo $btn_w; ?>;height:20px;margin:3px auto;display:flex;align-items:center;justify-content:center;color:#FFF;font-weight:bold;font-size:10px;">
+                Treinar Doujutsu
+            </div>
+            </td>
+            <?php endif; ?>
+          </tr>
+        </table>
     <div class="sep"></div>
     <div align="center"><input type="button" class="botao" value="Sair da Sala" onclick="location.href='?p=room&id=<?php echo $_GET['id']; ?>&leave=true'" /></div>
 </div>

@@ -192,11 +192,11 @@ function regSubmit(form) {
 <script>function regSubmit(form){ var s=form.querySelector('#subm'); s.value='Carregando...'; s.disabled=true; return true; }</script>
 <?php endif; ?>
 <input type="hidden" id="reg_submit" name="reg_submit" value="1" />
-<input type="hidden" id="reg_nlink" name="reg_nlink" value="<?php if(isset($_GET['nlink'])) echo $_GET['nlink']; ?>" />
+<input type="hidden" id="reg_nlink" name="reg_nlink" value="<?php if(isset($_GET['nlink'])) echo e($_GET['nlink']); ?>" />
 <fieldset>
         <legend>Dados da Conta</legend>
     <span class="destaque">Nome de Usuário:</span><br />
-    <input type="text" id="reg_usuario" name="reg_usuario" maxlength="15" onfocus="className='input'" onblur="className=''" <?php if(isset($_GET['user'])) echo 'value="'.$_GET['user'].'"'; ?>/><br />
+    <input type="text" id="reg_usuario" name="reg_usuario" maxlength="15" onfocus="className='input'" onblur="className=''" <?php if(isset($_GET['user'])) echo 'value="'.e($_GET['user']).'"'; ?>/><br />
     <span class="sub2">Digite um nome de usuário com até<br />15 caracteres. Este também será seu<br />login no jogo, e o nome do personagem.</span><br /><br />
 
     <span class="destaque">Senha:</span><br />

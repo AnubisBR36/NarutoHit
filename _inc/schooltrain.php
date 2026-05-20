@@ -81,6 +81,7 @@ function atualiza(div,divtotal){
 </script>
 <?php
 if(isset($_POST['train'])){
+        if(!csrf_validar()) { echo "<script>location.href='?p=home';</script>"; exit; }
         $train=$c->decode($_POST['train'],$chaveuniversal);
         $tempo=$c->decode($_POST['tempo'],$chaveuniversal);
         
@@ -154,7 +155,8 @@ try {
         <?php if($dbj['nivel']==5) { ?>
             Nível máximo alcançado!
         <?php } else { ?>
-        <form method="post" action="?p=schooltrain&amp;id=<?php echo $_GET['id']; ?>" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+        <form method="post" action="?p=schooltrain&amp;id=<?php echo (int)$_GET['id']; ?>" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+        <?php echo csrf_field(); ?>
         <input type="hidden" name="train" value="<?php echo $c->encode($dbj['jutsu'],$chaveuniversal); ?>">
         <select name="tempo">
             <?php for($i=1; $i<49; $i++) { ?>

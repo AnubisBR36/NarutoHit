@@ -1,0 +1,897 @@
+[mariadb] starting on port 3306 (socket /home/runner/.mariadb_data/mysql.sock)
+[mariadb] waiting for socket...
+[mariadb] ready
+[mariadb] running migrations
+1
+1
+[mariadb] migrations done
+[php] starting development server on 0.0.0.0:5000
+[Sat May  2 18:57:01 2026] PHP 8.2.23 Development Server (http://0.0.0.0:5000) started
+[Sat May  2 18:57:02 2026] 127.0.0.1:57884 Accepted
+[Sat May  2 18:57:02 2026] 127.0.0.1:57884 [200]: GET /
+[Sat May  2 18:57:02 2026] 127.0.0.1:57884 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57898 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57898 [200]: GET /_css/naruto.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:57898 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57912 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57912 [200]: GET /_css/banner_invasao.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:57912 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57916 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57916 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:57916 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57926 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57926 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:57926 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57930 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57930 [200]: GET /?p=despertar
+[Sat May  2 18:57:04 2026] 127.0.0.1:57930 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57934 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57934 [200]: GET /_js/banner_invasao.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:57934 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57946 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57948 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57956 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57968 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57982 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57986 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57946 [200]: GET /_css/naruto.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:57946 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57948 [200]: GET /_css/banner_invasao.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:57948 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57956 [200]: GET /_css/popup_noticia.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:57956 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57968 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:57968 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57982 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:57986 [200]: GET /_js/banner_invasao.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:57982 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57986 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:57994 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58010 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:57994 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58010 [200]: GET /_img/offline.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:57994 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58010 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58024 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58026 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58032 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58042 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58050 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58062 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58024 [200]: GET /?p=home
+[Sat May  2 18:57:04 2026] 127.0.0.1:58024 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58026 [200]: GET /_img/background.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58032 [200]: GET /_img/border_left.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58042 [200]: GET /_img/logo2.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58050 [200]: GET /_img/border_right.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58062 [200]: GET /_img/menu.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58026 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58032 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58042 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58050 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58062 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58070 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58084 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58098 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58114 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58070 [200]: GET /_img/box/box2_bottom.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58070 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58084 [200]: GET /_img/box/box2_middle.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58084 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58098 [200]: GET /_img/box/box2_top.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58098 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58114 [200]: GET /_img/border_top.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58114 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58118 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58132 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58118 [200]: GET /_css/naruto.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:58146 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58132 [200]: GET /_css/banner_invasao.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:58156 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58146 [200]: GET /_css/popup_noticia.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:58160 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58118 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58156 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58170 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58132 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58160 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58170 [200]: GET /_js/banner_invasao.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58146 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58156 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58160 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58170 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58178 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58178 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58178 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58180 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58180 [200]: GET /_img/offline.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58180 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58194 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58204 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58194 [200]: GET /_img/yens.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58194 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58208 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58218 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58230 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58234 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58204 [200]: GET /_img/Icones/tai.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58204 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58240 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58242 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58208 [200]: GET /_img/NewsBar/Azul/ponta_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58208 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58218 [200]: GET /_img/NewsBar/Azul/fim_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58218 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58230 [200]: GET /_img/Status.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58230 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58234 [200]: GET /_img/Icones/nin.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58234 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58256 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58240 [200]: GET /_img/NewsBar/Roxo/ponta_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58240 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58242 [200]: GET /_img/NewsBar/Roxo/fim_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58242 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58270 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58282 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58298 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58256 [200]: GET /index.php?p=login
+[Sat May  2 18:57:04 2026] 127.0.0.1:58256 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58314 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58270 [200]: GET /_img/Icones/gen.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58282 [200]: GET /_img/NewsBar/Verde/ponta_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58298 [200]: GET /_img/NewsBar/Verde/fim_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58328 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58314 [200]: GET /_img/Icones/Chakra.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58328 [200]: GET /_img/NewsBar/Dourado/ponta_barra.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58270 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58282 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58298 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58314 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58328 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58344 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58356 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58358 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58364 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58374 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58390 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58344 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58356 [200]: GET /_css/popup_noticia.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:58358 [200]: GET /_css/naruto.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:58364 [200]: GET /_js/banner_invasao.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58374 [200]: GET /_css/banner_invasao.css
+[Sat May  2 18:57:04 2026] 127.0.0.1:58390 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58344 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58356 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58358 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58364 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58374 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58390 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58398 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58400 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58398 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58398 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58414 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58400 [200]: GET /_img/online.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58400 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58414 [200]: GET /_img/offline.png
+[Sat May  2 18:57:04 2026] 127.0.0.1:58414 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58422 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58424 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58428 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58434 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58444 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58456 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58422 [200]: GET /_img/background.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58424 [200]: GET /_img/border_left.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58428 [200]: GET /_img/logo2.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58434 [200]: GET /_img/border_right.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58444 [200]: GET /_img/menu.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58456 [200]: GET /_img/border_top.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58422 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58424 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58428 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58434 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58444 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58456 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58460 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58470 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58472 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58486 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58490 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58496 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58460 [200]: GET /_img/box/box2_top.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58460 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58470 [200]: GET /_img/box/box2_middle.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58470 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58472 [200]: GET /_img/box/box2_bottom.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58472 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58486 [200]: GET /_img/box/box_top.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58486 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58490 [200]: GET /_img/box/box_middle.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58490 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58496 [200]: GET /_img/sep.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58496 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58498 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58504 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58510 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58498 [200]: GET /_img/login2.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58498 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58526 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58526 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58504 [200]: GET /_img/fundo_botao.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58510 [200]: GET /_img/box/box_bottom.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58526 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58504 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58510 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58532 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58548 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58556 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58532 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:57:04 2026] 127.0.0.1:58532 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58548 [200]: GET /_js/wz/wz_tooltip.js
+[Sat May  2 18:57:04 2026] 127.0.0.1:58548 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58556 [200]: GET /_img/border_bottom.jpg
+[Sat May  2 18:57:04 2026] 127.0.0.1:58556 Closing
+[Sat May  2 18:57:04 2026] 127.0.0.1:58566 Accepted
+[Sat May  2 18:57:04 2026] 127.0.0.1:58566 [200]: GET /_img/favicon.ico
+[Sat May  2 18:57:04 2026] 127.0.0.1:58566 Closing
+[Sat May  2 18:57:05 2026] 127.0.0.1:52934 Accepted
+[Sat May  2 18:57:05 2026] 127.0.0.1:52934 [200]: GET /_css/popup_noticia.css
+[Sat May  2 18:57:05 2026] 127.0.0.1:52934 Closing
+[Sat May  2 18:57:06 2026] 127.0.0.1:52944 Accepted
+[Sat May  2 18:57:06 2026] 127.0.0.1:52944 [200]: GET /_img/NewsBar/Azul/ponta_barra.jpg
+[Sat May  2 18:57:06 2026] 127.0.0.1:52944 Closing
+[Sat May  2 18:57:06 2026] 127.0.0.1:52952 Accepted
+[Sat May  2 18:57:06 2026] 127.0.0.1:52952 [200]: GET /_img/offline.png
+[Sat May  2 18:57:06 2026] 127.0.0.1:52952 Closing
+[Sat May  2 18:57:08 2026] 127.0.0.1:52968 Accepted
+[Sat May  2 18:57:08 2026] 127.0.0.1:52968 [200]: GET /_img/yens.png
+[Sat May  2 18:57:08 2026] 127.0.0.1:52968 Closing
+[Sat May  2 18:57:08 2026] 127.0.0.1:52976 Accepted
+[Sat May  2 18:57:08 2026] 127.0.0.1:52976 [200]: GET /_img/Status.png
+[Sat May  2 18:57:08 2026] 127.0.0.1:52976 Closing
+[Sat May  2 18:57:08 2026] 127.0.0.1:52984 Accepted
+[Sat May  2 18:57:08 2026] 127.0.0.1:52984 [200]: GET /_img/NewsBar/Azul/fim_barra.jpg
+[Sat May  2 18:57:08 2026] 127.0.0.1:52984 Closing
+[Sat May  2 18:57:08 2026] 127.0.0.1:52992 Accepted
+[Sat May  2 18:57:08 2026] 127.0.0.1:52992 [200]: GET /_img/Icones/tai.png
+[Sat May  2 18:57:08 2026] 127.0.0.1:52992 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53008 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53008 [200]: GET /_img/NewsBar/Roxo/ponta_barra.jpg
+[Sat May  2 18:57:09 2026] 127.0.0.1:53008 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53024 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53024 [200]: GET /index.php?p=login
+[Sat May  2 18:57:09 2026] 127.0.0.1:53024 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53028 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53028 [200]: GET /_css/naruto.css
+[Sat May  2 18:57:09 2026] 127.0.0.1:53028 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53042 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53042 [200]: GET /_css/banner_invasao.css
+[Sat May  2 18:57:09 2026] 127.0.0.1:53042 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53044 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53044 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 18:57:09 2026] 127.0.0.1:53044 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53060 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53060 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 18:57:09 2026] 127.0.0.1:53060 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53066 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53066 [200]: GET /_js/banner_invasao.js
+[Sat May  2 18:57:09 2026] 127.0.0.1:53066 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53074 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53074 [200]: GET /_img/online.png
+[Sat May  2 18:57:09 2026] 127.0.0.1:53074 Closing
+[Sat May  2 18:57:09 2026] 127.0.0.1:53078 Accepted
+[Sat May  2 18:57:09 2026] 127.0.0.1:53078 [200]: GET /_img/offline.png
+[Sat May  2 18:57:09 2026] 127.0.0.1:53078 Closing
+[Sat May  2 18:57:13 2026] 127.0.0.1:53080 Accepted
+[Sat May  2 18:57:13 2026] 127.0.0.1:53080 [200]: GET /_css/popup_noticia.css
+[Sat May  2 18:57:13 2026] 127.0.0.1:53080 Closing
+[Sat May  2 18:57:13 2026] 127.0.0.1:53084 Accepted
+[Sat May  2 18:57:13 2026] 127.0.0.1:53084 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 18:57:13 2026] 127.0.0.1:53084 Closing
+[Sat May  2 18:57:13 2026] 127.0.0.1:53094 Accepted
+[Sat May  2 18:57:13 2026] 127.0.0.1:53094 [200]: GET /_img/background.jpg
+[Sat May  2 18:57:13 2026] 127.0.0.1:53094 Closing
+[Sat May  2 18:57:13 2026] 127.0.0.1:53104 Accepted
+[Sat May  2 18:57:13 2026] 127.0.0.1:53104 [200]: GET /_img/border_top.jpg
+[Sat May  2 18:57:13 2026] 127.0.0.1:53104 Closing
+[Sat May  2 18:57:13 2026] 127.0.0.1:53110 Accepted
+[Sat May  2 18:57:13 2026] 127.0.0.1:53110 [200]: GET /_img/border_right.jpg
+[Sat May  2 18:57:13 2026] 127.0.0.1:53110 Closing
+[Sat May  2 18:57:13 2026] 127.0.0.1:53124 Accepted
+[Sat May  2 18:57:13 2026] 127.0.0.1:53124 [200]: GET /_img/fundo_botao.jpg
+[Sat May  2 18:57:13 2026] 127.0.0.1:53124 Closing
+[Sat May  2 18:57:14 2026] 127.0.0.1:53128 Accepted
+[Sat May  2 18:57:14 2026] 127.0.0.1:53128 [200]: GET /_img/box/box_middle.jpg
+[Sat May  2 18:57:14 2026] 127.0.0.1:53128 Closing
+[Sat May  2 18:57:16 2026] 127.0.0.1:53114 Accepted
+[Sat May  2 18:57:16 2026] 127.0.0.1:53114 [200]: GET /_img/menu.jpg
+[Sat May  2 18:57:16 2026] 127.0.0.1:53114 Closing
+[Sat May  2 18:57:16 2026] 127.0.0.1:53126 Accepted
+[Sat May  2 18:57:16 2026] 127.0.0.1:53126 [200]: GET /_img/logo2.jpg
+[Sat May  2 18:57:16 2026] 127.0.0.1:53126 Closing
+[Sat May  2 18:57:16 2026] 127.0.0.1:53138 Accepted
+[Sat May  2 18:57:16 2026] 127.0.0.1:53138 [200]: GET /_img/border_left.jpg
+[Sat May  2 18:57:16 2026] 127.0.0.1:53138 Closing
+[Sat May  2 18:57:16 2026] 127.0.0.1:53144 Accepted
+[Sat May  2 18:57:16 2026] 127.0.0.1:53144 [200]: GET /_img/box/box_top.jpg
+[Sat May  2 18:57:16 2026] 127.0.0.1:53144 Closing
+[Sat May  2 18:57:16 2026] 127.0.0.1:53148 Accepted
+[Sat May  2 18:57:16 2026] 127.0.0.1:53148 [200]: GET /_img/sep.jpg
+[Sat May  2 18:57:16 2026] 127.0.0.1:53148 Closing
+[Sat May  2 18:57:17 2026] 127.0.0.1:53156 Accepted
+[Sat May  2 18:57:17 2026] 127.0.0.1:53156 [200]: GET /_img/box/box2_top.jpg
+[Sat May  2 18:57:17 2026] 127.0.0.1:53156 Closing
+[Sat May  2 18:57:17 2026] 127.0.0.1:53160 Accepted
+[Sat May  2 18:57:17 2026] 127.0.0.1:53160 [200]: GET /_img/box/box2_bottom.jpg
+[Sat May  2 18:57:17 2026] 127.0.0.1:53160 Closing
+[Sat May  2 18:57:17 2026] 127.0.0.1:53174 Accepted
+[Sat May  2 18:57:17 2026] 127.0.0.1:53174 [302]: POST /index.php?p=login
+[Sat May  2 18:57:17 2026] 127.0.0.1:53174 Closing
+[Sat May  2 18:57:19 2026] 127.0.0.1:53184 Accepted
+[Sat May  2 18:57:19 2026] 127.0.0.1:53184 [200]: GET /_img/login1.jpg
+[Sat May  2 18:57:19 2026] 127.0.0.1:53184 Closing
+[Sat May  2 18:57:19 2026] 127.0.0.1:53186 Accepted
+[Sat May  2 18:57:19 2026] 127.0.0.1:53186 [200]: GET /_img/box/box2_middle.jpg
+[Sat May  2 18:57:19 2026] 127.0.0.1:53186 Closing
+[Sat May  2 18:57:19 2026] 127.0.0.1:53192 Accepted
+[Sat May  2 18:57:19 2026] 127.0.0.1:53192 [200]: GET /_img/box/box_bottom.jpg
+[Sat May  2 18:57:19 2026] 127.0.0.1:53192 Closing
+[Sat May  2 18:57:20 2026] 127.0.0.1:53208 Accepted
+[Sat May  2 18:57:20 2026] 127.0.0.1:53208 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:57:20 2026] 127.0.0.1:53208 Closing
+[Sat May  2 18:57:20 2026] 127.0.0.1:53222 Accepted
+[Sat May  2 18:57:20 2026] 127.0.0.1:53222 [200]: GET /_img/border_bottom.jpg
+[Sat May  2 18:57:20 2026] 127.0.0.1:53222 Closing
+[Sat May  2 18:57:20 2026] 127.0.0.1:53228 Accepted
+[Sat May  2 18:57:20 2026] 127.0.0.1:53228 [200]: GET /_js/wz/wz_tooltip.js
+[Sat May  2 18:57:20 2026] 127.0.0.1:53228 Closing
+[Sat May  2 18:57:22 2026] 127.0.0.1:53230 Accepted
+[Sat May  2 18:57:22 2026] 127.0.0.1:53230 [200]: GET /index.php?p=login&erro=1
+[Sat May  2 18:57:22 2026] 127.0.0.1:53230 Closing
+[Sat May  2 18:57:23 2026] 127.0.0.1:53236 Accepted
+[Sat May  2 18:57:23 2026] 127.0.0.1:53236 [200]: GET /_js/banner_invasao.js
+[Sat May  2 18:57:23 2026] 127.0.0.1:53236 Closing
+[Sat May  2 18:57:25 2026] 127.0.0.1:53242 Accepted
+[Sat May  2 18:57:25 2026] 127.0.0.1:53242 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 18:57:25 2026] 127.0.0.1:53242 Closing
+[Sat May  2 18:57:25 2026] 127.0.0.1:53246 Accepted
+[Sat May  2 18:57:25 2026] 127.0.0.1:53246 [200]: GET /_css/naruto.css
+[Sat May  2 18:57:25 2026] 127.0.0.1:53246 Closing
+[Sat May  2 18:57:25 2026] 127.0.0.1:53252 Accepted
+[Sat May  2 18:57:25 2026] 127.0.0.1:53252 [200]: GET /_css/popup_noticia.css
+[Sat May  2 18:57:25 2026] 127.0.0.1:53252 Closing
+[Sat May  2 18:57:25 2026] 127.0.0.1:53256 Accepted
+[Sat May  2 18:57:25 2026] 127.0.0.1:53256 [200]: GET /_css/banner_invasao.css
+[Sat May  2 18:57:25 2026] 127.0.0.1:53256 Closing
+[Sat May  2 18:57:25 2026] 127.0.0.1:60478 Accepted
+[Sat May  2 18:57:25 2026] 127.0.0.1:60478 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 18:57:25 2026] 127.0.0.1:60478 Closing
+[Sat May  2 18:57:26 2026] 127.0.0.1:60490 Accepted
+[Sat May  2 18:57:26 2026] 127.0.0.1:60490 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 18:57:26 2026] 127.0.0.1:60490 Closing
+[Sat May  2 18:57:26 2026] 127.0.0.1:60502 Accepted
+[Sat May  2 18:57:26 2026] 127.0.0.1:60502 [200]: GET /_img/online.png
+[Sat May  2 18:57:26 2026] 127.0.0.1:60502 Closing
+[Sat May  2 18:57:27 2026] 127.0.0.1:60516 Accepted
+[Sat May  2 18:57:27 2026] 127.0.0.1:60516 [200]: GET /_img/border_right.jpg
+[Sat May  2 18:57:27 2026] 127.0.0.1:60516 Closing
+[Sat May  2 18:57:27 2026] 127.0.0.1:60520 Accepted
+[Sat May  2 18:57:27 2026] 127.0.0.1:60520 [200]: GET /_img/alert.png
+[Sat May  2 18:57:27 2026] 127.0.0.1:60520 Closing
+[Sat May  2 18:57:28 2026] 127.0.0.1:60534 Accepted
+[Sat May  2 18:57:28 2026] 127.0.0.1:60534 [200]: GET /_img/box/box_top.jpg
+[Sat May  2 18:57:28 2026] 127.0.0.1:60534 Closing
+[Sat May  2 18:57:28 2026] 127.0.0.1:60542 Accepted
+[Sat May  2 18:57:28 2026] 127.0.0.1:60542 [200]: GET /_img/offline.png
+[Sat May  2 18:57:28 2026] 127.0.0.1:60542 Closing
+[Sat May  2 18:57:29 2026] 127.0.0.1:60546 Accepted
+[Sat May  2 18:57:29 2026] 127.0.0.1:60546 [200]: GET /_img/logo2.jpg
+[Sat May  2 18:57:29 2026] 127.0.0.1:60546 Closing
+[Sat May  2 18:57:29 2026] 127.0.0.1:60554 Accepted
+[Sat May  2 18:57:29 2026] 127.0.0.1:60554 [200]: GET /_img/border_left.jpg
+[Sat May  2 18:57:29 2026] 127.0.0.1:60554 Closing
+[Sat May  2 18:57:29 2026] 127.0.0.1:60562 Accepted
+[Sat May  2 18:57:29 2026] 127.0.0.1:60562 [200]: GET /_img/background.jpg
+[Sat May  2 18:57:29 2026] 127.0.0.1:60562 Closing
+[Sat May  2 18:57:29 2026] 127.0.0.1:60564 Accepted
+[Sat May  2 18:57:29 2026] 127.0.0.1:60564 [200]: GET /_img/box/box2_middle.jpg
+[Sat May  2 18:57:29 2026] 127.0.0.1:60564 Closing
+[Sat May  2 18:57:30 2026] 127.0.0.1:60570 Accepted
+[Sat May  2 18:57:30 2026] 127.0.0.1:60570 [200]: GET /_img/login2.jpg
+[Sat May  2 18:57:30 2026] 127.0.0.1:60570 Closing
+[Sat May  2 18:57:30 2026] 127.0.0.1:60586 Accepted
+[Sat May  2 18:57:30 2026] 127.0.0.1:60586 [200]: GET /_img/menu.jpg
+[Sat May  2 18:57:30 2026] 127.0.0.1:60586 Closing
+[Sat May  2 18:57:30 2026] 127.0.0.1:60602 Accepted
+[Sat May  2 18:57:30 2026] 127.0.0.1:60602 [200]: GET /_img/border_top.jpg
+[Sat May  2 18:57:30 2026] 127.0.0.1:60602 Closing
+[Sat May  2 18:57:31 2026] 127.0.0.1:60610 Accepted
+[Sat May  2 18:57:31 2026] 127.0.0.1:60610 [200]: GET /_img/box/box_middle.jpg
+[Sat May  2 18:57:31 2026] 127.0.0.1:60610 Closing
+[Sat May  2 18:57:31 2026] 127.0.0.1:60622 Accepted
+[Sat May  2 18:57:31 2026] 127.0.0.1:60622 [200]: GET /_img/sep.jpg
+[Sat May  2 18:57:31 2026] 127.0.0.1:60622 Closing
+[Sat May  2 18:57:31 2026] 127.0.0.1:60634 Accepted
+[Sat May  2 18:57:31 2026] 127.0.0.1:60634 [200]: GET /_img/box/box2_top.jpg
+[Sat May  2 18:57:31 2026] 127.0.0.1:60634 Closing
+[Sat May  2 18:57:32 2026] 127.0.0.1:60640 Accepted
+[Sat May  2 18:57:32 2026] 127.0.0.1:60640 [200]: GET /_img/box/box_bottom.jpg
+[Sat May  2 18:57:32 2026] 127.0.0.1:60640 Closing
+[Sat May  2 18:57:32 2026] 127.0.0.1:60656 Accepted
+[Sat May  2 18:57:32 2026] 127.0.0.1:60656 [200]: GET /_img/border_bottom.jpg
+[Sat May  2 18:57:32 2026] 127.0.0.1:60656 Closing
+[Sat May  2 18:57:32 2026] 127.0.0.1:60662 Accepted
+[Sat May  2 18:57:32 2026] 127.0.0.1:60662 [200]: GET /_img/fundo_botao.jpg
+[Sat May  2 18:57:32 2026] 127.0.0.1:60662 Closing
+[Sat May  2 18:57:32 2026] 127.0.0.1:60678 Accepted
+[Sat May  2 18:57:32 2026] 127.0.0.1:60678 [200]: GET /_img/box/box2_bottom.jpg
+[Sat May  2 18:57:32 2026] 127.0.0.1:60678 Closing
+[Sat May  2 18:57:33 2026] 127.0.0.1:60680 Accepted
+[Sat May  2 18:57:33 2026] 127.0.0.1:60680 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:57:33 2026] 127.0.0.1:60680 Closing
+[Sat May  2 18:57:34 2026] 127.0.0.1:60694 Accepted
+[Sat May  2 18:57:34 2026] 127.0.0.1:60694 [200]: GET /_js/wz/wz_tooltip.js
+[Sat May  2 18:57:34 2026] 127.0.0.1:60694 Closing
+[Sat May  2 18:57:57 2026] 127.0.0.1:41088 Accepted
+[Sat May  2 18:57:57 2026] 127.0.0.1:41088 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:57:57 2026] 127.0.0.1:41088 Closing
+[Sat May  2 18:58:30 2026] 127.0.0.1:38704 Accepted
+[Sat May  2 18:58:30 2026] 127.0.0.1:38704 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:58:30 2026] 127.0.0.1:38704 Closing
+[Sat May  2 18:59:00 2026] 127.0.0.1:50266 Accepted
+[Sat May  2 18:59:00 2026] 127.0.0.1:50266 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:59:00 2026] 127.0.0.1:50266 Closing
+[Sat May  2 18:59:27 2026] 127.0.0.1:38646 Accepted
+[Sat May  2 18:59:27 2026] 127.0.0.1:38646 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 18:59:27 2026] 127.0.0.1:38646 Closing
+[Sat May  2 19:00:29 2026] 127.0.0.1:39330 Accepted
+[Sat May  2 19:00:29 2026] 127.0.0.1:39330 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:00:29 2026] 127.0.0.1:39330 Closing
+[Sat May  2 19:01:41 2026] 127.0.0.1:35030 Accepted
+[Sat May  2 19:01:41 2026] 127.0.0.1:35030 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:01:41 2026] 127.0.0.1:35030 Closing
+[Sat May  2 19:01:59 2026] 127.0.0.1:39922 Accepted
+[Sat May  2 19:01:59 2026] 127.0.0.1:39922 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:01:59 2026] 127.0.0.1:39922 Closing
+[Sat May  2 19:02:29 2026] 127.0.0.1:34092 Accepted
+[Sat May  2 19:02:29 2026] 127.0.0.1:34092 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:02:29 2026] 127.0.0.1:34092 Closing
+[Sat May  2 19:02:59 2026] 127.0.0.1:53246 Accepted
+[Sat May  2 19:02:59 2026] 127.0.0.1:53246 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:02:59 2026] 127.0.0.1:53246 Closing
+[Sat May  2 19:03:29 2026] 127.0.0.1:57812 Accepted
+[Sat May  2 19:03:29 2026] 127.0.0.1:57812 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:03:29 2026] 127.0.0.1:57812 Closing
+[Sat May  2 19:04:00 2026] 127.0.0.1:49558 Accepted
+[Sat May  2 19:04:00 2026] 127.0.0.1:49558 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:04:00 2026] 127.0.0.1:49558 Closing
+[Sat May  2 19:04:28 2026] 127.0.0.1:39070 Accepted
+[Sat May  2 19:04:28 2026] 127.0.0.1:39070 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:04:28 2026] 127.0.0.1:39070 Closing
+[Sat May  2 19:05:00 2026] 127.0.0.1:48162 Accepted
+[Sat May  2 19:05:00 2026] 127.0.0.1:48162 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:05:00 2026] 127.0.0.1:48162 Closing
+[Sat May  2 19:05:28 2026] 127.0.0.1:47708 Accepted
+[Sat May  2 19:05:28 2026] 127.0.0.1:47708 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:05:28 2026] 127.0.0.1:47708 Closing
+[Sat May  2 19:06:15 2026] 127.0.0.1:54972 Accepted
+[Sat May  2 19:06:15 2026] 127.0.0.1:54972 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:06:15 2026] 127.0.0.1:54972 Closing
+[Sat May  2 19:06:30 2026] 127.0.0.1:57610 Accepted
+[Sat May  2 19:06:30 2026] 127.0.0.1:57610 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:06:30 2026] 127.0.0.1:57610 Closing
+[Sat May  2 19:06:56 2026] 127.0.0.1:36926 Accepted
+[Sat May  2 19:06:56 2026] 127.0.0.1:36926 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:06:56 2026] 127.0.0.1:36926 Closing
+[Sat May  2 19:07:29 2026] 127.0.0.1:58006 Accepted
+[Sat May  2 19:07:29 2026] 127.0.0.1:58006 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:07:29 2026] 127.0.0.1:58006 Closing
+[Sat May  2 19:08:00 2026] 127.0.0.1:44844 Accepted
+[Sat May  2 19:08:00 2026] 127.0.0.1:44844 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:08:00 2026] 127.0.0.1:44844 Closing
+[Sat May  2 19:08:27 2026] 127.0.0.1:57426 Accepted
+[Sat May  2 19:08:27 2026] 127.0.0.1:57426 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:08:27 2026] 127.0.0.1:57426 Closing
+[Sat May  2 19:08:59 2026] 127.0.0.1:56510 Accepted
+[Sat May  2 19:08:59 2026] 127.0.0.1:56510 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:08:59 2026] 127.0.0.1:56510 Closing
+[Sat May  2 19:09:26 2026] 127.0.0.1:37808 Accepted
+[Sat May  2 19:09:26 2026] 127.0.0.1:37808 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:09:26 2026] 127.0.0.1:37808 Closing
+[Sat May  2 19:09:57 2026] 127.0.0.1:39694 Accepted
+[Sat May  2 19:09:57 2026] 127.0.0.1:39694 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:09:57 2026] 127.0.0.1:39694 Closing
+[Sat May  2 19:10:28 2026] 127.0.0.1:46618 Accepted
+[Sat May  2 19:10:28 2026] 127.0.0.1:46618 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:10:28 2026] 127.0.0.1:46618 Closing
+[Sat May  2 19:10:59 2026] 127.0.0.1:57660 Accepted
+[Sat May  2 19:10:59 2026] 127.0.0.1:57660 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:10:59 2026] 127.0.0.1:57660 Closing
+[Sat May  2 19:11:56 2026] 127.0.0.1:52096 Accepted
+[Sat May  2 19:11:56 2026] 127.0.0.1:52096 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:11:56 2026] 127.0.0.1:52096 Closing
+[Sat May  2 19:12:29 2026] 127.0.0.1:59988 Accepted
+[Sat May  2 19:12:29 2026] 127.0.0.1:59988 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:12:29 2026] 127.0.0.1:59988 Closing
+[Sat May  2 19:12:56 2026] 127.0.0.1:58640 Accepted
+[Sat May  2 19:12:56 2026] 127.0.0.1:58640 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:12:56 2026] 127.0.0.1:58640 Closing
+[Sat May  2 19:13:29 2026] 127.0.0.1:37636 Accepted
+[Sat May  2 19:13:29 2026] 127.0.0.1:37636 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:13:29 2026] 127.0.0.1:37636 Closing
+[Sat May  2 19:14:00 2026] 127.0.0.1:36080 Accepted
+[Sat May  2 19:14:00 2026] 127.0.0.1:36080 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:14:00 2026] 127.0.0.1:36080 Closing
+[Sat May  2 19:14:29 2026] 127.0.0.1:48050 Accepted
+[Sat May  2 19:14:29 2026] 127.0.0.1:48050 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:14:29 2026] 127.0.0.1:48050 Closing
+[Sat May  2 19:15:00 2026] 127.0.0.1:42494 Accepted
+[Sat May  2 19:15:00 2026] 127.0.0.1:42494 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:15:00 2026] 127.0.0.1:42494 Closing
+[Sat May  2 19:15:29 2026] 127.0.0.1:55272 Accepted
+[Sat May  2 19:15:29 2026] 127.0.0.1:55272 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:15:29 2026] 127.0.0.1:55272 Closing
+[Sat May  2 19:15:59 2026] 127.0.0.1:53678 Accepted
+[Sat May  2 19:15:59 2026] 127.0.0.1:53678 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:15:59 2026] 127.0.0.1:53678 Closing
+[Sat May  2 19:16:28 2026] 127.0.0.1:40090 Accepted
+[Sat May  2 19:16:28 2026] 127.0.0.1:40090 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:16:28 2026] 127.0.0.1:40090 Closing
+[Sat May  2 19:17:00 2026] 127.0.0.1:40248 Accepted
+[Sat May  2 19:17:00 2026] 127.0.0.1:40248 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:17:00 2026] 127.0.0.1:40248 Closing
+[Sat May  2 19:17:29 2026] 127.0.0.1:44294 Accepted
+[Sat May  2 19:17:29 2026] 127.0.0.1:44294 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:17:29 2026] 127.0.0.1:44294 Closing
+[Sat May  2 19:18:00 2026] 127.0.0.1:56426 Accepted
+[Sat May  2 19:18:00 2026] 127.0.0.1:56426 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:18:00 2026] 127.0.0.1:56426 Closing
+[Sat May  2 19:18:26 2026] 127.0.0.1:47162 Accepted
+[Sat May  2 19:18:26 2026] 127.0.0.1:47162 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:18:26 2026] 127.0.0.1:47162 Closing
+[Sat May  2 19:18:59 2026] 127.0.0.1:37948 Accepted
+[Sat May  2 19:18:59 2026] 127.0.0.1:37948 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:18:59 2026] 127.0.0.1:37948 Closing
+[Sat May  2 19:19:29 2026] 127.0.0.1:37150 Accepted
+[Sat May  2 19:19:29 2026] 127.0.0.1:37150 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:19:29 2026] 127.0.0.1:37150 Closing
+[Sat May  2 19:19:59 2026] 127.0.0.1:48634 Accepted
+[Sat May  2 19:19:59 2026] 127.0.0.1:48634 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:19:59 2026] 127.0.0.1:48634 Closing
+[Sat May  2 19:20:26 2026] 127.0.0.1:49914 Accepted
+[Sat May  2 19:20:26 2026] 127.0.0.1:49914 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:20:26 2026] 127.0.0.1:49914 Closing
+[Sat May  2 19:20:57 2026] 127.0.0.1:49160 Accepted
+[Sat May  2 19:20:57 2026] 127.0.0.1:49160 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:20:57 2026] 127.0.0.1:49160 Closing
+[Sat May  2 19:21:29 2026] 127.0.0.1:53236 Accepted
+[Sat May  2 19:21:29 2026] 127.0.0.1:53236 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:21:29 2026] 127.0.0.1:53236 Closing
+[Sat May  2 19:21:57 2026] 127.0.0.1:59648 Accepted
+[Sat May  2 19:21:57 2026] 127.0.0.1:59648 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:21:57 2026] 127.0.0.1:59648 Closing
+[Sat May  2 19:22:56 2026] 127.0.0.1:36640 Accepted
+[Sat May  2 19:22:56 2026] 127.0.0.1:36640 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:22:56 2026] 127.0.0.1:36640 Closing
+[Sat May  2 19:23:26 2026] 127.0.0.1:38858 Accepted
+[Sat May  2 19:23:26 2026] 127.0.0.1:38858 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:23:26 2026] 127.0.0.1:38858 Closing
+[Sat May  2 19:23:58 2026] 127.0.0.1:53274 Accepted
+[Sat May  2 19:23:58 2026] 127.0.0.1:53274 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:23:58 2026] 127.0.0.1:53274 Closing
+[Sat May  2 19:24:27 2026] 127.0.0.1:41894 Accepted
+[Sat May  2 19:24:27 2026] 127.0.0.1:41894 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:24:27 2026] 127.0.0.1:41894 Closing
+[Sat May  2 19:24:57 2026] 127.0.0.1:38024 Accepted
+[Sat May  2 19:24:57 2026] 127.0.0.1:38024 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:24:57 2026] 127.0.0.1:38024 Closing
+[Sat May  2 19:25:29 2026] 127.0.0.1:37008 Accepted
+[Sat May  2 19:25:29 2026] 127.0.0.1:37008 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:25:29 2026] 127.0.0.1:37008 Closing
+[Sat May  2 19:25:58 2026] 127.0.0.1:45250 Accepted
+[Sat May  2 19:25:58 2026] 127.0.0.1:45250 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:25:58 2026] 127.0.0.1:45250 Closing
+[Sat May  2 19:26:30 2026] 127.0.0.1:57092 Accepted
+[Sat May  2 19:26:30 2026] 127.0.0.1:57092 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:26:30 2026] 127.0.0.1:57092 Closing
+[Sat May  2 19:26:57 2026] 127.0.0.1:46168 Accepted
+[Sat May  2 19:26:57 2026] 127.0.0.1:46168 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:26:57 2026] 127.0.0.1:46168 Closing
+[Sat May  2 19:27:30 2026] 127.0.0.1:33896 Accepted
+[Sat May  2 19:27:30 2026] 127.0.0.1:33896 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:27:30 2026] 127.0.0.1:33896 Closing
+[Sat May  2 19:28:00 2026] 127.0.0.1:57144 Accepted
+[Sat May  2 19:28:00 2026] 127.0.0.1:57144 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:28:00 2026] 127.0.0.1:57144 Closing
+[Sat May  2 19:28:29 2026] 127.0.0.1:33612 Accepted
+[Sat May  2 19:28:29 2026] 127.0.0.1:33612 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:28:29 2026] 127.0.0.1:33612 Closing
+[Sat May  2 19:28:59 2026] 127.0.0.1:52334 Accepted
+[Sat May  2 19:28:59 2026] 127.0.0.1:52334 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:28:59 2026] 127.0.0.1:52334 Closing
+[Sat May  2 19:29:28 2026] 127.0.0.1:47272 Accepted
+[Sat May  2 19:29:28 2026] 127.0.0.1:47272 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:29:28 2026] 127.0.0.1:47272 Closing
+[Sat May  2 19:29:59 2026] 127.0.0.1:46534 Accepted
+[Sat May  2 19:29:59 2026] 127.0.0.1:46534 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:29:59 2026] 127.0.0.1:46534 Closing
+[Sat May  2 19:30:27 2026] 127.0.0.1:55496 Accepted
+[Sat May  2 19:30:27 2026] 127.0.0.1:55496 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:30:27 2026] 127.0.0.1:55496 Closing
+[Sat May  2 19:31:00 2026] 127.0.0.1:55104 Accepted
+[Sat May  2 19:31:00 2026] 127.0.0.1:55104 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:31:00 2026] 127.0.0.1:55104 Closing
+[Sat May  2 19:31:30 2026] 127.0.0.1:51558 Accepted
+[Sat May  2 19:31:30 2026] 127.0.0.1:51558 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:31:30 2026] 127.0.0.1:51558 Closing
+[Sat May  2 19:31:59 2026] 127.0.0.1:49372 Accepted
+[Sat May  2 19:31:59 2026] 127.0.0.1:49372 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:31:59 2026] 127.0.0.1:49372 Closing
+[Sat May  2 19:32:27 2026] 127.0.0.1:50768 Accepted
+[Sat May  2 19:32:27 2026] 127.0.0.1:50768 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:32:27 2026] 127.0.0.1:50768 Closing
+[Sat May  2 19:32:58 2026] 127.0.0.1:50912 Accepted
+[Sat May  2 19:32:58 2026] 127.0.0.1:50912 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:32:58 2026] 127.0.0.1:50912 Closing
+[Sat May  2 19:33:27 2026] 127.0.0.1:50568 Accepted
+[Sat May  2 19:33:27 2026] 127.0.0.1:50568 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:33:27 2026] 127.0.0.1:50568 Closing
+[Sat May  2 19:34:00 2026] 127.0.0.1:36062 Accepted
+[Sat May  2 19:34:00 2026] 127.0.0.1:36062 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:34:00 2026] 127.0.0.1:36062 Closing
+[Sat May  2 19:34:27 2026] 127.0.0.1:41154 Accepted
+[Sat May  2 19:34:27 2026] 127.0.0.1:41154 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:34:27 2026] 127.0.0.1:41154 Closing
+[Sat May  2 19:35:00 2026] 127.0.0.1:55544 Accepted
+[Sat May  2 19:35:00 2026] 127.0.0.1:55544 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:35:00 2026] 127.0.0.1:55544 Closing
+[Sat May  2 19:35:26 2026] 127.0.0.1:59810 Accepted
+[Sat May  2 19:35:26 2026] 127.0.0.1:59810 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:35:26 2026] 127.0.0.1:59810 Closing
+[Sat May  2 19:35:59 2026] 127.0.0.1:59652 Accepted
+[Sat May  2 19:35:59 2026] 127.0.0.1:59652 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:35:59 2026] 127.0.0.1:59652 Closing
+[Sat May  2 19:36:27 2026] 127.0.0.1:50088 Accepted
+[Sat May  2 19:36:27 2026] 127.0.0.1:50088 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:36:27 2026] 127.0.0.1:50088 Closing
+[Sat May  2 19:36:59 2026] 127.0.0.1:50752 Accepted
+[Sat May  2 19:36:59 2026] 127.0.0.1:50752 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:36:59 2026] 127.0.0.1:50752 Closing
+[Sat May  2 19:37:29 2026] 127.0.0.1:58058 Accepted
+[Sat May  2 19:37:29 2026] 127.0.0.1:58058 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:37:29 2026] 127.0.0.1:58058 Closing
+[Sat May  2 19:37:59 2026] 127.0.0.1:51634 Accepted
+[Sat May  2 19:37:59 2026] 127.0.0.1:51634 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:37:59 2026] 127.0.0.1:51634 Closing
+[Sat May  2 19:38:29 2026] 127.0.0.1:59978 Accepted
+[Sat May  2 19:38:29 2026] 127.0.0.1:59978 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:38:29 2026] 127.0.0.1:59978 Closing
+[Sat May  2 19:38:59 2026] 127.0.0.1:33058 Accepted
+[Sat May  2 19:38:59 2026] 127.0.0.1:33058 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:38:59 2026] 127.0.0.1:33058 Closing
+[Sat May  2 19:39:29 2026] 127.0.0.1:35226 Accepted
+[Sat May  2 19:39:29 2026] 127.0.0.1:35226 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:39:29 2026] 127.0.0.1:35226 Closing
+[Sat May  2 19:39:59 2026] 127.0.0.1:44832 Accepted
+[Sat May  2 19:39:59 2026] 127.0.0.1:44832 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:39:59 2026] 127.0.0.1:44832 Closing
+[Sat May  2 19:40:29 2026] 127.0.0.1:56770 Accepted
+[Sat May  2 19:40:29 2026] 127.0.0.1:56770 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:40:29 2026] 127.0.0.1:56770 Closing
+[Sat May  2 19:41:01 2026] 127.0.0.1:44304 Accepted
+[Sat May  2 19:41:01 2026] 127.0.0.1:44304 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:41:01 2026] 127.0.0.1:44304 Closing
+[Sat May  2 19:41:29 2026] 127.0.0.1:44830 Accepted
+[Sat May  2 19:41:29 2026] 127.0.0.1:44830 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:41:29 2026] 127.0.0.1:44830 Closing
+[Sat May  2 19:41:57 2026] 127.0.0.1:60298 Accepted
+[Sat May  2 19:41:57 2026] 127.0.0.1:60298 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:41:57 2026] 127.0.0.1:60298 Closing
+[Sat May  2 19:42:28 2026] 127.0.0.1:40752 Accepted
+[Sat May  2 19:42:28 2026] 127.0.0.1:40752 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:42:28 2026] 127.0.0.1:40752 Closing
+[Sat May  2 19:42:56 2026] 127.0.0.1:48492 Accepted
+[Sat May  2 19:42:56 2026] 127.0.0.1:48492 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:42:56 2026] 127.0.0.1:48492 Closing
+[Sat May  2 19:43:29 2026] 127.0.0.1:45432 Accepted
+[Sat May  2 19:43:29 2026] 127.0.0.1:45432 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:43:29 2026] 127.0.0.1:45432 Closing
+[Sat May  2 19:43:57 2026] 127.0.0.1:46198 Accepted
+[Sat May  2 19:43:57 2026] 127.0.0.1:46198 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:43:57 2026] 127.0.0.1:46198 Closing
+[Sat May  2 19:44:29 2026] 127.0.0.1:35892 Accepted
+[Sat May  2 19:44:29 2026] 127.0.0.1:35892 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:44:29 2026] 127.0.0.1:35892 Closing
+[Sat May  2 19:45:14 2026] 127.0.0.1:55022 Accepted
+[Sat May  2 19:45:14 2026] 127.0.0.1:55022 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:45:14 2026] 127.0.0.1:55022 Closing
+[Sat May  2 19:45:30 2026] 127.0.0.1:47506 Accepted
+[Sat May  2 19:45:30 2026] 127.0.0.1:47506 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:45:30 2026] 127.0.0.1:47506 Closing
+[Sat May  2 19:46:00 2026] 127.0.0.1:56122 Accepted
+[Sat May  2 19:46:00 2026] 127.0.0.1:56122 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:46:00 2026] 127.0.0.1:56122 Closing
+[Sat May  2 19:46:30 2026] 127.0.0.1:45132 Accepted
+[Sat May  2 19:46:30 2026] 127.0.0.1:45132 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:46:30 2026] 127.0.0.1:45132 Closing
+[Sat May  2 19:46:59 2026] 127.0.0.1:45680 Accepted
+[Sat May  2 19:46:59 2026] 127.0.0.1:45680 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:46:59 2026] 127.0.0.1:45680 Closing
+[Sat May  2 19:47:30 2026] 127.0.0.1:39730 Accepted
+[Sat May  2 19:47:30 2026] 127.0.0.1:39730 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:47:30 2026] 127.0.0.1:39730 Closing
+[Sat May  2 19:48:06 2026] 127.0.0.1:59252 Accepted
+[Sat May  2 19:48:06 2026] 127.0.0.1:59252 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:48:06 2026] 127.0.0.1:59252 Closing
+[Sat May  2 19:48:31 2026] 127.0.0.1:48994 Accepted
+[Sat May  2 19:48:31 2026] 127.0.0.1:48994 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:48:31 2026] 127.0.0.1:48994 Closing
+[Sat May  2 19:48:57 2026] 127.0.0.1:56066 Accepted
+[Sat May  2 19:48:57 2026] 127.0.0.1:56066 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:48:57 2026] 127.0.0.1:56066 Closing
+[Sat May  2 19:49:27 2026] 127.0.0.1:60160 Accepted
+[Sat May  2 19:49:27 2026] 127.0.0.1:60160 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:49:27 2026] 127.0.0.1:60160 Closing
+[Sat May  2 19:49:57 2026] 127.0.0.1:40364 Accepted
+[Sat May  2 19:49:57 2026] 127.0.0.1:40364 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:49:57 2026] 127.0.0.1:40364 Closing
+[Sat May  2 19:50:30 2026] 127.0.0.1:49208 Accepted
+[Sat May  2 19:50:30 2026] 127.0.0.1:49208 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:50:30 2026] 127.0.0.1:49208 Closing
+[Sat May  2 19:51:15 2026] 127.0.0.1:58408 Accepted
+[Sat May  2 19:51:15 2026] 127.0.0.1:58408 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:51:15 2026] 127.0.0.1:58408 Closing
+[Sat May  2 19:51:27 2026] 127.0.0.1:33098 Accepted
+[Sat May  2 19:51:27 2026] 127.0.0.1:33098 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:51:27 2026] 127.0.0.1:33098 Closing
+[Sat May  2 19:51:56 2026] 127.0.0.1:54774 Accepted
+[Sat May  2 19:51:56 2026] 127.0.0.1:54774 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:51:56 2026] 127.0.0.1:54774 Closing
+[Sat May  2 19:52:29 2026] 127.0.0.1:38938 Accepted
+[Sat May  2 19:52:29 2026] 127.0.0.1:38938 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:52:29 2026] 127.0.0.1:38938 Closing
+[Sat May  2 19:53:00 2026] 127.0.0.1:52002 Accepted
+[Sat May  2 19:53:00 2026] 127.0.0.1:52002 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:53:00 2026] 127.0.0.1:52002 Closing
+[Sat May  2 19:53:30 2026] 127.0.0.1:39516 Accepted
+[Sat May  2 19:53:30 2026] 127.0.0.1:39516 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:53:30 2026] 127.0.0.1:39516 Closing
+[Sat May  2 19:53:56 2026] 127.0.0.1:60658 Accepted
+[Sat May  2 19:53:56 2026] 127.0.0.1:60658 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:53:56 2026] 127.0.0.1:60658 Closing
+[Sat May  2 19:54:29 2026] 127.0.0.1:56516 Accepted
+[Sat May  2 19:54:29 2026] 127.0.0.1:56516 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:54:29 2026] 127.0.0.1:56516 Closing
+[Sat May  2 19:54:57 2026] 127.0.0.1:43678 Accepted
+[Sat May  2 19:54:57 2026] 127.0.0.1:43678 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:54:57 2026] 127.0.0.1:43678 Closing
+[Sat May  2 19:55:29 2026] 127.0.0.1:57228 Accepted
+[Sat May  2 19:55:29 2026] 127.0.0.1:57228 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:55:29 2026] 127.0.0.1:57228 Closing
+[Sat May  2 19:55:58 2026] 127.0.0.1:47402 Accepted
+[Sat May  2 19:55:58 2026] 127.0.0.1:47402 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:55:58 2026] 127.0.0.1:47402 Closing
+[Sat May  2 19:56:30 2026] 127.0.0.1:49584 Accepted
+[Sat May  2 19:56:30 2026] 127.0.0.1:49584 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:56:30 2026] 127.0.0.1:49584 Closing
+[Sat May  2 19:56:56 2026] 127.0.0.1:56638 Accepted
+[Sat May  2 19:56:56 2026] 127.0.0.1:56638 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:56:56 2026] 127.0.0.1:56638 Closing
+[Sat May  2 19:58:00 2026] 127.0.0.1:44658 Accepted
+[Sat May  2 19:58:00 2026] 127.0.0.1:44658 [200]: GET /
+[Sat May  2 19:58:00 2026] 127.0.0.1:44658 Closing
+[Sat May  2 19:58:01 2026] 127.0.0.1:44664 Accepted
+[Sat May  2 19:58:01 2026] 127.0.0.1:44664 [200]: GET /_css/popup_noticia.css
+[Sat May  2 19:58:01 2026] 127.0.0.1:44664 Closing
+[Sat May  2 19:58:01 2026] 127.0.0.1:44680 Accepted
+[Sat May  2 19:58:01 2026] 127.0.0.1:44680 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 19:58:01 2026] 127.0.0.1:44680 Closing
+[Sat May  2 19:58:02 2026] 127.0.0.1:44688 Accepted
+[Sat May  2 19:58:02 2026] 127.0.0.1:44688 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 19:58:02 2026] 127.0.0.1:44688 Closing
+[Sat May  2 19:58:02 2026] 127.0.0.1:44698 Accepted
+[Sat May  2 19:58:02 2026] 127.0.0.1:44698 [200]: GET /_img/offline.png
+[Sat May  2 19:58:02 2026] 127.0.0.1:44698 Closing
+[Sat May  2 19:58:04 2026] 127.0.0.1:44708 Accepted
+[Sat May  2 19:58:04 2026] 127.0.0.1:44708 [200]: GET /_css/naruto.css
+[Sat May  2 19:58:04 2026] 127.0.0.1:44708 Closing
+[Sat May  2 19:58:04 2026] 127.0.0.1:44716 Accepted
+[Sat May  2 19:58:04 2026] 127.0.0.1:44716 [200]: GET /_css/banner_invasao.css
+[Sat May  2 19:58:04 2026] 127.0.0.1:44716 Closing
+[Sat May  2 19:58:04 2026] 127.0.0.1:44720 Accepted
+[Sat May  2 19:58:04 2026] 127.0.0.1:44720 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 19:58:04 2026] 127.0.0.1:44720 Closing
+[Sat May  2 19:58:04 2026] 127.0.0.1:44732 Accepted
+[Sat May  2 19:58:04 2026] 127.0.0.1:44732 [200]: GET /_js/banner_invasao.js
+[Sat May  2 19:58:04 2026] 127.0.0.1:44732 Closing
+[Sat May  2 19:58:08 2026] 127.0.0.1:50928 Accepted
+[Sat May  2 19:58:08 2026] 127.0.0.1:50928 [200]: GET /_img/yens.png
+[Sat May  2 19:58:08 2026] 127.0.0.1:50928 Closing
+[Sat May  2 19:58:08 2026] 127.0.0.1:50936 Accepted
+[Sat May  2 19:58:08 2026] 127.0.0.1:50936 [200]: GET /_img/Icones/tai.png
+[Sat May  2 19:58:08 2026] 127.0.0.1:50936 Closing
+[Sat May  2 19:58:08 2026] 127.0.0.1:50948 Accepted
+[Sat May  2 19:58:08 2026] 127.0.0.1:50948 [200]: GET /index.php?p=login
+[Sat May  2 19:58:08 2026] 127.0.0.1:50948 Closing
+[Sat May  2 19:58:09 2026] 127.0.0.1:50962 Accepted
+[Sat May  2 19:58:09 2026] 127.0.0.1:50962 [200]: GET /_css/naruto.css
+[Sat May  2 19:58:09 2026] 127.0.0.1:50962 Closing
+[Sat May  2 19:58:09 2026] 127.0.0.1:50966 Accepted
+[Sat May  2 19:58:09 2026] 127.0.0.1:50966 [200]: GET /_css/banner_invasao.css
+[Sat May  2 19:58:09 2026] 127.0.0.1:50966 Closing
+[Sat May  2 19:58:10 2026] 127.0.0.1:50970 Accepted
+[Sat May  2 19:58:10 2026] 127.0.0.1:50970 [200]: GET /_css/popup_noticia.css
+[Sat May  2 19:58:10 2026] 127.0.0.1:50970 Closing
+[Sat May  2 19:58:10 2026] 127.0.0.1:50976 Accepted
+[Sat May  2 19:58:10 2026] 127.0.0.1:50976 [200]: GET /_js/jquery-1.2.6.pack.js
+[Sat May  2 19:58:10 2026] 127.0.0.1:50976 Closing
+[Sat May  2 19:58:11 2026] 127.0.0.1:50978 Accepted
+[Sat May  2 19:58:11 2026] 127.0.0.1:50978 [200]: GET /_js/jquery-modal-1.0.pack.js
+[Sat May  2 19:58:11 2026] 127.0.0.1:50978 Closing
+[Sat May  2 19:58:12 2026] 127.0.0.1:50984 Accepted
+[Sat May  2 19:58:12 2026] 127.0.0.1:50984 [200]: GET /_img/offline.png
+[Sat May  2 19:58:12 2026] 127.0.0.1:50984 Closing
+[Sat May  2 19:58:14 2026] 127.0.0.1:50986 Accepted
+[Sat May  2 19:58:14 2026] 127.0.0.1:50986 [200]: GET /_js/banner_invasao.js
+[Sat May  2 19:58:14 2026] 127.0.0.1:50986 Closing
+[Sat May  2 19:58:15 2026] 127.0.0.1:50992 Accepted
+[Sat May  2 19:58:15 2026] 127.0.0.1:50992 [200]: GET /_js/css-supports-polyfill.js
+[Sat May  2 19:58:15 2026] 127.0.0.1:50992 Closing
+[Sat May  2 19:58:15 2026] 127.0.0.1:51008 Accepted
+[Sat May  2 19:58:15 2026] 127.0.0.1:51008 [200]: GET /_img/online.png
+[Sat May  2 19:58:15 2026] 127.0.0.1:51008 Closing
+[Sat May  2 19:58:16 2026] 127.0.0.1:59208 Accepted
+[Sat May  2 19:58:16 2026] 127.0.0.1:59208 [200]: GET /_inc/check_banner_invasao.php
+[Sat May  2 19:58:16 2026] 127.0.0.1:59208 Closing
+[Sat May  2 19:58:17 2026] 127.0.0.1:59224 Accepted
+[Sat May  2 19:58:17 2026] 127.0.0.1:59224 [200]: GET /_img/login2.jpg
+[Sat May  2 19:58:17 2026] 127.0.0.1:59224 Closing
+[Sat May  2 19:58:17 2026] 127.0.0.1:59236 Accepted
+[Sat May  2 19:58:17 2026] 127.0.0.1:59236 [200]: GET /_img/logo2.jpg
+[Sat May  2 19:58:17 2026] 127.0.0.1:59236 Closing
+[Sat May  2 19:58:19 2026] 127.0.0.1:59242 Accepted
+[Sat May  2 19:58:19 2026] 127.0.0.1:59242 [200]: GET /_img/box/box_top.jpg
+[Sat May  2 19:58:19 2026] 127.0.0.1:59242 Closing
+[Sat May  2 19:58:19 2026] 127.0.0.1:59250 Accepted
+[Sat May  2 19:58:19 2026] 127.0.0.1:59250 [200]: GET /_img/background.jpg
+[Sat May  2 19:58:19 2026] 127.0.0.1:59250 Closing
+[Sat May  2 19:58:19 2026] 127.0.0.1:59262 Accepted
+[Sat May  2 19:58:19 2026] 127.0.0.1:59262 [200]: GET /_img/box/box_middle.jpg
+[Sat May  2 19:58:19 2026] 127.0.0.1:59262 Closing
+[Sat May  2 19:58:20 2026] 127.0.0.1:59268 Accepted
+[Sat May  2 19:58:20 2026] 127.0.0.1:59268 [200]: GET /_img/border_left.jpg
+[Sat May  2 19:58:20 2026] 127.0.0.1:59268 Closing
+[Sat May  2 19:58:20 2026] 127.0.0.1:59284 Accepted
+[Sat May  2 19:58:20 2026] 127.0.0.1:59284 [200]: GET /_img/box/box_bottom.jpg
+[Sat May  2 19:58:20 2026] 127.0.0.1:59284 Closing
+[Sat May  2 19:58:20 2026] 127.0.0.1:59286 Accepted
+[Sat May  2 19:58:20 2026] 127.0.0.1:59286 [200]: GET /_img/menu.jpg
+[Sat May  2 19:58:20 2026] 127.0.0.1:59286 Closing
+[Sat May  2 19:58:20 2026] 127.0.0.1:59302 Accepted
+[Sat May  2 19:58:20 2026] 127.0.0.1:59302 [200]: GET /_img/box/box2_middle.jpg
+[Sat May  2 19:58:20 2026] 127.0.0.1:59302 Closing
+[Sat May  2 19:58:21 2026] 127.0.0.1:59318 Accepted
+[Sat May  2 19:58:21 2026] 127.0.0.1:59318 [200]: GET /_img/sep.jpg
+[Sat May  2 19:58:21 2026] 127.0.0.1:59318 Closing
+[Sat May  2 19:58:21 2026] 127.0.0.1:59324 Accepted
+[Sat May  2 19:58:21 2026] 127.0.0.1:59324 [200]: GET /_img/border_right.jpg
+[Sat May  2 19:58:21 2026] 127.0.0.1:59324 Closing
+[Sat May  2 19:58:21 2026] 127.0.0.1:59338 Accepted
+[Sat May  2 19:58:21 2026] 127.0.0.1:59338 [200]: GET /_img/fundo_botao.jpg
+[Sat May  2 19:58:21 2026] 127.0.0.1:59338 Closing
+[Sat May  2 19:58:22 2026] 127.0.0.1:59342 Accepted
+[Sat May  2 19:58:22 2026] 127.0.0.1:59342 [200]: GET /_img/border_top.jpg
+[Sat May  2 19:58:22 2026] 127.0.0.1:59342 Closing
+[Sat May  2 19:58:22 2026] 127.0.0.1:59352 Accepted
+[Sat May  2 19:58:22 2026] 127.0.0.1:59352 [200]: GET /_img/border_bottom.jpg
+[Sat May  2 19:58:22 2026] 127.0.0.1:59352 Closing
+[Sat May  2 19:58:23 2026] 127.0.0.1:59354 Accepted
+[Sat May  2 19:58:23 2026] 127.0.0.1:59354 [200]: GET /_img/box/box2_top.jpg
+[Sat May  2 19:58:23 2026] 127.0.0.1:59354 Closing
+[Sat May  2 19:58:24 2026] 127.0.0.1:59362 Accepted
+[Sat May  2 19:58:24 2026] 127.0.0.1:59362 [200]: GET /_img/box/box2_bottom.jpg
+[Sat May  2 19:58:24 2026] 127.0.0.1:59362 Closing
+[Sat May  2 19:58:24 2026] 127.0.0.1:59374 Accepted
+[Sat May  2 19:58:24 2026] 127.0.0.1:59374 [200]: GET /_js/wz/wz_tooltip.js
+[Sat May  2 19:58:24 2026] 127.0.0.1:59374 Closing

@@ -23,6 +23,7 @@ $cancelsRemaining = $cancelLimit - (int)($db['hunt_cancels_today'] ?? 0);
 
 // Processar cancelamento
 if(isset($_POST['cancel_hunt']) && $canCancel && $db['hunt'] > 0) {
+    if(!csrf_validar()) { echo "<script>self.location='?p=busyhunt'</script>"; exit; }
     if($cancelsRemaining > 0 || $isAdmin) {
         // Calcular tempo decorrido
         $hunt_inicio = isset($db['hunt_inicio']) ? strtotime($db['hunt_inicio']) : (strtotime($db['hunt_fim']) - ($db['hunt_duracao'] ?? 600));
@@ -150,6 +151,7 @@ function confirmCancel() {
 <div class="sep"></div>
 <div style="text-align:center; padding:10px;">
     <form method="post" action="?p=busyhunt" onsubmit="return confirmCancel();">
+        <?php echo csrf_field(); ?>
         <input type="hidden" name="cancel_hunt" value="1" />
         <input type="submit" class="botao" value="Cancelar Caça" style="background:#663333;" />
     </form>

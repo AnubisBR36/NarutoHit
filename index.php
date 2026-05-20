@@ -15,7 +15,9 @@ if (
     exit;
 }
 
-session_start();
+// session_start() removido daqui — security.php (via conexao.php) configura
+// os parâmetros de cookie seguros (HttpOnly, SameSite, Secure) ANTES de iniciar
+// a sessão. Chamar session_start() aqui impedia essa configuração de ser aplicada.
 if(isset($_GET['allowgm'])) setcookie('allowgm',1,time()+900);
 
 // Verificar se é página do fórum - usar layout próprio (ANTES de qualquer outra verificação)
@@ -282,13 +284,15 @@ if(isset($_COOKIE['logado'])){
                         exit; 
                 }
         } else {
-                $stmt = $conexao->prepare("SELECT u.id, u.status, u.usuario, u.yens, u.yens_fat, u.nivel, u.orgid, u.energia, u.energiamax, u.taijutsu, u.ninjutsu, u.genjutsu, u.personagem, u.avatar, u.renegado, u.vila, u.doujutsu, u.exp, u.expmax, u.doujutsu_nivel, u.doujutsu_exp, u.doujutsu_expmax, u.vip_inicio, u.vip, u.missao, u.hunt, u.treino, u.penalidade_fim, u.loginip, u.bandana_estilo, u.bonus_invasao_tai, u.bonus_invasao_nin, u.bonus_invasao_gen, u.bonus_invasao_pct, u.adm, u.timestamp, COALESCE(o.nivel, 0) as orgnivel FROM usuarios u LEFT OUTER JOIN organizacoes o ON u.orgid=o.id WHERE u.id=?");
+                $stmt = $conexao->prepare("SELECT u.id, u.status, u.usuario, u.yens, u.yens_fat, u.nivel, u.orgid, u.energia, u.energiamax, u.chakra_regen_ultima, u.taijutsu, u.ninjutsu, u.genjutsu, u.personagem, u.avatar, u.renegado, u.vila, u.doujutsu, u.exp, u.expmax, u.doujutsu_nivel, u.doujutsu_exp, u.doujutsu_expmax, u.vip_inicio, u.vip, u.missao, u.hunt, u.treino, u.penalidade_fim, u.loginip, u.bandana_estilo, u.bonus_invasao_tai, u.bonus_invasao_nin, u.bonus_invasao_gen, u.bonus_invasao_pct, u.adm, u.timestamp, COALESCE(o.nivel, 0) as orgnivel FROM usuarios u LEFT OUTER JOIN organizacoes o ON u.orgid=o.id WHERE u.id=?");
                 $stmt->execute([$_SESSION['logado']]);
                 $db = $stmt->fetch(PDO::FETCH_ASSOC);
                 if($db && $db['status']=='banido'){ 
                         header("Location: index.php?p=logout&ban=true"); 
                         exit; 
                 }
+                // Regeneração passiva de chakra (5% por hora)
+                if($db) require_once('_inc/chakra_regen.php');
         }
 
         if($db && isset($_GET['p']) && $_GET['p'] != 'first' && $_GET['p'] != 'view' && $_GET['p'] != 'prepare' && $db['avatar'] == 0){ 
@@ -471,11 +475,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         case 'ramen': require_once('_inc/ramen.php'); break;
                         case 'hunt': require_once('_inc/hunt.php'); break;
                         case 'rank': require_once('_inc/rank.php'); break;
+                        case 'rank_doujutsu': require_once('_inc/rank_doujutsu.php'); break;
                         case 'pratice': require_once('_inc/pratice.php'); break;
                         case 'doujutsu': require_once('doujutsu.php'); break;
                         case 'newdoujutsu': require_once('newdoujutsu.php'); break;
                         case 'despertar': require_once('_inc/despertar.php'); break;
                         case 'schooltrain': require_once('_inc/schooltrain.php'); break;
+                        case 'treinar_doujutsu': require_once('_inc/treinar_doujutsu.php'); break;
                         case 'busymission': require_once('_inc/busymission.php'); break;
                         case 'busytrain': require_once('_inc/busytrain.php'); break;
                         case 'updates': require_once('_inc/updates.php'); break;

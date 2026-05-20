@@ -3,6 +3,7 @@
 <?php require_once('verificar.php'); ?>
 <?php require_once('funcoes.php'); ?>
 <?php require_once('funcoes_selos.php'); ?>
+<?php require_once('funcoes_despertar.php'); ?>
 <?php
 
 // Verificar se é ataque de invasão (não precisa validar anti-bot)
@@ -770,6 +771,10 @@ $ene=$db['energia'].' / '.$db['energiamax'].','.$dbi['energia'].' / '.$dbi['ener
         $conexao->prepare("UPDATE usuarios SET exp=exp+?, exptotal=exptotal+?, penalidade_fim=?, empates=empates+1, batalhas=batalhas+1, doujutsu_exp=doujutsu_exp+?, energia=? WHERE id=?")->execute([$exp_1, $exp_1, $penalidade, $expd_1, $energia_salvar_db, $db['id']]);
         $conexao->prepare("UPDATE usuarios SET exp=exp+?, exptotal=exptotal+?, empates=empates+1, batalhas=batalhas+1, doujutsu_exp=doujutsu_exp+?, energia=? WHERE id=?")->execute([$exp_2, $exp_2, $expd_2, $energia_salvar_dbi, $dbi['id']]);
     }
+    // Verificar notificação de Despertar para ambos os jogadores
+    despertar_verificar_notificacao($conexao, $db['id']);
+    despertar_verificar_notificacao($conexao, $dbi['id']);
+
     $exp=$exp_1.','.(4-$exp_2);
     $danos=$dano1.','.$perdido1;
     $reldoujutsu=$db['doujutsu'].','.$dbi['doujutsu'];

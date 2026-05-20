@@ -38,6 +38,7 @@ try {
         <td width="140"><img src="_img/ramen/ramen<?php echo $dbr['ramenid']; ?>.jpg" /></td>
         <td><b><?php echo $nome; ?></b><br /><span class="sub2">Regenera <?php echo $reg; ?> pontos de Energia</span>
         <form method="post" action="?p=home" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+        <?php echo csrf_field(); ?>
         <input type="hidden" id="ram_id" name="ram_id" value="<?php echo $c->encode($dbr['id'],$chaveuniversal); ?>" />
         <input type="hidden" id="ram_tipo" name="ram_tipo" value="<?php echo $c->encode($dbr['ramenid'],$chaveuniversal); ?>" />
         <input type="submit" id="subm" name="subm" class="botao" value="Usar" />

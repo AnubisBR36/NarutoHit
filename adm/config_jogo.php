@@ -34,15 +34,22 @@ function cfg_save(PDO $pdo, string $nome, string $valor, string $descricao): voi
 }
 
 // ── SALVAR ────────────────────────────────────────────────────────────────────
+if (!function_exists('adm_log')) {
+    function adm_log($pdo, $autor_id, $autor_nome, $acao, $alvo_id = null, $alvo_nome = null, $detalhes = null) {
+        try { $pdo->prepare("INSERT INTO admin_logs (autor_id,autor_nome,acao,alvo_id,alvo_nome,detalhes) VALUES (?,?,?,?,?,?)")->execute([$autor_id,$autor_nome,$acao,$alvo_id,$alvo_nome,$detalhes]); } catch(Exception $e) {}
+    }
+}
+$_adm_nome = $usuario_logado['usuario'] ?? '?';
+
 if (isset($_POST['salvar_geral'])) {
     $nome_srv = trim($_POST['site_nome'] ?? '');
     $url_site  = trim($_POST['site_url']  ?? '');
-    // Salvar brand name
     if ($nome_srv !== '') {
         $brand_content = "<?php\nif (!defined('BRAND_NAME')) {\n    define('BRAND_NAME', '" . addslashes($nome_srv) . "');\n}\nif (!function_exists('nome_servidor')) {\n    function nome_servidor(): string { return BRAND_NAME; }\n}\nif (!function_exists('nome_servidor_safe')) {\n    function nome_servidor_safe(): string { return htmlspecialchars(nome_servidor(), ENT_QUOTES, 'UTF-8'); }\n}\n";
         file_put_contents('../config/brand.php', $brand_content);
     }
     cfg_save($conexao, 'site_url', $url_site, 'URL base do site para geração de nLinks');
+    adm_log($conexao, $user_id, $_adm_nome, 'Config Geral', null, null, "Nome=$nome_srv | URL=$url_site");
     $msg = 'Configurações gerais salvas.'; $msg_tipo = 'success';
 }
 
@@ -50,6 +57,7 @@ if (isset($_POST['salvar_caca'])) {
     cfg_save($conexao, 'caca_vip_bonus_exp',  (string)max(0,(int)$_POST['caca_vip_bonus_exp']),  'Bônus de EXP VIP na caça (pontos fixos)');
     cfg_save($conexao, 'caca_item_chance',     (string)max(0,min(50,(int)$_POST['caca_item_chance'])), 'Chance (%) de encontrar item ao finalizar caça');
     cfg_save($conexao, 'caca_item_chance2',    (string)max(0,min(50,(int)$_POST['caca_item_chance2'])),'Chance (%) de encontrar item usável ao finalizar caça');
+    adm_log($conexao, $user_id, $_adm_nome, 'Config Caça', null, null, "VIP EXP={$_POST['caca_vip_bonus_exp']} | Chance1={$_POST['caca_item_chance']}% | Chance2={$_POST['caca_item_chance2']}%");
     $msg = 'Configurações de caça salvas.'; $msg_tipo = 'success';
 }
 
@@ -59,12 +67,14 @@ if (isset($_POST['salvar_missoes'])) {
         cfg_save($conexao, "missao_yens_{$rank}", (string)$y, "Yens/hora missão Rank ".strtoupper($rank));
     }
     cfg_save($conexao, 'missao_exp_hora', (string)max(0,(int)($_POST['missao_exp_hora']??1)), 'EXP por hora de missão');
+    adm_log($conexao, $user_id, $_adm_nome, 'Config Missões', null, null, "EXP/hora={$_POST['missao_exp_hora']}");
     $msg = 'Configurações de missões salvas.'; $msg_tipo = 'success';
 }
 
 if (isset($_POST['salvar_treino'])) {
     $div = max(1, (int)($_POST['treino_exp_divisor'] ?? 5));
     cfg_save($conexao, 'treino_exp_divisor', (string)$div, 'Divisor do tempo de treino para calcular EXP de jutsu');
+    adm_log($conexao, $user_id, $_adm_nome, 'Config Treino', null, null, "Divisor=$div");
     $msg = 'Configurações de treino salvas.'; $msg_tipo = 'success';
 }
 
@@ -72,6 +82,7 @@ if (isset($_POST['salvar_multiplicadores'])) {
     cfg_save($conexao, 'global_exp_mult',  number_format(max(0.1,min(10.0,(float)str_replace(',','.',($_POST['global_exp_mult'] ??'1')))),2,'.','.'), 'Multiplicador global de EXP (base para eventos)');
     cfg_save($conexao, 'global_yens_mult', number_format(max(0.1,min(10.0,(float)str_replace(',','.',($_POST['global_yens_mult']??'1')))),2,'.','.'), 'Multiplicador global de Yens (base para eventos)');
     cfg_save($conexao, 'global_drop_mult', number_format(max(0.1,min(10.0,(float)str_replace(',','.',($_POST['global_drop_mult']??'1')))),2,'.','.'), 'Multiplicador global de Drop (base para eventos)');
+    adm_log($conexao, $user_id, $_adm_nome, 'Config Multiplicadores', null, null, "EXP={$_POST['global_exp_mult']}x | Yens={$_POST['global_yens_mult']}x | Drop={$_POST['global_drop_mult']}x");
     $msg = 'Multiplicadores globais salvos.'; $msg_tipo = 'success';
 }
 
@@ -80,6 +91,7 @@ if (isset($_POST['salvar_registro'])) {
     cfg_save($conexao, 'pvp_ativo',          $_POST['pvp_ativo']          === '1' ? '1' : '0', 'PVP entre jogadores habilitado (1=sim, 0=não)');
     cfg_save($conexao, 'vip_exp_bonus_pct',  (string)max(0,(int)$_POST['vip_exp_bonus_pct']),  'Bônus extra de EXP para VIP em %');
     cfg_save($conexao, 'vip_yens_bonus_pct', (string)max(0,(int)$_POST['vip_yens_bonus_pct']), 'Bônus extra de Yens para VIP em %');
+    adm_log($conexao, $user_id, $_adm_nome, 'Config Servidor', null, null, "Cadastro={$_POST['cadastro_aberto']} | PVP={$_POST['pvp_ativo']} | VIP EXP={$_POST['vip_exp_bonus_pct']}% | VIP Yens={$_POST['vip_yens_bonus_pct']}%");
     $msg = 'Configurações de servidor salvas.'; $msg_tipo = 'success';
 }
 

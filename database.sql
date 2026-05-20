@@ -808,6 +808,35 @@ CREATE TABLE `table_jutsus` (
 
 
 -- ------------------------------------------------------------
+-- Seed: jutsus padrão
+INSERT INTO `table_jutsus` (`id`, `nome`, `nivel`, `natureza`, `forca`, `valor`, `doujutsu`, `doujutsu_nivel`, `texto`) VALUES
+(1,  'Clone das Sombras',          1,  'nenhum', 10, 500.00,   0, 0, 'Cria uma cópia ilusória do ninja para confundir o oponente.'),
+(2,  'Técnica de Transformação',   2,  'nenhum',  8, 300.00,   0, 0, 'Permite ao ninja transformar-se em qualquer pessoa ou objeto.'),
+(3,  'Técnica de Substituição',    3,  'nenhum', 12, 800.00,   0, 0, 'Troca a posição do ninja com um objeto próximo no momento do golpe.'),
+(4,  'Kawarimi no Jutsu',          5,  'nenhum', 15, 1200.00,  0, 0, 'Versão avançada da substituição, com menor tempo de reação.'),
+(5,  'Bunshin no Jutsu',           8,  'nenhum', 18, 2000.00,  0, 0, 'Gera múltiplos clones de chakra que desorientam o inimigo.'),
+(6,  'Henge no Jutsu',            10,  'nenhum', 22, 3000.00,  0, 0, 'Transformação perfeita que engana até os sensores de chakra.'),
+(7,  'Katon: Bola de Fogo',       15,  'fogo',   30, 5000.00,  0, 0, 'Expele uma grande esfera de fogo pela boca.'),
+(8,  'Katon: Dragão de Fogo',     20,  'fogo',   45, 8000.00,  0, 0, 'Uma corrente de fogo em forma de dragão avança sobre o alvo.'),
+(9,  'Katon: Faíscas',            25,  'fogo',   60, 12000.00, 0, 0, 'Dispara múltiplos projéteis de fogo em alta velocidade.'),
+(10, 'Katon: Pilares de Fogo',    30,  'fogo',   80, 18000.00, 0, 0, 'Colunas de fogo emergem do chão em torno do oponente.'),
+(11, 'Suiton: Bala d''Água',      15,  'agua',   28, 5000.00,  0, 0, 'Dispara uma bala de água comprimida com enorme pressão.'),
+(12, 'Suiton: Prisão d''Água',    20,  'agua',   42, 8000.00,  0, 0, 'Envolve o alvo em uma esfera de água que o imobiliza.'),
+(13, 'Suiton: Dragão d''Água',    25,  'agua',   58, 12000.00, 0, 0, 'Um dragão de água se ergue e ataca o oponente com força devastadora.'),
+(14, 'Suiton: Grande Tsunami',    30,  'agua',   78, 18000.00, 0, 0, 'Uma onda gigantesca avança e arrasa tudo em seu caminho.'),
+(15, 'Doton: Muro de Terra',      15,  'terra',  25, 5000.00,  0, 0, 'Levanta uma parede de terra como escudo ou barreira.'),
+(16, 'Doton: Espinhos de Terra',  20,  'terra',  40, 8000.00,  0, 0, 'Dispara lanças de pedra do chão em direção ao inimigo.'),
+(17, 'Doton: Terremoto',          30,  'terra',  75, 18000.00, 0, 0, 'Faz o chão tremer com força, desequilibrando e danificando o oponente.'),
+(18, 'Fuuton: Lâmina de Vento',   15,  'vento',  32, 5000.00,  0, 0, 'Projeta lâminas de ar cortante em direção ao alvo.'),
+(19, 'Fuuton: Tempestade',        25,  'vento',  62, 12000.00, 0, 0, 'Invoca um redemoinho que suga e corta o oponente.'),
+(20, 'Raiton: Chidori',           20,  'raio',   50, 9000.00,  0, 0, 'Concentra chakra de raio na mão e perfura o alvo com velocidade relâmpago.'),
+(21, 'Raiton: Relâmpago',         28,  'raio',   70, 15000.00, 0, 0, 'Canaliza um raio direto do céu sobre o adversário.'),
+(22, 'Genjutsu do Sharingan',      5,  'nenhum', 35, 6000.00,  1, 1, 'Usa o Sharingan para prender o alvo em uma ilusão profunda.'),
+(23, 'Hakke: 64 Palmas',           5,  'nenhum', 38, 6000.00,  2, 1, 'Golpeia 64 pontos de chakra do oponente bloqueando seu fluxo.'),
+(24, 'Caminhos do Rinnegan',       5,  'nenhum', 45, 8000.00,  3, 1, 'Manifesta os poderes dos seis caminhos do Rinnegan.');
+
+
+-- ------------------------------------------------------------
 -- Tabela: `table_missoes`
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS `table_missoes`;
@@ -836,6 +865,11 @@ CREATE TABLE `table_usaveis` (
   `descricao` TEXT,
   `imagem` VARCHAR(255),
   `categoria` VARCHAR(50) DEFAULT 'cristal',
+  `tipo_efeito` VARCHAR(32) NULL DEFAULT NULL,
+  `valor_efeito` VARCHAR(64) NULL DEFAULT NULL,
+  `imagem_fragmento` VARCHAR(255) NULL DEFAULT NULL,
+  `cristal_alvo_id` INTEGER NULL DEFAULT NULL,
+  `fragmentos_necessarios` INTEGER NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -950,6 +984,10 @@ CREATE TABLE `usuarios` (
   `doujutsu_nivel` INT DEFAULT 0,
   `doujutsu_exp` INT DEFAULT 0,
   `doujutsu_expmax` INT DEFAULT 100,
+  `chakra_regen_ultima` DATETIME DEFAULT NULL,
+  `doujutsu_treino_fim` DATETIME DEFAULT NULL,
+  `doujutsu_treino_dia` DATE DEFAULT NULL,
+  `doujutsu_treino_count` INT DEFAULT 0,
   `vip_inicio` DATETIME,
   `vip` DATETIME DEFAULT '2000-01-01 00:00:00',
   `hunt` INT DEFAULT 0,
@@ -1049,6 +1087,8 @@ CREATE TABLE `usuarios` (
   `config_okyoutube` VARCHAR(3) DEFAULT 'nao',
   `criador_conteudo` INT DEFAULT 0,
   `ref_link` VARCHAR(60) DEFAULT NULL,
+  `missoes_longas` INT NOT NULL DEFAULT 0,
+  `despertar_notificado` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1110,6 +1150,165 @@ CREATE TABLE `vip` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+
+-- ------------------------------------------------------------
+-- Tabela: `backup_config`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `backup_config` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `modo` VARCHAR(20) NOT NULL DEFAULT 'horas',
+  `intervalo` INT NOT NULL DEFAULT 24,
+  `dia_semana` TINYINT NOT NULL DEFAULT 0,
+  `hora` TINYINT NOT NULL DEFAULT 3,
+  `minuto` TINYINT NOT NULL DEFAULT 0,
+  `pasta_destino` VARCHAR(255) NOT NULL DEFAULT 'backups',
+  `max_backups` INT NOT NULL DEFAULT 30,
+  `incluir_forum` TINYINT NOT NULL DEFAULT 1,
+  `mysqldump_path` VARCHAR(500) NOT NULL DEFAULT '',
+  `ativo` TINYINT NOT NULL DEFAULT 0,
+  `ultimo_backup` DATETIME NULL,
+  `proximo_backup` DATETIME NULL,
+  `criado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `backup_historico`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `backup_historico` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `arquivo_naruto` VARCHAR(255) NULL,
+  `arquivo_forum` VARCHAR(255) NULL,
+  `tamanho_bytes` BIGINT NOT NULL DEFAULT 0,
+  `status` VARCHAR(20) NOT NULL DEFAULT 'sucesso',
+  `erro_mensagem` TEXT NULL,
+  `origem` VARCHAR(20) NOT NULL DEFAULT 'manual',
+  `criado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `categorias_equipamento`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `categorias_equipamento` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `slug` VARCHAR(40) NOT NULL UNIQUE,
+  `nome` VARCHAR(60) NOT NULL,
+  `emoji` VARCHAR(16) DEFAULT '',
+  `pasta` VARCHAR(100) NOT NULL,
+  `placeholder` VARCHAR(80) DEFAULT '',
+  `ordem` INT DEFAULT 100,
+  `ativo` TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `contato`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `contato` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `nome` VARCHAR(80) NOT NULL,
+  `email` VARCHAR(120) NOT NULL,
+  `assunto` VARCHAR(100) NOT NULL,
+  `usuario` VARCHAR(60) NOT NULL DEFAULT '-',
+  `mensagem` TEXT NOT NULL,
+  `ip` VARCHAR(45) DEFAULT '',
+  `criado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lido` TINYINT(1) NOT NULL DEFAULT 0,
+  KEY `idx_contato_lido` (`lido`),
+  KEY `idx_contato_data` (`criado_em`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `craft_fragmentos`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `craft_fragmentos` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `usuarioid` INTEGER NOT NULL,
+  `itemid` INTEGER NOT NULL,
+  `quantidade` INTEGER NOT NULL DEFAULT 0,
+  UNIQUE KEY `uniq_usuario_item` (`usuarioid`, `itemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `eventos_bonus`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `eventos_bonus` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `nome` VARCHAR(120) NOT NULL,
+  `descricao` TEXT NOT NULL DEFAULT '',
+  `mult_exp` DECIMAL(5,2) NOT NULL DEFAULT 1.00,
+  `mult_yens` DECIMAL(5,2) NOT NULL DEFAULT 1.00,
+  `mult_drop` DECIMAL(5,2) NOT NULL DEFAULT 1.00,
+  `inicio` DATETIME NOT NULL,
+  `fim` DATETIME NOT NULL,
+  `banner_cor` VARCHAR(20) NOT NULL DEFAULT '#ff6600',
+  `criado_em` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `login_streak`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `login_streak` (
+  `id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `usuarioid` INTEGER NOT NULL UNIQUE,
+  `streak` INTEGER NOT NULL DEFAULT 1,
+  `ultimo_login` DATE NOT NULL,
+  `total_logins` INTEGER NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `login_streak_config`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `login_streak_config` (
+  `dia` TINYINT NOT NULL PRIMARY KEY,
+  `yens` INTEGER NOT NULL DEFAULT 0,
+  `exp` INTEGER NOT NULL DEFAULT 0,
+  `icone` VARCHAR(100) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `login_tentativas`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `login_tentativas` (
+  `ip` BIGINT UNSIGNED NOT NULL,
+  `tentativas` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  `primeiro_erro` DATETIME NOT NULL,
+  `ultimo_erro` DATETIME NOT NULL,
+  `bloqueado_ate` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`ip`),
+  INDEX `idx_bloqueio` (`bloqueado_ate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `personagens_catalogo`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `personagens_catalogo` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `chave` VARCHAR(40) NOT NULL,
+  `nome` VARCHAR(80) NOT NULL,
+  `nivel` INT(11) NOT NULL DEFAULT 1,
+  `vip` TINYINT(1) NOT NULL DEFAULT 0,
+  `descricao` VARCHAR(255) DEFAULT '',
+  `ordem` INT(11) NOT NULL DEFAULT 0,
+  `ativo` TINYINT(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_chave` (`chave`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Tabela: `despertar_historico`
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `despertar_historico` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `usuario_id` INT NOT NULL,
+  `resultado` TINYINT NOT NULL DEFAULT 0,
+  `data` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `batalhas` INT NOT NULL DEFAULT 0,
+  `vitorias` INT NOT NULL DEFAULT 0,
+  `missoes_longas` INT NOT NULL DEFAULT 0,
+  INDEX `idx_dh_usuario` (`usuario_id`),
+  INDEX `idx_dh_resultado` (`resultado`),
+  INDEX `idx_dh_data` (`data`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 SET FOREIGN_KEY_CHECKS = 1;

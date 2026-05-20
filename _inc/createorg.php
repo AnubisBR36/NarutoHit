@@ -6,6 +6,7 @@
 <?php } else { ?>
 <?php
         if(isset($_POST['org'])){
+                if(!csrf_validar()) { echo "<script>self.location='?p=createorg'</script>"; exit; }
                 $nome = trim($_POST['org_nome']);
                 $sigla = substr(strtoupper(trim($_POST['org_sigla'])), 0, 4);
                 
@@ -50,6 +51,7 @@
 <div class="box_top">Criar Organização</div>
 <div class="box_middle">Para criar uma organização, primeiramente é necessário ter espírito de liderança. Um bom líder conseguirá administrar uma boa organização, e assim, conquistar os melhores ninjas! Além disso, também é preciso ter uma boa reserva de yens! Os custos para a criação são de 3.000,00 yens.<div class="sep"></div><div style="padding-left:5px;background:url(_img/gradient.jpg) repeat-y;font-weight:bold;color:#FFFFAA;"><img src="_img/yens.png" width="14" height="14" align="absmiddle" /> Meus yens: <?php echo number_format($db['yens'],2,',','.'); ?> yens</div><div class="sep"></div>
         <form method="post" action="?p=createorg" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+    <?php echo csrf_field(); ?>
     <input type="hidden" id="org" name="org" value="1">
     <fieldset><legend>Criar Organização</legend>
         <span class="destaque">Nome da Organização:</span><br />

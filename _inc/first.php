@@ -19,6 +19,7 @@ if(!is_dir(__DIR__ . '/../_img/personagens/' . $char_atual)){
 }
 
 if(isset($_POST['fir_avatar'])){
+        if(!csrf_validar()) { echo "<script>self.location='?p=first'</script>"; exit; }
         $avatar=$c->decode($_POST['fir_avatar'],$chaveuniversal);
         vn($avatar);
         
@@ -46,6 +47,7 @@ if(isset($_POST['fir_avatar'])){
 <div class="box_top">Primeiro Login</div>
 <div class="box_middle">Seja bem-vindo ao <?php echo nome_servidor(); ?>! Como este é seu primeiro login no jogo, queremos que você escolha um avatar para representação. Marque uma das 9 opções abaixo, e clique no botão para confirmar. Lembramos que esta função não interfere na força da sua conta. A troca de avatares pode ser feita uma vez por dia (ilimitado para jogadores VIP).<div class="sep"></div>
         <form method="post" action="?p=first" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+        <?php echo csrf_field(); ?>
         <fieldset><legend>Avatar</legend>
     <div align="center">
     <table width="100%" border="0" cellpadding="0" cellspacing="0">

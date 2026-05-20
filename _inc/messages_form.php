@@ -1,6 +1,7 @@
 <?php
 // Processar envio de mensagem
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['msg_destino'])) {
+    if(!csrf_validar()) { echo "<script>self.location='?p=messages&type=form'</script>"; exit; }
     $destinos_str = trim($_POST['msg_destino']);
     $assunto = trim($_POST['msg_assunto']);
     $mensagem = trim($_POST['msg_msg']);
@@ -77,6 +78,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['msg_destino'])) {
         echo '<div class="aviso">'.$msg.'</div><div class="sep"></div>'; } ?>
     <fieldset><legend>Enviar Mensagem</legend>
         <form method="post" action="?p=messages&type=form" onsubmit="subm.value='Carregando...';subm.disabled=true;">
+          <?php echo csrf_field(); ?>
           <input type="hidden" id="msg_origem" name="msg_origem" value="<?php echo htmlspecialchars($db['usuario']); ?>" />
             <span class="destaque">Destino(s) da Mensagem:</span><br />
             <input type="text" id="msg_destino" name="msg_destino" maxlength="159" onfocus="className='input'" onblur="className=''" <?php if(isset($_GET['destiny'])) echo 'value="'.htmlspecialchars($_GET['destiny']).'"'; ?>/><br />

@@ -50,7 +50,8 @@ if($dbi['usuarioid']<>$db['id']){ echo "<script>self.location='?p=home'</script>
                 <?php if($dbi['genjutsu']>0) echo '<img src="_img/equipamentos/up.png" width="14" height="14" align="absmiddle" /> [+'.($dbi['genjutsu']+$dbi['upgrade']).'] em Genjutsu<br />'; ?></b>
                 <br />
                 <form method="post" action="?p=addmy" onsubmit="subm.value='Carregando...';subm.disabled=true;">
-                <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+                <?php echo csrf_field(); ?>
+                <input type="hidden" name="id" value="<?php echo (int)$_GET['id']; ?>" />
                 <b>Escolha a Moeda de Venda:</b><br />
                 <div style="margin:8px 0;line-height:2.2;">
                         <label style="margin-right:16px;cursor:pointer;">

@@ -21,6 +21,7 @@ if(!is_file(__DIR__ . '/../_img/personagens/' . $char_atual . '/1.jpg')){
 }
 
 if(isset($_POST['fir_avatar'])){
+        if(!csrf_validar()) { echo "<script>self.location='?p=config&type=avat'</script>"; exit; }
         $avatar=$c->decode($_POST['fir_avatar'],$chaveuniversal);
         vn($avatar);
         
@@ -64,6 +65,7 @@ if(isset($_GET['msg'])){
 }
 ?>
 <form method="post" action="?p=config&amp;type=avat" onsubmit="fir_submit.value='Carregando...';fir_submit.disabled=true;">
+<?php echo csrf_field(); ?>
 <fieldset><legend>Alterar Avatar</legend>
 <div align="center">
 <?php

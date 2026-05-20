@@ -1,0 +1,148 @@
+Revise e refatore todo o meu projeto PHP (jogo de navegador estilo RPG/Naruto), atualmente usando SQLite, mas preparando o sistema para futura migração para MySQL.
+
+⚠️ O projeto já está 90% pronto, então NÃO recrie do zero — apenas melhore, corrija, proteja e padronize.
+
+O código deve ser compatível com PHP 8+ e estruturado de forma que a troca de SQLite para MySQL seja simples e rápida.
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔄 COMPATIBILIDADE SQLite → MySQL
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Usar PDO para todas conexões (sem exceções)
+* Evitar qualquer código específico de SQLite
+* Criar camada de conexão reutilizável (ex: Database.php)
+* Preparar queries compatíveis com MySQL (evitar sintaxes exclusivas)
+* Centralizar configuração de banco (host, dbname, user, senha)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔒 SEGURANÇA GERAL
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Sanitizar e validar TODAS as entradas (GET, POST, COOKIE)
+* Escapar TODAS as saídas com htmlspecialchars para evitar XSS
+* Nunca confiar em dados do front-end
+* Sistema deve ser seguro mesmo com acesso ao DevTools (F12)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🛢️ BANCO DE DADOS
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Usar PDO com prepared statements
+* Proibir concatenação direta em SQL (evitar SQL Injection)
+* Tratar erros sem expor informações sensíveis
+* Criar estrutura de queries limpa e reutilizável
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🔑 AUTENTICAÇÃO E SENHAS
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Usar password_hash() e password_verify()
+* Implementar login seguro com sessão
+* Regenerar session_id após login
+* Implementar proteção contra brute force (rate limit)
+* Criar logs de tentativas de login
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🍪 SESSÕES E TOKENS
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Configurar cookies:
+
+  * HttpOnly = true
+  * Secure = true (HTTPS obrigatório)
+  * SameSite = Strict
+* Implementar expiração de sessão
+* NÃO armazenar tokens em localStorage ou JavaScript
+* Validar sessão em todas páginas protegidas
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🛡️ PROTEÇÃO CSRF
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Gerar token CSRF por sessão
+* Incluir em todos formulários POST
+* Validar no backend
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🚫 PROTEÇÃO XSS
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Usar htmlspecialchars em todas saídas
+* Evitar inserção direta no DOM
+* Preparar sistema contra roubo de sessão via script
+
+━━━━━━━━━━━━━━━━━━━━━━━
+📁 UPLOAD DE ARQUIVOS
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Validar MIME e extensão
+* Renomear arquivos
+* Bloquear execução de scripts (.php, .js)
+* Armazenar fora da pasta pública
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🌐 HEADERS DE SEGURANÇA
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Implementar:
+
+* Content-Security-Policy (CSP)
+* X-Frame-Options
+* X-Content-Type-Options
+* Strict-Transport-Security
+
+━━━━━━━━━━━━━━━━━━━━━━━
+⚔️ LÓGICA DO JOGO (CRÍTICO)
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Toda lógica deve estar no backend (PHP)
+
+* Nunca confiar em dados enviados pelo jogador:
+
+  * vida
+  * dano
+  * chakra
+  * dinheiro
+  * inventário
+
+* Sempre buscar dados do banco antes de processar ações
+
+* Bloquear requisições manipuladas via DevTools
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🚦 PROTEÇÃO CONTRA ABUSO
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Rate limit por IP e usuário
+* Detectar requisições suspeitas
+* Criar logs de ações importantes
+
+━━━━━━━━━━━━━━━━━━━━━━━
+🧩 ESTRUTURA DO CÓDIGO
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Refatorar para padrão moderno (PHP 8+)
+* Organizar em MVC ou estrutura modular
+* Separar:
+
+  * conexão com banco
+  * lógica do jogo
+  * interface
+
+━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ REGRAS IMPORTANTES
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* NÃO quebrar funcionalidades existentes
+* NÃO mover lógica crítica para o front-end
+* Priorizar segurança no backend
+* Preparar o projeto para escalar futuramente
+
+━━━━━━━━━━━━━━━━━━━━━━━
+📌 ENTREGA
+━━━━━━━━━━━━━━━━━━━━━━━
+
+* Código refatorado
+* Explicação das melhorias
+* Destaque das vulnerabilidades corrigidas
+* Indicar o que já está pronto para MySQL

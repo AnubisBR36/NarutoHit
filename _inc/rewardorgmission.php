@@ -1,4 +1,5 @@
 <?php require_once('trava.php'); ?>
+<?php require_once('funcoes_despertar.php'); ?>
 <?php
 // Só missões de org (911-924)
 if($db['missao'] < 911 || $db['missao'] > 924){
@@ -53,6 +54,15 @@ try {
 } catch(PDOException $e){
     echo "<script>alert('Erro ao processar recompensa.'); self.location='?p=home'</script>"; exit;
 }
+// Contar missões longas (>= 10 horas) para o Ritual de Despertar
+if($db['missao_tempo'] >= 10){
+    try {
+        $stmtLonga = $conexao->prepare("UPDATE usuarios SET missoes_longas = missoes_longas + 1 WHERE id=?");
+        $stmtLonga->execute([$db['id']]);
+    } catch(PDOException $e){ /* silently fail */ }
+}
+// Verificar notificação de Despertar
+despertar_verificar_notificacao($conexao, $db['id']);
 
 // -------------------------------------------------------
 // Drops: rolagens independentes

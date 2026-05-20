@@ -120,7 +120,7 @@ if(!defined('INDEX')) die('Acesso direto a este arquivo não é permitido!');
             <div style="margin: 30px 0;">
                 <p style="background:#333333; padding: 10px; margin: 10px 0;">
                     <b>Energia Necessária:</b> 25 pontos<br />
-                    <span style="font-size: 12px;">Sua energia atual: <?php echo $db['energia']; ?>/<?php echo $db['energiamax']; ?></span>
+                    <span style="font-size: 12px;">Seu chakra atual: <?php echo $db['energia']; ?>/<?php echo $db['energiamax']; ?></span>
                 </p>
                 
                 <input type="button" class="botao" value="Atacar Invasor" onclick="location.href='?p=attack&invasao=1'" />

@@ -13,6 +13,9 @@ $default_values = array(
     'yens_perd' => 0.00,
     'config_apresentacao' => '',
     'doujutsu' => 0,
+    'doujutsu_nivel' => 0,
+    'doujutsu_exp' => 0,
+    'doujutsu_expmax' => 0,
     'orgid' => 0,
     'orgnome' => ''
 );

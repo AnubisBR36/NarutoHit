@@ -29,18 +29,29 @@ if(isset($_u_man['adm']) && $_u_man['adm'] == 2) {
     require_once('_gm_auth.php');
 }
 
+if (!function_exists('adm_log')) {
+    function adm_log($pdo, $autor_id, $autor_nome, $acao, $alvo_id = null, $alvo_nome = null, $detalhes = null) {
+        try { $pdo->prepare("INSERT INTO admin_logs (autor_id,autor_nome,acao,alvo_id,alvo_nome,detalhes) VALUES (?,?,?,?,?,?)")->execute([$autor_id,$autor_nome,$acao,$alvo_id,$alvo_nome,$detalhes]); } catch(Exception $e) {}
+    }
+}
+$_man_uid  = $_SESSION['logado'] ?? 0;
+$_man_nome = '?';
+try { $_s = $conexao->prepare("SELECT usuario FROM usuarios WHERE id=?"); $_s->execute([$_man_uid]); $_man_nome = $_s->fetchColumn() ?: '?'; } catch(Exception $e) {}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     if ($action === 'salvar') {
         $mensagem_personalizada = $_POST['mensagem_personalizada'] ?? '';
         $manutencao_ativa = isset($_POST['manutencao_ativa']) ? true : false;
         if (salvar_config_manutencao($manutencao_ativa, $mensagem_personalizada)) {
+            adm_log($conexao, $_man_uid, $_man_nome, 'Config Manutenção', null, null, 'Ativo=' . ($manutencao_ativa ? 'sim' : 'não'));
             $sucesso_msg = 'Configurações de manutenção salvas com sucesso!';
         } else {
             $erro_msg = 'Erro ao salvar configurações!';
         }
     } elseif ($action === 'excluir') {
         if (salvar_config_manutencao(false, '')) {
+            adm_log($conexao, $_man_uid, $_man_nome, 'Config Manutenção', null, null, 'Mensagem excluída');
             $sucesso_msg = 'Mensagem de manutenção excluída com sucesso!';
         } else {
             $erro_msg = 'Erro ao excluir mensagem!';
@@ -53,12 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($rc_site_key) || empty($rc_secret_key)) {
             $erro_msg = 'Site Key e Secret Key são obrigatórios!';
         } elseif (salvar_config_recaptcha($rc_version, $rc_site_key, $rc_secret_key, $rc_min_score)) {
+            adm_log($conexao, $_man_uid, $_man_nome, 'Config reCAPTCHA', null, null, "Versão=$rc_version | Score=$rc_min_score");
             $sucesso_msg = 'Configurações do reCAPTCHA salvas com sucesso!';
         } else {
             $erro_msg = 'Erro ao salvar configurações do reCAPTCHA!';
         }
     } elseif ($action === 'limpar_recaptcha') {
         if (salvar_config_recaptcha('v2', '', '', 0.5)) {
+            adm_log($conexao, $_man_uid, $_man_nome, 'Config reCAPTCHA', null, null, 'Chaves removidas');
             $sucesso_msg = 'Configurações do reCAPTCHA limpas com sucesso!';
         } else {
             $erro_msg = 'Erro ao limpar configurações do reCAPTCHA!';
@@ -68,12 +81,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($ip_num > 0) {
             require_once('../_inc/rate_limit.php');
             rl_desbloquear_ip($conexao, $ip_num);
+            adm_log($conexao, $_man_uid, $_man_nome, 'Desbloquear IP', null, null, 'IP=' . long2ip($ip_num));
             $sucesso_msg = 'IP desbloqueado com sucesso!';
         }
     } elseif ($action === 'limpar_bloqueios') {
         require_once('../_inc/rate_limit.php');
         rl_limpar_todos($conexao);
+        adm_log($conexao, $_man_uid, $_man_nome, 'Limpar Bloqueios IP', null, null, 'Todos os bloqueios removidos');
         $sucesso_msg = 'Todos os bloqueios foram removidos!';
+    } elseif ($action === 'fix_energiamax') {
+        try {
+            // Busca todas as contas com energiamax diferente de nivel*100
+            $rows = $conexao->query("SELECT id, usuario, nivel, energiamax FROM usuarios WHERE status <> 'banido'")->fetchAll(PDO::FETCH_ASSOC);
+            $corrigidos = 0;
+            $stmt_fix = $conexao->prepare("UPDATE usuarios SET energiamax = ?, energia = LEAST(energia, ?) WHERE id = ?");
+            foreach ($rows as $row) {
+                $correto = max(100, (int)$row['nivel'] * 100);
+                if ((int)$row['energiamax'] !== $correto) {
+                    $stmt_fix->execute([$correto, $correto, $row['id']]);
+                    $corrigidos++;
+                }
+            }
+            adm_log($conexao, $_man_uid, $_man_nome, 'Fix EnergiaMáx', null, null, "Contas corrigidas: $corrigidos");
+            $sucesso_msg = "Correção concluída: <b>$corrigidos</b> conta(s) tiveram o energiamax atualizado para nivel×100.";
+        } catch (PDOException $e) {
+            $erro_msg = 'Erro ao corrigir: ' . $e->getMessage();
+        }
     }
 }
 
@@ -287,6 +320,35 @@ $ips_bloqueados = rl_listar_bloqueados($conexao);
         <?php endforeach; ?>
     </table>
 <?php endif; ?>
+
+<div class="sep"></div>
+
+<h3>Correção de Energia Máxima</h3>
+<div class="sep"></div>
+<p class="sub2">
+    A energia máxima de cada jogador deve ser <b>nível × 100</b> (ex: nível 5 → 500, nível 99 → 9.900).<br>
+    Contas criadas antes desta regra ou editadas manualmente podem ter valor incorreto.<br>
+    Esta ação corrige todas as contas de uma vez e também ajusta a energia atual se estiver acima do novo máximo.
+</p>
+<?php
+// Contar quantas contas estão com energiamax errado
+$count_errado = 0;
+try {
+    $rows_chk = $conexao->query("SELECT nivel, energiamax FROM usuarios WHERE status <> 'banido'")->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($rows_chk as $rc) {
+        if ((int)$rc['energiamax'] !== max(100, (int)$rc['nivel'] * 100)) $count_errado++;
+    }
+} catch (PDOException $e) {}
+?>
+<p>
+    Contas com energiamax incorreto: <b style="color:<?php echo $count_errado > 0 ? '#ff8888' : '#88ff88'; ?>;"><?php echo $count_errado; ?></b>
+</p>
+<form method="post" action="admin_manutencao.php" onsubmit="return confirm('Corrigir energiamax de <?php echo $count_errado; ?> conta(s)? A energia atual será limitada ao novo máximo.');">
+    <input type="hidden" name="action" value="fix_energiamax">
+    <button type="submit" class="botao<?php echo $count_errado == 0 ? '' : ' btn-danger'; ?>" <?php echo $count_errado == 0 ? 'disabled' : ''; ?>>
+        Corrigir EnergiaMáx (<?php echo $count_errado; ?> conta<?php echo $count_errado != 1 ? 's' : ''; ?>)
+    </button>
+</form>
 
 <div class="sep"></div>
 <p class="sub2"><strong>Dica:</strong> Para desativar completamente a manutenção, desmarque "Ativar modo de manutenção" e salve as configurações.</p>
